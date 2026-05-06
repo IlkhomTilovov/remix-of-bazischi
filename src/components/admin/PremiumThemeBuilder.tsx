@@ -728,15 +728,7 @@ const PreviewSurface = ({ formData }: { formData: ThemeFormData }) => {
         className="flex items-center justify-between px-5 py-3.5 border-b"
         style={{ borderColor: 'var(--p-secondary)' }}
       >
-        <div className="flex items-center gap-2">
-          <div
-            className="h-7 w-7 flex items-center justify-center text-xs font-bold"
-            style={{ background: 'var(--p-primary)', color: 'var(--p-bg)', borderRadius: radius }}
-          >
-            M
-          </div>
-          <span className="font-semibold tracking-tight text-sm">MIR MEXA</span>
-        </div>
+        <div className="flex items-center gap-2" />
         <div className="flex items-center gap-3">
           <Search className="h-4 w-4 opacity-60" />
           <Bell className="h-4 w-4 opacity-60" />
