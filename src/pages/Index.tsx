@@ -353,45 +353,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* TESTIMONIALS - editable */}
-      <section ref={sectionTestimonials.ref} className="py-20 md:py-28 bg-background">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${sectionTestimonials.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <EditableText contentKey="testimonials_label" fallback="Fikrlar" as="span" className="text-primary text-xs tracking-[0.3em] uppercase font-medium" section="testimonials" />
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4">
-              <EditableText contentKey="testimonials_title" fallback="Mijozlarimiz nima deydi" as="span" className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold" section="testimonials" />
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((item, i) => (
-              <div
-                key={item.key}
-                className={`p-8 border border-border rounded-sm transition-all duration-700 ${sectionTestimonials.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
-                style={{ transitionDelay: `${i * 150}ms` }}
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                  "<EditableText contentKey={`${item.key}_text`} fallback={item.textFallback} as="span" className="text-sm" section="testimonials" />"
-                </p>
-                <div>
-                  <p className="font-medium text-foreground text-sm">
-                    <EditableText contentKey={`${item.key}_name`} fallback={item.nameFallback} as="span" className="font-medium text-sm" section="testimonials" />
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    <EditableText contentKey={`${item.key}_role`} fallback={item.roleFallback} as="span" className="text-xs" section="testimonials" />
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA - editable */}
       <section ref={sectionCta.ref} className="py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 bg-primary" />
