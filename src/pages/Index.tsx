@@ -144,22 +144,34 @@ export default function Index() {
             </div>
 
             {/* Trust badges - editable */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {trustBadges.map((badge) => (
                 <div
                   key={badge.key}
-                  className="group relative flex items-center gap-3 rounded-xl px-4 py-3.5 bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.03] hover:border-primary/40 hover:shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.35)]"
+                  className="group relative overflow-hidden rounded-2xl p-[1px] bg-gradient-to-br from-white/15 via-white/5 to-transparent transition-all duration-500 hover:from-primary/60 hover:via-primary/20 hover:to-transparent"
                 >
-                  <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 backdrop-blur-sm shadow-inner transition-all duration-300 group-hover:from-primary/30 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.5)]">
-                    <badge.icon className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
+                  {/* Glow */}
+                  <div className="pointer-events-none absolute -inset-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.35),transparent_60%)]" />
+
+                  <div className="relative h-full flex items-center gap-3.5 rounded-2xl px-4 py-4 bg-[linear-gradient(135deg,rgba(15,18,28,0.92),rgba(8,10,18,0.96))] backdrop-blur-xl">
+                    {/* Top sheen */}
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 rounded-xl bg-primary/30 blur-md opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-primary/25 via-primary/10 to-transparent border border-primary/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-all duration-500 group-hover:scale-105 group-hover:border-primary/60">
+                        <badge.icon className="w-[22px] h-[22px] text-primary transition-transform duration-500 group-hover:scale-110" strokeWidth={1.75} />
+                      </div>
+                    </div>
+
+                    <EditableText
+                      contentKey={badge.key}
+                      fallback={badge.fallback}
+                      as="span"
+                      className="text-white/90 text-[13px] font-semibold leading-snug tracking-tight"
+                      section="hero"
+                    />
                   </div>
-                  <EditableText
-                    contentKey={badge.key}
-                    fallback={badge.fallback}
-                    as="span"
-                    className="text-white/85 text-xs font-medium leading-tight"
-                    section="hero"
-                  />
                 </div>
               ))}
             </div>
