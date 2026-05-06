@@ -146,13 +146,18 @@ export default function Index() {
             {/* Trust badges - editable */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {trustBadges.map((badge) => (
-                <div key={badge.key} className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-sm px-4 py-3">
-                  <badge.icon className="w-5 h-5 text-primary flex-shrink-0" />
+                <div
+                  key={badge.key}
+                  className="group relative flex items-center gap-3 rounded-xl px-4 py-3.5 bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-[1.03] hover:border-primary/40 hover:shadow-[0_8px_30px_-4px_hsl(var(--primary)/0.35)]"
+                >
+                  <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 backdrop-blur-sm shadow-inner transition-all duration-300 group-hover:from-primary/30 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.5)]">
+                    <badge.icon className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
+                  </div>
                   <EditableText
                     contentKey={badge.key}
                     fallback={badge.fallback}
                     as="span"
-                    className="text-white/80 text-xs font-medium"
+                    className="text-white/85 text-xs font-medium leading-tight"
                     section="hero"
                   />
                 </div>
