@@ -144,23 +144,21 @@ export default function Index() {
             </div>
 
             {/* Trust badges - editable */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
               {trustBadges.map((badge) => (
                 <div
                   key={badge.key}
-                  className="group relative overflow-hidden rounded-2xl p-[1px] bg-gradient-to-br from-white/15 via-white/5 to-transparent transition-all duration-500 hover:from-primary/60 hover:via-primary/20 hover:to-transparent"
+                  className="group relative overflow-hidden rounded-xl md:rounded-2xl p-[1px] bg-gradient-to-br from-white/15 via-white/5 to-transparent transition-all duration-500 hover:from-primary/60 hover:via-primary/20 hover:to-transparent"
                 >
-                  {/* Glow */}
                   <div className="pointer-events-none absolute -inset-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.35),transparent_60%)]" />
 
-                  <div className="relative h-full flex items-center gap-3.5 rounded-2xl px-4 py-4 bg-[linear-gradient(135deg,rgba(15,18,28,0.92),rgba(8,10,18,0.96))] backdrop-blur-xl">
-                    {/* Top sheen */}
+                  <div className="relative h-full flex items-center gap-2.5 sm:gap-3 md:gap-3.5 rounded-xl md:rounded-2xl px-2.5 py-2.5 sm:px-3.5 sm:py-3.5 md:px-4 md:py-4 bg-[linear-gradient(135deg,rgba(15,18,28,0.92),rgba(8,10,18,0.96))] backdrop-blur-xl">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
                     <div className="relative flex-shrink-0">
-                      <div className="absolute inset-0 rounded-xl bg-primary/30 blur-md opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-                      <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-primary/25 via-primary/10 to-transparent border border-primary/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-all duration-500 group-hover:scale-105 group-hover:border-primary/60">
-                        <badge.icon className="w-[22px] h-[22px] text-primary transition-transform duration-500 group-hover:scale-110" strokeWidth={1.75} />
+                      <div className="absolute inset-0 rounded-lg md:rounded-xl bg-primary/30 blur-md opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                      <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-lg md:rounded-xl bg-gradient-to-br from-primary/25 via-primary/10 to-transparent border border-primary/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition-all duration-500 group-hover:scale-105 group-hover:border-primary/60">
+                        <badge.icon className="w-[18px] h-[18px] sm:w-5 sm:h-5 md:w-[22px] md:h-[22px] text-primary transition-transform duration-500 group-hover:scale-110" strokeWidth={1.75} />
                       </div>
                     </div>
 
@@ -168,7 +166,7 @@ export default function Index() {
                       contentKey={badge.key}
                       fallback={badge.fallback}
                       as="span"
-                      className="text-white/90 text-[13px] font-semibold leading-snug tracking-tight"
+                      className="min-w-0 flex-1 text-white/90 text-[11px] sm:text-xs md:text-[13px] font-semibold leading-snug tracking-tight break-words"
                       section="hero"
                     />
                   </div>
