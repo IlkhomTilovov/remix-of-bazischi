@@ -72,10 +72,10 @@ export default function Index() {
   ];
 
   const trustBadges = [
-    { key: 'trust_1', icon: Paintbrush, fallback: 'Individual dizayn' },
-    { key: 'trust_2', icon: Ruler, fallback: "Bepul o'lchov" },
-    { key: 'trust_3', icon: Gem, fallback: 'Premium materiallar' },
-    { key: 'trust_4', icon: Truck, fallback: 'Tez yetkazib berish' },
+    { key: 'trust_1', icon: Shield, fallback: 'Quyoshdan maksimal himoya' },
+    { key: 'trust_2', icon: Sparkles, fallback: "Elegant va sport uslub" },
+    { key: 'trust_3', icon: BadgeCheck, fallback: 'Uzoq muddatli sifat' },
+    { key: 'trust_4', icon: Wrench, fallback: 'Professional servis' },
   ];
 
   const sectionServices = useInView();
