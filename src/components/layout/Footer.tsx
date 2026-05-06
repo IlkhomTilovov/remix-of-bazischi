@@ -41,9 +41,17 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-6">
             <Link to="/" className="inline-block">
-              <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-foreground">
-                BAROKAT<span className="text-primary"> MEBEL</span>
-              </span>
+              {settings?.logo_url ? (
+                <img
+                  src={settings.logo_url}
+                  alt={settings?.site_name || 'Logo'}
+                  className="h-12 md:h-14 w-auto object-contain"
+                />
+              ) : (
+                <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-foreground">
+                  BAROKAT<span className="text-primary"> MEBEL</span>
+                </span>
+              )}
             </Link>
             <EditableText
               contentKey="footer_description"
