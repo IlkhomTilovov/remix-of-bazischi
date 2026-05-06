@@ -183,7 +183,15 @@ export function Footer() {
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-xs text-muted-foreground tracking-wider">
             © {new Date().getFullYear()}{' '}
-            <EditableText contentKey="footer_copyright" fallback="BAROKAT MEBEL. Barcha huquqlar himoyalangan." as="span" className="text-xs" section="footer" />
+            <a
+              href="https://sellsoft.uz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium"
+            >
+              Sell Soft
+            </a>
+            . Barcha huquqlar himoyalangan.
           </p>
         </div>
       </div>
