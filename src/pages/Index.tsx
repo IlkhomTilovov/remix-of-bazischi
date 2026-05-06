@@ -39,7 +39,7 @@ function useInView(threshold = 0.15) {
 }
 
 const iconMap: Record<string, any> = {
-  Shield, Ruler, Gem, Truck, Star, Paintbrush, Users,
+  Shield, Ruler, Gem, Truck, Star, Paintbrush, Users, ThermometerSun, Sparkles, Layers3, Wrench, BadgeCheck,
 };
 
 export default function Index() {
@@ -51,12 +51,12 @@ export default function Index() {
   const contactPhone = settings?.contact_phone || '+998 90 123 45 67';
 
   const whyUsItems = [
-    { key: 'whyus_1', icon: 'Shield', titleFallback: '5 yil kafolat', descFallback: 'Barcha mahsulotlarga 5 yillik kafolat' },
-    { key: 'whyus_2', icon: 'Paintbrush', titleFallback: 'Individual dizayn', descFallback: 'Sizning didingizga mos dizayn' },
-    { key: 'whyus_3', icon: 'Ruler', titleFallback: "O'lchov asosida", descFallback: "Aniq o'lchovlar bo'yicha ishlab chiqarish" },
-    { key: 'whyus_4', icon: 'Users', titleFallback: 'Tajribali ustalar', descFallback: '10+ yillik tajribaga ega mutaxassislar' },
-    { key: 'whyus_5', icon: 'Gem', titleFallback: 'Premium materiallar', descFallback: 'Faqat yuqori sifatli materiallar' },
-    { key: 'whyus_6', icon: 'Truck', titleFallback: 'Tez yetkazib berish', descFallback: "Toshkent bo'ylab bepul yetkazib berish" },
+    { key: 'whyus_1', icon: 'Shield', titleFallback: 'UV Himoya', descFallback: 'Quyosh nuri va zararli UV nurlardan ishonchli himoya' },
+    { key: 'whyus_2', icon: 'ThermometerSun', titleFallback: 'Issiqlikni kamaytirish', descFallback: 'Premium plyonkalar salon haroratini sezilarli pasaytiradi' },
+    { key: 'whyus_3', icon: 'Sparkles', titleFallback: "Elegant ko'rinish", descFallback: "Avtomobilingizga premium va sport ko'rinish baxsh etadi" },
+    { key: 'whyus_4', icon: 'Layers3', titleFallback: 'Keramika plyonkalar', descFallback: 'Yuqori sifatli nano-keramik tanirovka plyonkalari' },
+    { key: 'whyus_5', icon: 'Wrench', titleFallback: "Professional o'rnatish", descFallback: "Tajribali ustalar tomonidan aniq va sifatli o'rnatish" },
+    { key: 'whyus_6', icon: 'BadgeCheck', titleFallback: 'Kafolatlangan sifat', descFallback: 'Uzoq muddatga chidamli premium materiallar' },
   ];
 
   const steps = [
