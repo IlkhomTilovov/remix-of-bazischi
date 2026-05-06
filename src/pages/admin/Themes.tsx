@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { PremiumThemeBuilder } from '@/components/admin/PremiumThemeBuilder';
 
 const FONT_OPTIONS = [
   { value: "'Inter', system-ui, sans-serif", label: "Inter" },
