@@ -149,11 +149,11 @@ export default function Index() {
               {trustBadges.map((badge) => (
                 <div
                   key={badge.key}
-                  className="group relative overflow-hidden rounded-xl md:rounded-2xl p-[1px] bg-gradient-to-br from-white/15 via-white/5 to-transparent transition-all duration-500 hover:from-primary/60 hover:via-primary/20 hover:to-transparent"
+                  className="group relative overflow-hidden rounded-xl md:rounded-2xl p-[1px] bg-gradient-to-br from-white/10 via-white/5 to-transparent transition-all duration-500 hover:from-primary/40 hover:via-primary/10 hover:to-transparent"
                 >
-                  <div className="pointer-events-none absolute -inset-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.35),transparent_60%)]" />
+                  <div className="pointer-events-none absolute -inset-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.25),transparent_60%)]" />
 
-                  <div className="relative h-full flex items-center gap-2.5 sm:gap-3 md:gap-3.5 rounded-xl md:rounded-2xl px-2.5 py-2.5 sm:px-3.5 sm:py-3.5 md:px-4 md:py-4 bg-[linear-gradient(135deg,rgba(15,18,28,0.92),rgba(8,10,18,0.96))] backdrop-blur-xl">
+                  <div className="relative h-full flex items-center gap-2.5 sm:gap-3 md:gap-3.5 rounded-xl md:rounded-2xl px-2.5 py-2.5 sm:px-3.5 sm:py-3.5 md:px-4 md:py-4 bg-[linear-gradient(135deg,rgba(15,18,28,0.35),rgba(8,10,18,0.45))] backdrop-blur-xl">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
                     <div className="relative flex-shrink-0">
