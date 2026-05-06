@@ -45,9 +45,17 @@ export function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-foreground">
-              BAROKAT<span className="text-primary"> MEBEL</span>
-            </span>
+            {settings?.logo_url ? (
+              <img
+                src={settings.logo_url}
+                alt={settings?.site_name || 'Logo'}
+                className="h-10 md:h-12 w-auto object-contain"
+              />
+            ) : (
+              <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-foreground">
+                BAROKAT<span className="text-primary"> MEBEL</span>
+              </span>
+            )}
           </Link>
 
           {/* Desktop Nav */}
