@@ -479,7 +479,7 @@ export default function Index() {
               <span className="absolute -inset-1 bg-primary/50 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative flex items-center gap-2">
                 <Phone className="w-4 h-4" strokeWidth={2.2} />
-                Konsultatsiya olish
+                {language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}
               </span>
             </a>
 
@@ -490,13 +490,16 @@ export default function Index() {
               className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white border border-white/15 bg-white/[0.04] backdrop-blur-xl transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.08] hover:shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.4)]"
             >
               <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.2} />
-              Telegram orqali yozish
+              {language === 'ru' ? 'Написать в Telegram' : 'Telegram orqali yozish'}
             </a>
           </div>
 
           {/* Trust badges */}
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-12 text-white/50 text-xs md:text-sm tracking-wide">
-            {['Bepul konsultatsiya', "Professional o'rnatish", 'Premium materiallar'].map((t) => (
+            {(language === 'ru'
+              ? ['Бесплатная консультация', 'Профессиональная установка', 'Премиум материалы']
+              : ['Bepul konsultatsiya', "Professional o'rnatish", 'Premium materiallar']
+            ).map((t) => (
               <div key={t} className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/80 shadow-[0_0_8px_hsl(var(--primary))]" />
                 {t}
