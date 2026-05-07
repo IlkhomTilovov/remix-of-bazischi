@@ -496,13 +496,19 @@ export default function Index() {
 
           {/* Trust badges */}
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-12 text-white/50 text-xs md:text-sm tracking-wide">
-            {(language === 'ru'
-              ? ['Бесплатная консультация', 'Профессиональная установка', 'Премиум материалы']
-              : ['Bepul konsultatsiya', "Professional o'rnatish", 'Premium materiallar']
-            ).map((t) => (
-              <div key={t} className="flex items-center gap-2">
+            {[
+              { key: 'cta_badge_1', uz: 'Bepul konsultatsiya', ru: 'Бесплатная консультация' },
+              { key: 'cta_badge_2', uz: "Professional o'rnatish", ru: 'Профессиональная установка' },
+              { key: 'cta_badge_3', uz: 'Premium materiallar', ru: 'Премиум материалы' },
+            ].map((b) => (
+              <div key={b.key} className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/80 shadow-[0_0_8px_hsl(var(--primary))]" />
-                {t}
+                <EditableText
+                  contentKey={b.key}
+                  fallback={language === 'ru' ? b.ru : b.uz}
+                  as="span"
+                  section="cta"
+                />
               </div>
             ))}
           </div>
