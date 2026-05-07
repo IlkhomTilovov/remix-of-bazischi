@@ -6,7 +6,7 @@ import fs from "fs";
 
 const SUPABASE_URL = "https://fqijsixeemznknwmlhpz.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaWpzaXhlZW16bmtud21saHB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NzEwMDksImV4cCI6MjA5MjI0NzAwOX0.1pEkh8FuIOx9czit1riliY2-BUhhCu4ok_gO5xYP0jQ";
-const SITE_URL = "https://barokat-mebel.uz";
+const SITE_URL = "https://tanirovka.uz";
 
 async function fetchJSON(path: string) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {

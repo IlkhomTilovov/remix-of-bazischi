@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://barokat-mebel.uz/sitemap.xml
+Sitemap: https://tanirovka.uz/sitemap.xml
