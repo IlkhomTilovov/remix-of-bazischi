@@ -287,38 +287,86 @@ export default function Index() {
         </div>
       </section>
 
-      {/* PROCESS - editable */}
-      <section ref={sectionProcess.ref} className="py-20 md:py-28 bg-background">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${sectionProcess.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <EditableText contentKey="process_label" fallback="Jarayon" as="span" className="text-primary text-xs tracking-[0.3em] uppercase font-medium" section="process" />
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4">
-              <EditableText contentKey="process_title" fallback="Qanday ishlaymiz" as="span" className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold" section="process" />
-            </h2>
-          </div>
+      {/* PROCESS - premium automotive timeline */}
+      <section ref={sectionProcess.ref} className="relative py-24 md:py-32 overflow-hidden bg-[#05070d]">
+        {/* Ambient backdrop */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.18),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_hsl(var(--primary)/0.10),transparent_55%)]" />
+        <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(hsl(var(--primary))_1px,transparent_1px),linear-gradient(90deg,hsl(var(--primary))_1px,transparent_1px)] [background-size:48px_48px]" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step, i) => (
-              <div
-                key={step.key}
-                className={`relative text-center transition-all duration-700 ${sectionProcess.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
-                style={{ transitionDelay: `${i * 150}ms` }}
-              >
-                <span className="font-serif text-6xl font-bold text-primary/20">{step.num}</span>
-                <h3 className="font-serif text-lg font-semibold text-foreground mt-2 mb-2">
-                  <EditableText contentKey={`${step.key}_title`} fallback={step.titleFallback} as="span" className="font-serif text-lg font-semibold" section="process" />
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  <EditableText contentKey={`${step.key}_desc`} fallback={step.descFallback} as="span" className="text-sm" section="process" />
-                </p>
-                {i < steps.length - 1 && (
-                  <ChevronRight className="hidden lg:block absolute top-8 -right-4 w-8 h-8 text-primary/20" />
-                )}
-              </div>
-            ))}
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="text-center mb-20 max-w-3xl mx-auto"
+          >
+            <EditableText contentKey="process_label" fallback="Jarayon" as="span" className="inline-block text-primary text-[11px] tracking-[0.4em] uppercase font-semibold px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm" section="process" />
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-6 leading-tight tracking-tight">
+              <EditableText contentKey="process_title" fallback="Qanday ishlaymiz" as="span" className="font-serif" section="process" />
+            </h2>
+            <p className="text-white/50 text-base md:text-lg mt-5 font-light">
+              Premium tanirovka o'rnatish jarayonimizning to'rt bosqichi
+            </p>
+          </motion.div>
+
+          {/* Timeline */}
+          <div className="relative">
+            {/* Desktop horizontal connector line */}
+            <div className="hidden lg:block absolute top-[88px] left-[8%] right-[8%] h-px">
+              <div className="h-full w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 relative">
+              {steps.map((step, i) => {
+                const Icon = step.icon;
+                return (
+                  <motion.div
+                    key={step.key}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' }}
+                    className="relative group"
+                  >
+                    {/* Icon node */}
+                    <div className="relative flex justify-center mb-8">
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-2xl bg-primary/30 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 backdrop-blur-xl flex items-center justify-center transition-all duration-500 group-hover:border-primary/40 group-hover:-translate-y-1 group-hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.5)]">
+                          <Icon className="w-8 h-8 text-primary transition-transform duration-500 group-hover:scale-110" strokeWidth={1.5} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card */}
+                    <div className="relative rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent backdrop-blur-sm p-6 md:p-7 text-center transition-all duration-500 group-hover:border-primary/20 group-hover:bg-white/[0.05]">
+                      <div className="font-serif text-5xl md:text-6xl font-bold bg-gradient-to-b from-white/15 to-white/[0.02] bg-clip-text text-transparent leading-none">
+                        {step.num}
+                      </div>
+                      <h3 className="text-white text-lg md:text-xl font-semibold mt-4 mb-3 tracking-tight">
+                        <EditableText contentKey={`${step.key}_title`} fallback={step.titleFallback} as="span" className="font-semibold" section="process" />
+                      </h3>
+                      <p className="text-white/55 text-sm leading-relaxed font-light">
+                        <EditableText contentKey={`${step.key}_desc`} fallback={step.descFallback} as="span" className="text-sm" section="process" />
+                      </p>
+                    </div>
+
+                    {/* Connector arrow (desktop) */}
+                    {i < steps.length - 1 && (
+                      <div className="hidden lg:flex absolute top-[72px] -right-4 z-20 items-center justify-center w-8 h-8 rounded-full bg-[#05070d] border border-primary/20">
+                        <ChevronRight className="w-4 h-4 text-primary/70" />
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
+
 
       {/* FEATURED PRODUCTS */}
       <section ref={sectionProducts.ref} className="py-20 md:py-28 bg-secondary">
