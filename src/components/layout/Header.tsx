@@ -33,7 +33,7 @@ export function Header() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
-  const contactPhone = settings?.contact_phone || '+998 90 123 45 67';
+  const contactPhone = getContent('footer_phone', language, settings?.contact_phone || '+998 90 123 45 67');
 
   return (
     <header 
