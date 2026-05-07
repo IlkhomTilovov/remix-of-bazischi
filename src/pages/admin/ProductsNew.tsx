@@ -110,6 +110,7 @@ interface FormData {
   keyword_ru: string;
   variants_uz: string[];
   variants_ru: string[];
+  specifications: Specification[];
 }
 
 const emptyForm: FormData = {
