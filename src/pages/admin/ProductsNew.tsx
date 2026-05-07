@@ -145,6 +145,7 @@ const emptyForm: FormData = {
   keyword_ru: '',
   variants_uz: [],
   variants_ru: [],
+  specifications: [],
 };
 
 const ADMIN_PAGE_SIZE = 20;
