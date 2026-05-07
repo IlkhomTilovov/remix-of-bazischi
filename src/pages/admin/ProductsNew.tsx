@@ -384,6 +384,7 @@ export default function ProductsNew() {
       keyword_ru: (product as any).keyword_ru || '',
       variants_uz: (product as any).variants_uz || product.keyword_variations || [],
       variants_ru: (product as any).variants_ru || [],
+      specifications: ((product as any).specifications as Specification[]) || [],
     });
     setSlugError('');
     setActiveTab('basic');
