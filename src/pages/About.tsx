@@ -27,7 +27,7 @@ export default function About() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section id="hero" className="relative h-[50vh] min-h-[400px] flex items-center">
+      <section id="hero" className="relative h-screen flex items-center">
         <div className="absolute inset-0 z-0">
           <EditableImage
             contentKey="about_hero_image"
