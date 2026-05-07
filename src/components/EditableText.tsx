@@ -101,11 +101,13 @@ export function EditableText({
 
   // Show skeleton while content is loading to prevent flash of default text
   if (contentLoading) {
-    return <Skeleton className={cn('inline-block', className, 'min-h-[1em] min-w-[120px]')} />;
+    return <Skeleton className={cn('inline-block align-middle', className, 'min-h-[1em] min-w-[120px] opacity-60')} />;
   }
 
   // Not in edit mode or can't edit - render normally
   if (!isEditMode || !canEdit) {
+    // If CMS has no value, render nothing (avoid showing stale fallback text)
+    if (!currentValue) return null;
     return <Component className={className}>{currentValue}</Component>;
   }
 
