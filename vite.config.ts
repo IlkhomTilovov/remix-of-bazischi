@@ -4,8 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import fs from "fs";
 
-const SUPABASE_URL = "https://fqijsixeemznknwmlhpz.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxaWpzaXhlZW16bmtud21saHB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NzEwMDksImV4cCI6MjA5MjI0NzAwOX0.1pEkh8FuIOx9czit1riliY2-BUhhCu4ok_gO5xYP0jQ";
+const SUPABASE_URL = "https://opfualjglbvogrisvnqe.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wZnVhbGpnbGJ2b2dyaXN2bnFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTgwMTMsImV4cCI6MjA5MzYzNDAxM30.2VLquXlj6SK6TdJ2qo6CTbDc8YbZZD-Cf2oLHiB1bHY";
 const SITE_URL = "https://tanirovka.uz";
 
 async function fetchJSON(path: string) {
