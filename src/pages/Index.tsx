@@ -401,33 +401,106 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA - editable */}
-      <section ref={sectionCta.ref} className="py-20 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-primary" />
-        <div className="absolute inset-0 bg-[url('/images/hero-default.jpg')] bg-cover bg-center opacity-10" />
-        <div className={`container mx-auto px-4 lg:px-8 relative z-10 text-center transition-all duration-700 ${sectionCta.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6">
-            <EditableText contentKey="cta_title" fallback="Hoziroq buyurtma bering" as="span" className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold" section="cta" />
+      {/* CTA - premium automotive conversion */}
+      <section ref={sectionCta.ref} className="relative py-28 md:py-36 overflow-hidden bg-[#04060b]">
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center scale-105"
+          style={{ backgroundImage: "url('/images/hero-default.jpg')" }}
+        />
+        {/* Cinematic overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04060b] via-[#04060b]/85 to-[#04060b]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#04060b_75%)]" />
+        {/* Blue accent glows */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-primary/25 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[300px] bg-primary/15 rounded-full blur-[100px]" />
+        {/* Grid texture */}
+        <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(hsl(var(--primary))_1px,transparent_1px),linear-gradient(90deg,hsl(var(--primary))_1px,transparent_1px)] [background-size:56px_56px]" />
+
+        {/* Floating particles */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-primary/60"
+            style={{ left: `${15 + i * 13}%`, top: `${20 + (i % 3) * 25}%` }}
+            animate={{ y: [0, -20, 0], opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.5, ease: 'easeInOut' }}
+          />
+        ))}
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="container mx-auto px-4 lg:px-8 relative z-10 text-center max-w-4xl"
+        >
+          <EditableText
+            contentKey="cta_label"
+            fallback="PREMIUM TANIROVKA"
+            as="span"
+            className="inline-block text-primary text-[11px] tracking-[0.4em] uppercase font-semibold px-4 py-1.5 rounded-full border border-primary/25 bg-primary/[0.08] backdrop-blur-md"
+            section="cta"
+          />
+
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-7 leading-[1.1] tracking-tight">
+            <EditableText
+              contentKey="cta_title"
+              fallback="Avtomobilingizga premium himoya bering"
+              as="span"
+              className="font-serif"
+              section="cta"
+            />
           </h2>
-          <p className="text-primary-foreground/70 text-lg mb-10 max-w-xl mx-auto">
-            <EditableText contentKey="cta_subtitle" fallback="Bepul konsultatsiya va o'lchov uchun biz bilan bog'laning" as="span" className="text-lg" section="cta" />
+
+          <p className="text-white/60 text-base md:text-lg lg:text-xl mt-6 max-w-2xl mx-auto font-light leading-relaxed">
+            <EditableText
+              contentKey="cta_subtitle"
+              fallback="Nano-keramika va premium UV himoya plyonkalari bilan avtomobilingizni issiqlik, quyosh va begona nigohlardan himoya qiling."
+              as="span"
+              className="font-light"
+              section="cta"
+            />
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-sm px-8 tracking-wider text-sm uppercase h-14">
-              <a href={`tel:${contactPhone.replace(/\s/g, '')}`}>
-                <Phone className="w-4 h-4 mr-2" />
-                {contactPhone}
-              </a>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 rounded-sm px-8 tracking-wider text-sm uppercase h-14 bg-transparent">
-              <a href={settings?.social_telegram || '#'} target="_blank" rel="noopener noreferrer">
-                <Send className="w-4 h-4 mr-2" />
-                Telegram
-              </a>
-            </Button>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+            <a
+              href={`tel:${contactPhone.replace(/\s/g, '')}`}
+              className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white overflow-hidden transition-transform duration-300 hover:scale-[1.03]"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary/80" />
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="absolute -inset-1 bg-primary/50 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative flex items-center gap-2">
+                <Phone className="w-4 h-4" strokeWidth={2.2} />
+                Konsultatsiya olish
+              </span>
+            </a>
+
+            <a
+              href={settings?.social_telegram || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white border border-white/15 bg-white/[0.04] backdrop-blur-xl transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.08] hover:shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.4)]"
+            >
+              <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.2} />
+              Telegram orqali yozish
+            </a>
           </div>
-        </div>
+
+          {/* Trust badges */}
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-12 text-white/50 text-xs md:text-sm tracking-wide">
+            {['Bepul konsultatsiya', "Professional o'rnatish", 'Premium materiallar'].map((t) => (
+              <div key={t} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary/80 shadow-[0_0_8px_hsl(var(--primary))]" />
+                {t}
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </section>
+
 
     </div>
   );
