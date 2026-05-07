@@ -531,7 +531,7 @@ export default function ProductsNew() {
       keyword_ru: formData.keyword_ru || null,
       variants_uz: (formData.variants_uz || []).length > 0 ? formData.variants_uz : [],
       variants_ru: (formData.variants_ru || []).length > 0 ? formData.variants_ru : [],
-      specifications: formData.specifications || [],
+      specifications: (formData.specifications || []) as any,
     };
 
     try {
