@@ -343,6 +343,7 @@ export type Database = {
           sizes: string[] | null
           slug: string | null
           sort_order: number | null
+          specifications: Json
           target_keyword: string | null
           updated_at: string
           variants_ru: string[] | null
@@ -382,6 +383,7 @@ export type Database = {
           sizes?: string[] | null
           slug?: string | null
           sort_order?: number | null
+          specifications?: Json
           target_keyword?: string | null
           updated_at?: string
           variants_ru?: string[] | null
@@ -421,6 +423,7 @@ export type Database = {
           sizes?: string[] | null
           slug?: string | null
           sort_order?: number | null
+          specifications?: Json
           target_keyword?: string | null
           updated_at?: string
           variants_ru?: string[] | null
