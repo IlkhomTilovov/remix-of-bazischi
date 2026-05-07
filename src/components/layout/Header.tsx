@@ -17,6 +17,7 @@ export function Header() {
   const { totalItems } = useCart();
   const location = useLocation();
   const { settings } = useSystemSettings();
+  const { getContent } = useSiteContent();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
