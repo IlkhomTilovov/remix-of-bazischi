@@ -421,6 +421,9 @@ export default function ProductDetails() {
           </div>
         )}
 
+        {/* Specifications */}
+        <ProductSpecifications specifications={(product as any).specifications} />
+
         {/* Related Products */}
         {filteredRelated.length > 0 && (
           <div className="mt-16">
