@@ -103,7 +103,7 @@ export default function Index() {
         </div>
 
         <div className="container mx-auto px-4 lg:px-8 relative z-10 py-20 pointer-events-none">
-          <div className="max-w-2xl [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_[data-editable]]:pointer-events-auto">
+          <div className="max-w-4xl [&_a]:pointer-events-auto [&_button]:pointer-events-auto [&_[data-editable]]:pointer-events-auto">
             <div className="inline-block mb-6 px-4 py-1.5 border border-primary/40 rounded-sm">
               <EditableText
                 contentKey="hero_badge"
