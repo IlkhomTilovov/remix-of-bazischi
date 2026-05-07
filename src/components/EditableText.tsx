@@ -35,7 +35,10 @@ export function EditableText({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const editRef = useRef<HTMLDivElement>(null);
 
-  const currentValue = getContent(contentKey, language, fallback);
+  // In view mode: only use real CMS value (no fallback flash).
+  // In edit mode: show fallback so admins see something to click on.
+  const cmsValue = getContent(contentKey, language, '');
+  const currentValue = cmsValue || ((isEditMode && canEdit) ? fallback : '');
 
   const saveFn = useCallback(async (value: string) => {
     setSaveStatus('saving');
@@ -98,11 +101,13 @@ export function EditableText({
 
   // Show skeleton while content is loading to prevent flash of default text
   if (contentLoading) {
-    return <Skeleton className={cn('inline-block', className, 'min-h-[1em] min-w-[120px]')} />;
+    return <Skeleton className={cn('inline-block align-middle', className, 'min-h-[1em] min-w-[120px] opacity-60')} />;
   }
 
   // Not in edit mode or can't edit - render normally
   if (!isEditMode || !canEdit) {
+    // If CMS has no value, render nothing (avoid showing stale fallback text)
+    if (!currentValue) return null;
     return <Component className={className}>{currentValue}</Component>;
   }
 
