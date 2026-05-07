@@ -380,11 +380,11 @@ export default function Index() {
             <div>
               <EditableText contentKey="products_label" fallback="Katalog" as="span" className="text-primary text-xs tracking-[0.3em] uppercase font-medium" section="products" />
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mt-2">
-                <EditableText contentKey="featured_title" fallback="Tanlangan mahsulotlar" as="span" className="font-serif text-3xl md:text-4xl font-bold" section="products" />
+                <EditableText contentKey="featured_title" fallback={language === 'ru' ? 'Избранные товары' : 'Tanlangan mahsulotlar'} as="span" className="font-serif text-3xl md:text-4xl font-bold" section="products" />
               </h2>
             </div>
             <Button asChild variant="outline" className="gap-2 rounded-sm border-border hover:border-primary text-sm tracking-wider uppercase">
-              <Link to="/catalog">Barchasini ko'rish <ArrowRight className="w-4 h-4" /></Link>
+              <Link to="/catalog">{language === 'ru' ? 'Смотреть все' : "Barchasini ko'rish"} <ArrowRight className="w-4 h-4" /></Link>
             </Button>
           </div>
           
