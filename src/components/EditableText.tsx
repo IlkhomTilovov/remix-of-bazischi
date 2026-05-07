@@ -35,7 +35,10 @@ export function EditableText({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const editRef = useRef<HTMLDivElement>(null);
 
-  const currentValue = getContent(contentKey, language, fallback);
+  // In view mode: only use real CMS value (no fallback flash).
+  // In edit mode: show fallback so admins see something to click on.
+  const cmsValue = getContent(contentKey, language, '');
+  const currentValue = cmsValue || ((isEditMode && canEdit) ? fallback : '');
 
   const saveFn = useCallback(async (value: string) => {
     setSaveStatus('saving');
