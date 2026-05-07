@@ -33,6 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { AddMediaModal, MediaItem } from '@/components/admin/AddMediaModal';
 import { MediaGrid } from '@/components/admin/MediaGrid';
+import { SpecificationsBuilder, type Specification } from '@/components/admin/SpecificationsBuilder';
 
 interface Category {
   id: string;
@@ -109,6 +110,7 @@ interface FormData {
   keyword_ru: string;
   variants_uz: string[];
   variants_ru: string[];
+  specifications: Specification[];
 }
 
 const emptyForm: FormData = {
@@ -143,6 +145,7 @@ const emptyForm: FormData = {
   keyword_ru: '',
   variants_uz: [],
   variants_ru: [],
+  specifications: [],
 };
 
 const ADMIN_PAGE_SIZE = 20;
@@ -381,6 +384,7 @@ export default function ProductsNew() {
       keyword_ru: (product as any).keyword_ru || '',
       variants_uz: (product as any).variants_uz || product.keyword_variations || [],
       variants_ru: (product as any).variants_ru || [],
+      specifications: ((product as any).specifications as Specification[]) || [],
     });
     setSlugError('');
     setActiveTab('basic');
@@ -527,6 +531,7 @@ export default function ProductsNew() {
       keyword_ru: formData.keyword_ru || null,
       variants_uz: (formData.variants_uz || []).length > 0 ? formData.variants_uz : [],
       variants_ru: (formData.variants_ru || []).length > 0 ? formData.variants_ru : [],
+      specifications: (formData.specifications || []) as any,
     };
 
     try {
@@ -1054,51 +1059,10 @@ export default function ProductsNew() {
 
             {/* Attributes Tab */}
             <TabsContent value="attributes" className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label>O'lchamlar</Label>
-                <Input
-                  value={formData.sizes}
-                  onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
-                  placeholder="Masalan: 200x100x80, 180x90x75 (vergul bilan ajrating)"
-                />
-                <p className="text-xs text-muted-foreground">Bir nechta o'lchamlarni vergul bilan ajrating</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Ranglar</Label>
-                <Input
-                  value={formData.colors}
-                  onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
-                  placeholder="Masalan: Oq, Qora, Jigarrang (vergul bilan ajrating)"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Materiallar</Label>
-                <Input
-                  value={formData.materials}
-                  onChange={(e) => setFormData({ ...formData, materials: e.target.value })}
-                  placeholder="Masalan: Yog'och, Temir, Mato (vergul bilan ajrating)"
-                />
-              </div>
-
-              {/* Preview */}
-              {(formData.sizes || formData.colors || formData.materials) && (
-                <div className="mt-4 p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-medium mb-2">Ko'rinishi:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.sizes && formData.sizes.split(',').filter(Boolean).map((size, i) => (
-                      <Badge key={`size-${i}`} variant="outline">{size.trim()}</Badge>
-                    ))}
-                    {formData.colors && formData.colors.split(',').filter(Boolean).map((color, i) => (
-                      <Badge key={`color-${i}`} variant="secondary">{color.trim()}</Badge>
-                    ))}
-                    {formData.materials && formData.materials.split(',').filter(Boolean).map((material, i) => (
-                      <Badge key={`material-${i}`}>{material.trim()}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <SpecificationsBuilder
+                value={formData.specifications}
+                onChange={(specs) => setFormData({ ...formData, specifications: specs })}
+              />
             </TabsContent>
 
             {/* SEO Tab */}
