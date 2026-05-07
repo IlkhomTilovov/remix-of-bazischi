@@ -113,12 +113,12 @@ export default function Index() {
                 section="hero"
               />
             </div>
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-6">
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-6 break-words">
               <EditableText
                 contentKey="hero_title"
-                fallback="Premium Mebel Dizayni"
+                fallback={language === 'ru' ? 'DAÇ премиальные пленки. Профессиональный центр тонировки.' : 'DAÇ premium plyonkalar. Professional tonirovka markazi.'}
                 as="span"
-                className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold"
+                className="font-serif text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold break-words"
                 section="hero"
               />
             </h1>
