@@ -145,7 +145,7 @@ export default function Index() {
             </div>
 
             {/* Trust badges - editable */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 md:gap-4">
               {trustBadges.map((badge) => (
                 <div
                   key={badge.key}
