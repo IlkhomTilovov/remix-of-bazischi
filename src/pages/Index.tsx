@@ -333,7 +333,7 @@ export default function Index() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' }}
-                    className="relative group"
+                    className="relative group h-full flex flex-col"
                   >
                     {/* Icon node */}
                     <div className="relative flex justify-center mb-8">
@@ -346,7 +346,7 @@ export default function Index() {
                     </div>
 
                     {/* Card */}
-                    <div className="relative rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent backdrop-blur-sm p-6 md:p-7 text-center transition-all duration-500 group-hover:border-primary/20 group-hover:bg-white/[0.05]">
+                    <div className="relative flex-1 flex flex-col rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent backdrop-blur-sm p-6 md:p-7 text-center transition-all duration-500 group-hover:border-primary/20 group-hover:bg-white/[0.05]">
                       <div className="font-serif text-5xl md:text-6xl font-bold bg-gradient-to-b from-white/15 to-white/[0.02] bg-clip-text text-transparent leading-none">
                         {step.num}
                       </div>
