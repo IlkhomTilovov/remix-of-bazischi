@@ -60,10 +60,10 @@ export default function Index() {
   ];
 
   const steps = [
-    { key: 'step_1', num: '01', titleFallback: "O'lchov olish", descFallback: "Ustamiz siznikiga kelib bepul o'lchov oladi" },
-    { key: 'step_2', num: '02', titleFallback: 'Dizayn yaratish', descFallback: '3D dizayn tayyorlab, sizga taqdim etamiz' },
-    { key: 'step_3', num: '03', titleFallback: 'Ishlab chiqarish', descFallback: 'Premium materiallarda tayyor qilamiz' },
-    { key: 'step_4', num: '04', titleFallback: "O'rnatish", descFallback: "Professional o'rnatish va sozlash" },
+    { key: 'step_1', num: '01', icon: ScanSearch, titleFallback: 'Diagnostika', descFallback: 'Avtomobil oynalari tekshiriladi va optimal tanirovka yechimi tanlanadi.' },
+    { key: 'step_2', num: '02', icon: Layers3, titleFallback: 'Premium plyonka tanlash', descFallback: "Keramika, carbon yoki premium UV himoya plyonkalari tavsiya qilinadi." },
+    { key: 'step_3', num: '03', icon: Wrench, titleFallback: 'Precision montaj', descFallback: "Maxsus uskunalar yordamida professional o'rnatish amalga oshiriladi." },
+    { key: 'step_4', num: '04', icon: ShieldCheck, titleFallback: 'Himoya va komfort', descFallback: "Salon issiqlikdan himoyalanadi va avtomobil premium ko'rinishga ega bo'ladi." },
   ];
 
   const testimonials = [
