@@ -7,6 +7,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { ImageLightbox } from '@/components/ImageLightbox';
 import { LazyImage } from '@/components/LazyImage';
 import { VideoPlayerModal } from '@/components/VideoPlayerModal';
+import { ProductSpecifications } from '@/components/ProductSpecifications';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSEO } from '@/hooks/useSEO';
 import { useCart } from '@/hooks/useCart';
