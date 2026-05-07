@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import { CartDrawer } from '@/components/CartDrawer';
 
 export function Header() {
@@ -16,6 +17,7 @@ export function Header() {
   const { totalItems } = useCart();
   const location = useLocation();
   const { settings } = useSystemSettings();
+  const { getContent } = useSiteContent();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -31,7 +33,7 @@ export function Header() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
-  const contactPhone = settings?.contact_phone || '+998 90 123 45 67';
+  const contactPhone = getContent('footer_phone', language, settings?.contact_phone || '+998 90 123 45 67');
 
   return (
     <header 
