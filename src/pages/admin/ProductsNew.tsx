@@ -33,6 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { AddMediaModal, MediaItem } from '@/components/admin/AddMediaModal';
 import { MediaGrid } from '@/components/admin/MediaGrid';
+import { SpecificationsBuilder, type Specification } from '@/components/admin/SpecificationsBuilder';
 
 interface Category {
   id: string;
