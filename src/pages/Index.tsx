@@ -306,9 +306,14 @@ export default function Index() {
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-6 leading-tight tracking-tight">
               <EditableText contentKey="process_title" fallback="Qanday ishlaymiz" as="span" className="font-serif" section="process" />
             </h2>
-            <p className="text-white/50 text-base md:text-lg mt-5 font-light">
-              DAC premium plyonkalari, atermal yechimlar va tanirovka ustalari uchun professional uskunalar.
-            </p>
+            <EditableText
+              contentKey="process_subtitle"
+              fallback="DAC premium plyonkalari, atermal yechimlar va tanirovka ustalari uchun professional uskunalar."
+              as="p"
+              className="text-white/50 text-base md:text-lg mt-5 font-light"
+              section="process"
+              multiline
+            />
           </motion.div>
 
           {/* Timeline */}
