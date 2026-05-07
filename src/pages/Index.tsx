@@ -307,7 +307,7 @@ export default function Index() {
               <EditableText contentKey="process_title" fallback="Qanday ishlaymiz" as="span" className="font-serif" section="process" />
             </h2>
             <p className="text-white/50 text-base md:text-lg mt-5 font-light">
-              Premium tanirovka o'rnatish jarayonimizning to'rt bosqichi
+              DAC premium plyonkalari, atermal yechimlar va tanirovka ustalari uchun professional uskunalar.
             </p>
           </motion.div>
 
