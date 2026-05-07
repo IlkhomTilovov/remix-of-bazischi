@@ -344,6 +344,9 @@ export default function ProductDetails() {
               </div>
             )}
 
+            {/* Inline Specifications (compact) */}
+            <ProductSpecifications specifications={(product as any).specifications} variant="compact" />
+
             {/* Actions */}
             <div className="flex flex-col gap-3 mb-4">
               <Button
@@ -421,8 +424,7 @@ export default function ProductDetails() {
           </div>
         )}
 
-        {/* Specifications */}
-        <ProductSpecifications specifications={(product as any).specifications} />
+
 
         {/* Related Products */}
         {filteredRelated.length > 0 && (
