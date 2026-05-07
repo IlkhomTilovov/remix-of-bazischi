@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import { CartDrawer } from '@/components/CartDrawer';
 
 export function Header() {
