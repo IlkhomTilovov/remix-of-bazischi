@@ -20,6 +20,8 @@ export default function Contact() {
   });
   const { toast } = useToast();
   const { getContent } = useSiteContent();
+  const { settings } = useSystemSettings();
+  const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
 
