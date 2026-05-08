@@ -192,7 +192,7 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">{text.phone} *</Label>
+            <Label htmlFor="phone">{text.phone} <span className="text-red-500">*</span></Label>
             <Input
               id="phone"
               type="tel"

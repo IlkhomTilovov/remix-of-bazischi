@@ -212,7 +212,7 @@ export default function Checkout() {
     const labelElement = (
       <Label htmlFor={field.id} className="flex items-center gap-2">
         {IconComponent && <IconComponent className="w-4 h-4" />}
-        {label} {field.is_required && '*'}
+        {label} {field.is_required && <span className="text-red-500">*</span>}
       </Label>
     );
 
