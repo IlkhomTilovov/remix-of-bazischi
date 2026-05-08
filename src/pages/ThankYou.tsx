@@ -44,8 +44,8 @@ export default function ThankYou() {
         <div className="bg-muted/50 rounded-2xl p-6 mb-8">
           <p className="text-muted-foreground leading-relaxed">
             {language === 'uz' 
-              ? 'Bizning mutaxassislarimiz tez orada siz bilan bog\'lanishadi va buyurtmangiz bo\'yicha barcha tafsilotlarni aniqlashtiradi.' 
-              : 'Наши специалисты свяжутся с вами в ближайшее время и уточнят все детали вашего заказа.'}
+              ? 'Bizning mutaxassisimiz Qahramon tez orada siz bilan bog\'lanadi va buyurtmangiz bo\'yicha barcha tafsilotlarni aniqlashtiradi.' 
+              : 'Наш специалист Кахрамон свяжется с вами в ближайшее время и уточнит все детали вашего заказа.'}
           </p>
         </div>
 
