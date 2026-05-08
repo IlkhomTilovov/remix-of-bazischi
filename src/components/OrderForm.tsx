@@ -177,13 +177,12 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">{text.name} *</Label>
+            <Label htmlFor="name">{text.name}</Label>
             <Input
               id="name"
               placeholder={text.namePlaceholder}
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              required
             />
             {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
           </div>
