@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Phone, User, FileText, ShoppingBag, Search, MessageCircle, Users, RefreshCw, ArrowUpDown, UserPlus } from 'lucide-react';
+import { TelegramIcon } from '@/components/icons/TelegramIcon';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -460,7 +461,7 @@ export default function Customers() {
                           onClick={() => handleTelegram(customer.phone)}
                           title="Telegram orqali bog'lanish"
                         >
-                          <MessageCircle className="h-4 w-4" />
+                          <TelegramIcon className="h-4 w-4" />
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => openCustomerDialog(customer)}>
                           Batafsil
@@ -514,7 +515,7 @@ export default function Customers() {
                   Qo'ng'iroq
                 </Button>
                 <Button variant="outline" onClick={() => handleTelegram(selectedCustomer.phone)}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <TelegramIcon className="h-4 w-4 mr-2" />
                   Telegram
                 </Button>
               </div>

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { CreateOrderModal } from '@/components/admin/CreateOrderModal';
+import { TelegramIcon } from '@/components/icons/TelegramIcon';
 import {
   Eye, 
   Trash2, 
   Filter, 
   Search, 
   Phone, 
-  MessageCircle, 
+  MessageCircle,
   Calendar,
   Package,
   RefreshCw,
@@ -631,7 +632,7 @@ ${order.customer_message ? `\n💬 *Xabar:* ${order.customer_message}` : ''}
                             onClick={() => openTelegram(order.customer_phone)}
                             title="Telegramda yozish"
                           >
-                            <MessageCircle className="h-4 w-4 text-blue-600" />
+                            <TelegramIcon className="h-4 w-4 text-blue-600" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -684,7 +685,7 @@ ${order.customer_message ? `\n💬 *Xabar:* ${order.customer_message}` : ''}
                   onClick={() => openTelegram(selectedOrder.customer_phone)}
                   className="gap-2"
                 >
-                  <MessageCircle className="h-4 w-4" />
+                  <TelegramIcon className="h-4 w-4" />
                   Telegram
                 </Button>
                 {telegramSettings?.enabled && (
