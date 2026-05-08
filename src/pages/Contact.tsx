@@ -152,17 +152,6 @@ export default function Contact() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block text-foreground">{t.contact.form.email}</label>
-                    <Input
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      maxLength={255}
-                      placeholder="email@example.com"
-                      className="h-12 rounded-lg border-border/50 bg-background focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <div>
                     <label className="text-sm font-medium mb-2 block text-foreground">{t.contact.form.message}</label>
                     <Textarea
                       value={form.message}
