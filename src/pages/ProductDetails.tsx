@@ -25,6 +25,8 @@ interface MediaItem {
 export default function ProductDetails() {
   const { id } = useParams();
   const { language, t } = useLanguage();
+  const { settings } = useSystemSettings();
+  const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
   const { addItem, isInCart } = useCart();
   const { isAdmin } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
