@@ -10,6 +10,7 @@ import { useSEO } from '@/hooks/useSEO';
 import { EditableText } from '@/components/EditableText';
 import { EditableLink } from '@/components/EditableLink';
 import { useSiteContent } from '@/hooks/useSiteContent';
+import { useSystemSettings } from '@/hooks/useSystemSettings';
 
 export default function Contact() {
   const { language, t } = useLanguage();
