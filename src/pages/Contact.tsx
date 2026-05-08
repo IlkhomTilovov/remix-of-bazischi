@@ -129,7 +129,7 @@ export default function Contact() {
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="text-sm font-medium mb-2 block text-foreground">
-                        {t.contact.form.name} <span className="text-muted-foreground font-normal">({language === 'uz' ? 'ixtiyoriy' : 'необязательно'})</span>
+                        {t.contact.form.name}
                       </label>
                       <Input
                         value={form.name}
@@ -154,7 +154,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block text-foreground">
-                      {t.contact.form.message} <span className="text-muted-foreground font-normal">({language === 'uz' ? 'ixtiyoriy' : 'необязательно'})</span>
+                      {t.contact.form.message}
                     </label>
                     <Textarea
                       value={form.message}
