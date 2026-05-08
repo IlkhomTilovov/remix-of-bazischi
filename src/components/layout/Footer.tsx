@@ -65,18 +65,18 @@ export function Footer() {
               <EditableLink
                 contentKey="footer_social_telegram"
                 fallback={settings?.social_telegram || '#'}
-                className="w-10 h-10 border border-border rounded-sm flex items-center justify-center hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-300 text-muted-foreground"
+                className="w-14 h-14 border border-border rounded-sm flex items-center justify-center bg-[#229ED9] hover:opacity-90 border-[#229ED9] text-white transition-all duration-300"
                 section="footer"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-7 h-7" />
               </EditableLink>
               <EditableLink
                 contentKey="footer_social_instagram"
                 fallback={settings?.social_instagram || '#'}
-                className="w-10 h-10 border border-border rounded-sm flex items-center justify-center hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-300 text-muted-foreground"
+                className="w-14 h-14 border border-border rounded-sm flex items-center justify-center bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] via-40% to-[#d62976] hover:opacity-90 border-transparent text-white transition-all duration-300"
                 section="footer"
               >
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-7 h-7" />
               </EditableLink>
             </div>
           </div>
