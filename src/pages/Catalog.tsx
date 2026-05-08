@@ -85,8 +85,7 @@ export default function Catalog() {
     if (sidebarFilters.categoryId !== 'all' && isUUID(sidebarFilters.categoryId)) {
       f.categoryId = sidebarFilters.categoryId;
     }
-    if (sidebarFilters.priceMin > 1) f.priceMin = sidebarFilters.priceMin;
-    if (sidebarFilters.priceMax < filterOptions.maxPrice) f.priceMax = sidebarFilters.priceMax;
+    // Price filter removed from UI — do not apply
     if (sidebarFilters.materials.length > 0) f.materials = sidebarFilters.materials;
     if (sidebarFilters.colors.length > 0) f.colors = sidebarFilters.colors;
     if (sidebarFilters.furLengths.length > 0) f.furLengths = sidebarFilters.furLengths;
