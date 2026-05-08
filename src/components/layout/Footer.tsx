@@ -68,7 +68,7 @@ export function Footer() {
                 className="text-[#229ED9] hover:opacity-80 transition-opacity duration-300"
                 section="footer"
               >
-                <Send className="w-8 h-8" />
+                <Send className="w-10 h-10" />
               </EditableLink>
               <EditableLink
                 contentKey="footer_social_instagram"
@@ -76,7 +76,7 @@ export function Footer() {
                 className="text-[#d62976] hover:opacity-80 transition-opacity duration-300"
                 section="footer"
               >
-                <Instagram className="w-8 h-8" />
+                <Instagram className="w-10 h-10" />
               </EditableLink>
             </div>
           </div>
