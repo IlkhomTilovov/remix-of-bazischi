@@ -53,10 +53,10 @@ export default function ThankYou() {
         <div className="flex items-center justify-center gap-2 text-muted-foreground mb-8">
           <Phone className="w-4 h-4" />
           <span>{language === 'uz' ? 'Savollar uchun' : 'По вопросам'}:</span>
-          <span className="font-medium text-foreground">Qahramon</span>
           <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="font-medium text-primary hover:underline">
             {contactPhone}
           </a>
+          <span className="font-medium text-foreground">Qahramon</span>
         </div>
 
         {/* Action Buttons */}
