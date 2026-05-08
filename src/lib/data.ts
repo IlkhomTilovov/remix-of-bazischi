@@ -221,56 +221,7 @@ export const reviews: Review[] = [
   },
 ];
 
-export const faqs: FAQ[] = [
-  {
-    id: '1',
-    question_uz: "Buyurtma qanday beriladi?",
-    question_ru: "Как оформить заказ?",
-    answer_uz: "Buyurtma berish uchun saytdan mahsulotni tanlang va 'Savatga qo'shish' tugmasini bosing. So'ngra savatga o'ting va buyurtmani rasmiylashtirig.",
-    answer_ru: "Для оформления заказа выберите товар на сайте и нажмите 'В корзину'. Затем перейдите в корзину и оформите заказ.",
-    category: 'ordering',
-  },
-  {
-    id: '2',
-    question_uz: "Yetkazib berish qancha vaqt oladi?",
-    question_ru: "Сколько времени занимает доставка?",
-    answer_uz: "Toshkent shahri bo'ylab 1-2 kun ichida yetkazib beriladi. Viloyatlarga 3-5 kun ichida.",
-    answer_ru: "По Ташкенту доставка в течение 1-2 дней. В регионы — 3-5 дней.",
-    category: 'delivery',
-  },
-  {
-    id: '3',
-    question_uz: "Kafolat muddati qancha?",
-    question_ru: "Какой срок гарантии?",
-    answer_uz: "Barcha sushilkalarimizga 1 yil kafolat beramiz.",
-    answer_ru: "На все наши сушилки предоставляется гарантия 1 год.",
-    category: 'warranty',
-  },
-  {
-    id: '4',
-    question_uz: "Sushilkani o'rnatib berasizlarmi?",
-    question_ru: "Вы устанавливаете сушилки?",
-    answer_uz: "Ha, devorga osiladigan sushilkalarni bepul o'rnatib beramiz.",
-    answer_ru: "Да, настенные сушилки устанавливаем бесплатно.",
-    category: 'custom',
-  },
-  {
-    id: '5',
-    question_uz: "To'lov qanday amalga oshiriladi?",
-    question_ru: "Как производится оплата?",
-    answer_uz: "Naqd pul, bank kartasi, Click, Payme orqali to'lash mumkin.",
-    answer_ru: "Можно оплатить наличными, банковской картой, через Click, Payme.",
-    category: 'payment',
-  },
-  {
-    id: '6',
-    question_uz: "Yetkazib berish pullikmi?",
-    question_ru: "Доставка платная?",
-    answer_uz: "Toshkent shahri bo'ylab 200 000 so'mdan ortiq buyurtmalar uchun yetkazib berish bepul.",
-    answer_ru: "Доставка по Ташкенту бесплатна для заказов от 200 000 сум.",
-    category: 'delivery',
-  },
-];
+export const faqs: FAQ[] = [];
 
 export const materials = [
   { id: 'steel', name_uz: "Po'lat", name_ru: "Сталь" },
