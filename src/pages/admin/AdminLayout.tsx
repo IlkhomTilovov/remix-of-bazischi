@@ -107,11 +107,8 @@ export default function AdminLayout() {
           Admin Panel
         </Link>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
-        </div>
+        <div className="flex items-center gap-2" />
+
       </header>
 
       {/* Mobile sidebar */}
