@@ -243,7 +243,7 @@ export default function Dashboard() {
       </div>
 
       {/* Alerts - New Orders */}
-      {stats.todayNew > 0 && (
+      {stats.todayNew > 0 && stats.latestNewAt && (!dismissedAt || new Date(stats.latestNewAt) > new Date(dismissedAt)) && (
         <Card className="border-blue-200 bg-blue-50">
           <CardContent className="flex items-center gap-4 py-4">
             <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
@@ -255,7 +255,11 @@ export default function Dashboard() {
               </p>
               <p className="text-sm text-blue-700">Buyurtmalarni ko'rib chiqing</p>
             </div>
-            <Button asChild size="sm">
+            <Button asChild size="sm" onClick={() => {
+              const ts = stats.latestNewAt!;
+              localStorage.setItem('dashboard_new_orders_dismissed_at', ts);
+              setDismissedAt(ts);
+            }}>
               <Link to="/admin/orders">Ko'rish</Link>
             </Button>
           </CardContent>
