@@ -241,7 +241,7 @@ export default function Checkout() {
               type="tel"
               value={value}
               onChange={(e) => handlePhoneChange(field.id, e.target.value)}
-              placeholder="+998 90 123 45 67"
+              placeholder="+998 95 707 00 08"
               className={error ? 'border-destructive' : ''}
             />
             {error && <p className="text-sm text-destructive">{error}</p>}

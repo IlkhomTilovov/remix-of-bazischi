@@ -1,0 +1,1 @@
+UPDATE public.system_settings SET contact_phone = '+998 95 707 00 08', whatsapp_number = '+998 95 707 00 08';
