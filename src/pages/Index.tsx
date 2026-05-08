@@ -132,14 +132,9 @@ export default function Index() {
               />
             </p>
             <div className="flex flex-wrap gap-4 mb-16">
-              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-8 tracking-wider text-sm uppercase h-14">
+              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-16 tracking-wider text-sm uppercase h-14">
                 <Link to="/contact">
                   <EditableText contentKey="hero_cta_primary" fallback={language === 'ru' ? 'Заказать' : "Buyurtma berish"} as="span" section="hero" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 bg-transparent text-white hover:bg-transparent hover:text-white hover:border-white/30 rounded-sm px-8 tracking-wider text-sm uppercase h-14 transition-none">
-                <Link to="/about">
-                  <EditableText contentKey="hero_cta_secondary" fallback={language === 'ru' ? 'Посмотреть портфолио' : "Portfolio ko'rish"} as="span" section="hero" />
                 </Link>
               </Button>
             </div>
