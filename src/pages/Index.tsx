@@ -467,25 +467,25 @@ export default function Index() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
             <a
               href={`tel:${contactPhone.replace(/\s/g, '')}`}
-              className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white overflow-hidden transition-transform duration-300 hover:scale-[1.03]"
+              className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white border border-white/15 bg-white/[0.04] backdrop-blur-xl transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.08] hover:shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.4)]"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary/80" />
-              <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <span className="absolute -inset-1 bg-primary/50 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-              <span className="relative flex items-center gap-2">
-                <Phone className="w-4 h-4" strokeWidth={2.2} />
-                {language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}
-              </span>
+              <Phone className="w-4 h-4" strokeWidth={2.2} />
+              {language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}
             </a>
 
             <a
               href={settings?.social_telegram || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white border border-white/15 bg-white/[0.04] backdrop-blur-xl transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.08] hover:shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.4)]"
+              className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white overflow-hidden transition-transform duration-300 hover:scale-[1.03]"
             >
-              <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.2} />
-              {language === 'ru' ? 'Написать в Telegram' : 'Telegram orqali yozish'}
+              <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary/80" />
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="absolute -inset-1 bg-primary/50 blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative flex items-center gap-2">
+                <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" strokeWidth={2.2} />
+                {language === 'ru' ? 'Написать в Telegram' : 'Telegram orqali yozish'}
+              </span>
             </a>
           </div>
 
