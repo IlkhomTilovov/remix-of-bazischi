@@ -595,7 +595,11 @@ ${order.customer_message ? `\n💬 *Xabar:* ${order.customer_message}` : ''}
                 </TableHeader>
                 <TableBody>
                   {filteredOrders.map((order) => (
-                    <TableRow key={order.id} className="group">
+                    <TableRow
+                      key={order.id}
+                      className="group cursor-pointer"
+                      onClick={() => fetchOrderDetails(order.id)}
+                    >
                       <TableCell className="font-medium">{order.order_number}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -611,7 +615,7 @@ ${order.customer_message ? `\n💬 *Xabar:* ${order.customer_message}` : ''}
                       </TableCell>
                       <TableCell>{getStatusBadge(order.status)}</TableCell>
                       <TableCell className="text-muted-foreground">{formatDate(order.created_at)}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
