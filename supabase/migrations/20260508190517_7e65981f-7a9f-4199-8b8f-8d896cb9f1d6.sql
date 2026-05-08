@@ -1,0 +1,1 @@
+UPDATE public.system_settings SET social_telegram = 'https://t.me/qahramonyusuf';
