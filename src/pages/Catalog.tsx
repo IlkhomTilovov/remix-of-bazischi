@@ -57,15 +57,13 @@ export default function Catalog() {
     }
   }, [resolvedCategoryId]);
 
-  // Sync priceMax with dynamic maxPrice when it loads (avoid filtering out valid products)
+  // Sync priceMax with dynamic maxPrice once it loads (only first time, before user customizes)
+  const priceMaxSynced = useRef(false);
   useEffect(() => {
-    setSidebarFilters(prev => {
-      // Only update if user hasn't customized priceMax (it's still at a default value)
-      if (prev.priceMax < filterOptions.maxPrice) {
-        return { ...prev, priceMax: filterOptions.maxPrice };
-      }
-      return prev;
-    });
+    if (!priceMaxSynced.current && filterOptions.maxPrice > 1) {
+      priceMaxSynced.current = true;
+      setSidebarFilters(prev => ({ ...prev, priceMax: filterOptions.maxPrice }));
+    }
   }, [filterOptions.maxPrice]);
 
   useEffect(() => {
