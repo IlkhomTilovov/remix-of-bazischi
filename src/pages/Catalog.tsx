@@ -57,6 +57,17 @@ export default function Catalog() {
     }
   }, [resolvedCategoryId]);
 
+  // Sync priceMax with dynamic maxPrice when it loads (avoid filtering out valid products)
+  useEffect(() => {
+    setSidebarFilters(prev => {
+      // Only update if user hasn't customized priceMax (it's still at a default value)
+      if (prev.priceMax < filterOptions.maxPrice) {
+        return { ...prev, priceMax: filterOptions.maxPrice };
+      }
+      return prev;
+    });
+  }, [filterOptions.maxPrice]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
