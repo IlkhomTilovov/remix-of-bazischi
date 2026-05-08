@@ -150,7 +150,7 @@ export default function Cart() {
                   variant="outline"
                   className="w-full gap-2 rounded-lg md:rounded-full bg-green-500 hover:bg-green-600 text-white border-0 h-11 md:h-12"
                 >
-                  <a href={`https://wa.me/998901234567?text=${generateWhatsAppMessage()}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://wa.me/998957070008?text=${generateWhatsAppMessage()}`} target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="w-4 h-4 md:w-5 md:h-5" /> {t.cart.sendWhatsApp}
                   </a>
                 </Button>
