@@ -415,22 +415,22 @@ export default function Categories() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Toifalar</h1>
-          <p className="text-muted-foreground">Mahsulot toifalarini boshqaring</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <a 
-            href="/sitemap.xml" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border hover:border-primary/50 transition-colors"
-          >
-            <Globe className="h-3.5 w-3.5" />
-            Sitemap
-            <ExternalLink className="h-3 w-3" />
-          </a>
+      <div className="space-y-3">
+        <a 
+          href="/sitemap.xml" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border hover:border-primary/50 transition-colors w-fit"
+        >
+          <Globe className="h-3.5 w-3.5" />
+          Sitemap
+          <ExternalLink className="h-3 w-3" />
+        </a>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Toifalar</h1>
+            <p className="text-muted-foreground">Mahsulot toifalarini boshqaring</p>
+          </div>
           <Button onClick={openCreateDialog}>
             <Plus className="mr-2 h-4 w-4" />
             Yangi toifa
