@@ -10,6 +10,7 @@ import { useSEO } from '@/hooks/useSEO';
 import { EditableText } from '@/components/EditableText';
 import { EditableLink } from '@/components/EditableLink';
 import { useSiteContent } from '@/hooks/useSiteContent';
+import { useSystemSettings } from '@/hooks/useSystemSettings';
 
 export default function Contact() {
   const { language, t } = useLanguage();
@@ -19,6 +20,8 @@ export default function Contact() {
   });
   const { toast } = useToast();
   const { getContent } = useSiteContent();
+  const { settings } = useSystemSettings();
+  const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
 
@@ -58,7 +61,7 @@ export default function Contact() {
 
   const contactInfo = [
     { icon: MapPin, labelKey: 'contact_address_label', valueKey: 'contact_address_value', label: t.contact.info.address, value: t.contact.info.addressValue, href: undefined },
-    { icon: Phone, labelKey: 'contact_phone_label', valueKey: 'contact_phone_value', label: t.contact.info.phone, value: '+998 95 707 00 08', href: 'tel:+998957070008' },
+    { icon: Phone, labelKey: 'contact_phone_label', valueKey: 'contact_phone_value', label: t.contact.info.phone, value: contactPhone, href: `tel:${contactPhone.replace(/\s/g, '')}` },
     
     { icon: Clock, labelKey: 'contact_hours_label', valueKey: 'contact_hours_value', label: t.contact.info.workingHours, value: 'Du-Ju: 9:00-18:00, Sha: 10:00-16:00', href: undefined },
   ];

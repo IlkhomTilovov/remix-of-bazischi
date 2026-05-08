@@ -13,6 +13,7 @@ import { useSEO } from '@/hooks/useSEO';
 import { useCart } from '@/hooks/useCart';
 import { useProductById, useProducts, useCategories, Product } from '@/hooks/useProducts';
 import { useAuth } from '@/hooks/useAuth';
+import { useSystemSettings } from '@/hooks/useSystemSettings';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -24,6 +25,8 @@ interface MediaItem {
 export default function ProductDetails() {
   const { id } = useParams();
   const { language, t } = useLanguage();
+  const { settings } = useSystemSettings();
+  const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
   const { addItem, isInCart } = useCart();
   const { isAdmin } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
@@ -361,7 +364,7 @@ export default function ProductDetails() {
             </div>
 
             <Button asChild variant="ghost" className="w-full gap-2 mb-4">
-              <a href="tel:+998901234567">
+              <a href={`tel:${contactPhone.replace(/\s/g, '')}`}>
                 <Phone className="w-4 h-4" /> {t.products.requestConsultation}
               </a>
             </Button>
