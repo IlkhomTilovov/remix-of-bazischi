@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -56,6 +56,15 @@ export default function Catalog() {
       setSidebarFilters(prev => ({ ...prev, categoryId: resolvedCategoryId }));
     }
   }, [resolvedCategoryId]);
+
+  // Sync priceMax with dynamic maxPrice once it loads (only first time, before user customizes)
+  const priceMaxSynced = useRef(false);
+  useEffect(() => {
+    if (!priceMaxSynced.current && filterOptions.maxPrice > 1) {
+      priceMaxSynced.current = true;
+      setSidebarFilters(prev => ({ ...prev, priceMax: filterOptions.maxPrice }));
+    }
+  }, [filterOptions.maxPrice]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
