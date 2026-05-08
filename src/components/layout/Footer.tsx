@@ -61,22 +61,22 @@ export function Footer() {
               multiline
               section="footer"
             />
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <EditableLink
                 contentKey="footer_social_telegram"
                 fallback={settings?.social_telegram || '#'}
-                className="w-14 h-14 border border-border rounded-sm flex items-center justify-center bg-[#229ED9] hover:opacity-90 border-[#229ED9] text-white transition-all duration-300"
+                className="text-[#229ED9] hover:opacity-80 transition-opacity duration-300"
                 section="footer"
               >
-                <Send className="w-7 h-7" />
+                <Send className="w-8 h-8" />
               </EditableLink>
               <EditableLink
                 contentKey="footer_social_instagram"
                 fallback={settings?.social_instagram || '#'}
-                className="w-14 h-14 border border-border rounded-sm flex items-center justify-center bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] via-40% to-[#d62976] hover:opacity-90 border-transparent text-white transition-all duration-300"
+                className="text-[#d62976] hover:opacity-80 transition-opacity duration-300"
                 section="footer"
               >
-                <Instagram className="w-7 h-7" />
+                <Instagram className="w-8 h-8" />
               </EditableLink>
             </div>
           </div>
