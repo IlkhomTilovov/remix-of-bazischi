@@ -114,7 +114,11 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
       const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order', {
         body: {
           customer_name: formData.name.trim() || 'Mijoz',
-          customer_phone: formData.phone.replace(/\s/g, ''),
+          customer_phone: (() => {
+            const digits = formData.phone.replace(/\D/g, '');
+            const local = digits.startsWith('998') ? digits.slice(3) : digits;
+            return '+998' + local;
+          })(),
           customer_message: formData.message || undefined,
           items: orderItems,
         },
