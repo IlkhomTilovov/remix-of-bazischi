@@ -636,14 +636,6 @@ ${order.customer_message ? `\n💬 *Xabar:* ${order.customer_message}` : ''}
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => fetchOrderDetails(order.id)}
-                            title="Ko'rish"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
                             onClick={() => setDeleteOrderId(order.id)}
                             title="O'chirish"
                           >
