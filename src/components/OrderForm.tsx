@@ -18,7 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 
 const orderSchema = z.object({
-  name: z.string().trim().min(2, 'Ism kamida 2 ta belgidan iborat bo\'lishi kerak').max(100),
+  name: z.string().trim().max(100).optional(),
   phone: z.string().trim().min(9, 'Telefon raqamini to\'liq kiriting').max(20),
   message: z.string().max(500).optional(),
 });
