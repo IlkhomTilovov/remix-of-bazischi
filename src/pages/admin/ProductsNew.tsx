@@ -1327,7 +1327,7 @@ export default function ProductsNew() {
                           {formData.meta_title_uz || formData.keyword_uz || formData.name_uz}
                         </p>
                         <p className="text-emerald-600 text-sm">
-                          barokat-mebel.uz/product/{formData.slug || 'slug'}
+                          tanirovka.uz/product/{formData.slug || 'slug'}
                         </p>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {formData.meta_description_uz || formData.description_uz || 'Meta tavsif...'}
@@ -1342,7 +1342,7 @@ export default function ProductsNew() {
                           {formData.meta_title_ru || formData.keyword_ru || formData.name_ru}
                         </p>
                         <p className="text-emerald-600 text-sm">
-                          barokat-mebel.uz/ru/product/{formData.slug || 'slug'}
+                          tanirovka.uz/ru/product/{formData.slug || 'slug'}
                         </p>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {formData.meta_description_ru || formData.description_ru || 'Мета описание...'}
