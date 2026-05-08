@@ -33,7 +33,7 @@ export default function Contact() {
     
     try {
       const { error } = await supabase.from('contact_messages').insert({
-        name: form.name.trim(),
+        name: form.name.trim() || 'Mehmon',
         phone: form.phone.trim(),
         email: form.email?.trim() || null,
         message: form.message.trim(),
@@ -128,11 +128,12 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="text-sm font-medium mb-2 block text-foreground">{t.contact.form.name}</label>
+                      <label className="text-sm font-medium mb-2 block text-foreground">
+                        {t.contact.form.name} <span className="text-muted-foreground font-normal">({language === 'uz' ? 'ixtiyoriy' : 'необязательно'})</span>
+                      </label>
                       <Input
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        required
                         maxLength={100}
                         placeholder="Ismingizni kiriting"
                         className="h-12 rounded-lg border-border/50 bg-background focus:border-primary transition-colors"
