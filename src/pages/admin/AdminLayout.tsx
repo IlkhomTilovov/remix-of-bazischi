@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -49,9 +50,28 @@ const navItems: NavItem[] = [
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const { canViewModule, userRole, user, signOut } = useAuth();
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from('contact_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false);
+      setUnreadMessages(count || 0);
+    };
+    fetchUnread();
+
+    const channel = supabase
+      .channel('contact_messages_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, fetchUnread)
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/admin') return location.pathname === '/admin';
@@ -134,7 +154,12 @@ export default function AdminLayout() {
               )}
             >
               <item.icon className="h-5 w-5" />
-              {item.title}
+              <span className="flex-1">{item.title}</span>
+              {item.url === '/admin/messages' && unreadMessages > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold">
+                  {unreadMessages}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
@@ -190,7 +215,12 @@ export default function AdminLayout() {
                 )}
               >
                 <item.icon className="h-5 w-5" />
-                {item.title}
+                <span className="flex-1">{item.title}</span>
+                {item.url === '/admin/messages' && unreadMessages > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold">
+                    {unreadMessages}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>
