@@ -244,7 +244,7 @@ export default function Contact() {
               <div className="pt-2">
                 <EditableLink
                   contentKey="contact_telegram_link"
-                  fallback="https://t.me/mebelusta"
+                  fallback={settings?.social_telegram || 'https://t.me/qahramonyusuf'}
                   className="block"
                 >
                   <Button size="lg" variant="outline" className="w-full gap-2 rounded-xl h-14 border-primary/20 hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-all text-primary">
