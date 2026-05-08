@@ -50,9 +50,28 @@ const navItems: NavItem[] = [
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const { canViewModule, userRole, user, signOut } = useAuth();
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from('contact_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false);
+      setUnreadMessages(count || 0);
+    };
+    fetchUnread();
+
+    const channel = supabase
+      .channel('contact_messages_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, fetchUnread)
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/admin') return location.pathname === '/admin';
