@@ -288,10 +288,6 @@ export default function SiteContent() {
           <h1 className="text-2xl font-bold">Sayt kontenti</h1>
           <p className="text-muted-foreground">Saytdagi barcha matnlarni vizual tahrirlang</p>
         </div>
-        <Button onClick={handleOpenVisualEditor} size="lg" className="gap-2">
-          <Play className="h-5 w-5" />
-          Vizual tahrirlashni boshlash
-        </Button>
       </div>
 
       <Alert>
