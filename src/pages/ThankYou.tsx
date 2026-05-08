@@ -69,7 +69,7 @@ export default function ThankYou() {
           <Button asChild variant="outline" size="lg" className="flex-1 rounded-full gap-2">
             <Link to="/catalog">
               <ShoppingBag className="w-4 h-4" />
-              {language === 'uz' ? 'Katalogga' : 'В каталог'}
+              {language === 'uz' ? 'Katalogga qaytish' : 'Вернуться в каталог'}
             </Link>
           </Button>
         </div>
