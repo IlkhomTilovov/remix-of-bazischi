@@ -425,9 +425,9 @@ export default function Categories() {
             href="/sitemap.xml" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1"
+            className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border hover:border-primary/50 transition-colors"
           >
-            <Globe className="h-4 w-4" />
+            <Globe className="h-3.5 w-3.5" />
             Sitemap
             <ExternalLink className="h-3 w-3" />
           </a>
