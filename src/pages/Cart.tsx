@@ -141,7 +141,7 @@ export default function Cart() {
                   className="w-full gap-2 rounded-lg md:rounded-full h-11 md:h-12"
                   onClick={() => setOrderFormOpen(true)}
                 >
-                  <Send className="w-4 h-4 md:w-5 md:h-5" /> {language === 'uz' ? 'Buyurtma berish' : 'Оформить заказ'}
+                  {language === 'uz' ? 'Buyurtma berish' : 'Оформить заказ'}
                 </Button>
 
                 <Button
