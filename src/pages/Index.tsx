@@ -132,7 +132,7 @@ export default function Index() {
               />
             </p>
             <div className="flex flex-wrap gap-4 mb-16">
-              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-16 tracking-wider text-sm uppercase h-14">
+              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm px-16 tracking-wider text-sm uppercase h-14 min-w-[420px]">
                 <Link to="/catalog">
                   <EditableText contentKey="hero_cta_primary" fallback={language === 'ru' ? 'Заказать' : "Buyurtma berish"} as="span" section="hero" />
                 </Link>
