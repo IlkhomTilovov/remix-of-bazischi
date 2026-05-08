@@ -364,7 +364,7 @@ export default function ProductDetails() {
             </div>
 
             <Button asChild variant="ghost" className="w-full gap-2 mb-4">
-              <a href="tel:+998901234567">
+              <a href={`tel:${contactPhone.replace(/\s/g, '')}`}>
                 <Phone className="w-4 h-4" /> {t.products.requestConsultation}
               </a>
             </Button>
