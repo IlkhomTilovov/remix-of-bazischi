@@ -107,11 +107,8 @@ export default function AdminLayout() {
           Admin Panel
         </Link>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
-        </div>
+        <div className="flex items-center gap-2" />
+
       </header>
 
       {/* Mobile sidebar */}
@@ -253,9 +250,7 @@ export default function AdminLayout() {
           {/* Desktop top header */}
           <header className="sticky top-0 z-20 h-16 bg-white border-b flex items-center justify-end px-6">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
+
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-medium">
                 {user?.email?.charAt(0).toUpperCase() || 'A'}
               </div>
