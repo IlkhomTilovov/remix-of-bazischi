@@ -13,6 +13,7 @@ import { useSEO } from '@/hooks/useSEO';
 import { useCart } from '@/hooks/useCart';
 import { useProductById, useProducts, useCategories, Product } from '@/hooks/useProducts';
 import { useAuth } from '@/hooks/useAuth';
+import { useSystemSettings } from '@/hooks/useSystemSettings';
 
 interface MediaItem {
   type: 'image' | 'video';
