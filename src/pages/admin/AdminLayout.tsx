@@ -37,7 +37,7 @@ const navItems: NavItem[] = [
   { title: 'Buyurtmalar', url: '/admin/orders', icon: ShoppingCart, module: 'orders' },
   { title: 'Toifalar', url: '/admin/categories', icon: FolderTree, module: 'categories' },
   { title: 'Mahsulotlar', url: '/admin/products', icon: Package, module: 'products' },
-  { title: 'Mijozlar', url: '/admin/customers', icon: Users, module: 'customers' },
+  
   { title: 'Xabarlar', url: '/admin/messages', icon: MessageSquare, module: 'customers' },
   { title: 'Sayt kontenti', url: '/admin/content', icon: FileText, module: 'siteContent' },
   { title: 'Checkout formasi', url: '/admin/checkout-form', icon: ClipboardList, module: 'siteContent' },
