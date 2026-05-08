@@ -18,7 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 
 const orderSchema = z.object({
-  name: z.string().trim().min(2, 'Ism kamida 2 ta belgidan iborat bo\'lishi kerak').max(100),
+  name: z.string().trim().max(100).optional(),
   phone: z.string().trim().min(9, 'Telefon raqamini to\'liq kiriting').max(20),
   message: z.string().max(500).optional(),
 });
@@ -113,7 +113,7 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
       // Call edge function for server-side price validation
       const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order', {
         body: {
-          customer_name: formData.name.trim(),
+          customer_name: formData.name.trim() || 'Mijoz',
           customer_phone: formData.phone.replace(/\s/g, ''),
           customer_message: formData.message || undefined,
           items: orderItems,
@@ -177,13 +177,12 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">{text.name} *</Label>
+            <Label htmlFor="name">{text.name}</Label>
             <Input
               id="name"
               placeholder={text.namePlaceholder}
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              required
             />
             {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
           </div>
