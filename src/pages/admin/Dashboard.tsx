@@ -33,6 +33,7 @@ interface OrderStats {
   cancelled: number;
   todayNew: number;
   todayTotal: number;
+  latestNewAt: string | null;
 }
 
 interface RecentOrder {
@@ -62,7 +63,11 @@ export default function Dashboard() {
     cancelled: 0,
     todayNew: 0,
     todayTotal: 0,
+    latestNewAt: null,
   });
+  const [dismissedAt, setDismissedAt] = useState<string | null>(
+    () => localStorage.getItem('dashboard_new_orders_dismissed_at')
+  );
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
     telegramEnabled: false,
@@ -104,22 +109,25 @@ export default function Dashboard() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
+      const todayNewOrders = orders?.filter(o => {
+        const orderDate = new Date(o.created_at);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime() && o.status === 'new';
+      }) || [];
+
       const orderStats: OrderStats = {
         total: orders?.length || 0,
         new: orders?.filter(o => o.status === 'new').length || 0,
         inProgress: orders?.filter(o => o.status === 'in_progress').length || 0,
         completed: orders?.filter(o => o.status === 'completed').length || 0,
         cancelled: orders?.filter(o => o.status === 'cancelled').length || 0,
-        todayNew: orders?.filter(o => {
-          const orderDate = new Date(o.created_at);
-          orderDate.setHours(0, 0, 0, 0);
-          return orderDate.getTime() === today.getTime() && o.status === 'new';
-        }).length || 0,
+        todayNew: todayNewOrders.length,
         todayTotal: orders?.filter(o => {
           const orderDate = new Date(o.created_at);
           orderDate.setHours(0, 0, 0, 0);
           return orderDate.getTime() === today.getTime();
         }).length || 0,
+        latestNewAt: todayNewOrders[0]?.created_at || null,
       };
 
       setStats(orderStats);
@@ -235,7 +243,7 @@ export default function Dashboard() {
       </div>
 
       {/* Alerts - New Orders */}
-      {stats.todayNew > 0 && (
+      {stats.todayNew > 0 && stats.latestNewAt && (!dismissedAt || new Date(stats.latestNewAt) > new Date(dismissedAt)) && (
         <Card className="border-blue-200 bg-blue-50">
           <CardContent className="flex items-center gap-4 py-4">
             <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
@@ -247,7 +255,11 @@ export default function Dashboard() {
               </p>
               <p className="text-sm text-blue-700">Buyurtmalarni ko'rib chiqing</p>
             </div>
-            <Button asChild size="sm">
+            <Button asChild size="sm" onClick={() => {
+              const ts = stats.latestNewAt!;
+              localStorage.setItem('dashboard_new_orders_dismissed_at', ts);
+              setDismissedAt(ts);
+            }}>
               <Link to="/admin/orders">Ko'rish</Link>
             </Button>
           </CardContent>
