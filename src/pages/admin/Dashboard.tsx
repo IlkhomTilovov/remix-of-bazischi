@@ -33,6 +33,7 @@ interface OrderStats {
   cancelled: number;
   todayNew: number;
   todayTotal: number;
+  latestNewAt: string | null;
 }
 
 interface RecentOrder {
