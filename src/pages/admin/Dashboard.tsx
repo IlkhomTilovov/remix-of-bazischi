@@ -63,7 +63,11 @@ export default function Dashboard() {
     cancelled: 0,
     todayNew: 0,
     todayTotal: 0,
+    latestNewAt: null,
   });
+  const [dismissedAt, setDismissedAt] = useState<string | null>(
+    () => localStorage.getItem('dashboard_new_orders_dismissed_at')
+  );
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
     telegramEnabled: false,
