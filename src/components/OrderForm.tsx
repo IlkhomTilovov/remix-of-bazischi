@@ -113,7 +113,7 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
       // Call edge function for server-side price validation
       const { data: orderResult, error: orderError } = await supabase.functions.invoke('create-order', {
         body: {
-          customer_name: formData.name.trim(),
+          customer_name: formData.name.trim() || 'Mijoz',
           customer_phone: formData.phone.replace(/\s/g, ''),
           customer_message: formData.message || undefined,
           items: orderItems,
