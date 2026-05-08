@@ -470,7 +470,7 @@ export default function Index() {
               className="group relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-xl text-sm font-semibold tracking-[0.15em] uppercase text-white border border-white/15 bg-white/[0.04] backdrop-blur-xl transition-all duration-300 hover:border-primary/40 hover:bg-white/[0.08] hover:shadow-[0_10px_40px_-10px_hsl(var(--primary)/0.4)]"
             >
               <Phone className="w-4 h-4" strokeWidth={2.2} />
-              {language === 'ru' ? 'Получить консультацию' : 'Konsultatsiya olish'}
+              {language === 'ru' ? 'Свяжитесь с нами' : "Biz bilan bog'laning"}
             </a>
 
             <a
