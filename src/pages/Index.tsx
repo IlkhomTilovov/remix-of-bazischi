@@ -48,7 +48,7 @@ export default function Index() {
   const { products: featuredProducts, loading: productsLoading } = useFeaturedProducts(8);
   const { settings } = useSystemSettings();
   const { categories, loading: categoriesLoading } = useCategories();
-  const contactPhone = settings?.contact_phone || '+998 90 123 45 67';
+  const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
 
   const whyUsItems = [
     { key: 'whyus_1', icon: 'Shield', titleFallback: 'UV Himoya', descFallback: 'Quyosh nuri va zararli UV nurlardan ishonchli himoya' },

@@ -146,7 +146,7 @@ export default function Contact() {
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         required
                         maxLength={20}
-                        placeholder="+998 90 123 45 67"
+                        placeholder="+998 95 707 00 08"
                         className="h-12 rounded-lg border-border/50 bg-background focus:border-primary transition-colors"
                       />
                     </div>

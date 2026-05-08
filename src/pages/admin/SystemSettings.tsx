@@ -479,7 +479,7 @@ export default function SystemSettings() {
                   <Input
                     value={formData.contact_phone || ''}
                     onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                    placeholder="+998 90 123 45 67"
+                    placeholder="+998 95 707 00 08"
                   />
                 </div>
                 <div className="space-y-2">
