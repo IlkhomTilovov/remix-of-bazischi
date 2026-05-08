@@ -162,7 +162,7 @@ Deno.serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      message = '✅ *Test xabar*\n\nMebel do\'koni admin paneli bilan aloqa muvaffaqiyatli o\'rnatildi!\n\nBuyurtmalar haqida xabarlar shu chatga keladi.';
+      message = '✅ *Test xabar*\n\nAdmin paneli bilan aloqa muvaffaqiyatli o\'rnatildi!\n\nBuyurtmalar haqida xabarlar shu chatga keladi.';
     } else if (body.type === 'order') {
       if (!body.order_data) {
         return new Response(
