@@ -109,22 +109,25 @@ export default function Dashboard() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
+      const todayNewOrders = orders?.filter(o => {
+        const orderDate = new Date(o.created_at);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime() && o.status === 'new';
+      }) || [];
+
       const orderStats: OrderStats = {
         total: orders?.length || 0,
         new: orders?.filter(o => o.status === 'new').length || 0,
         inProgress: orders?.filter(o => o.status === 'in_progress').length || 0,
         completed: orders?.filter(o => o.status === 'completed').length || 0,
         cancelled: orders?.filter(o => o.status === 'cancelled').length || 0,
-        todayNew: orders?.filter(o => {
-          const orderDate = new Date(o.created_at);
-          orderDate.setHours(0, 0, 0, 0);
-          return orderDate.getTime() === today.getTime() && o.status === 'new';
-        }).length || 0,
+        todayNew: todayNewOrders.length,
         todayTotal: orders?.filter(o => {
           const orderDate = new Date(o.created_at);
           orderDate.setHours(0, 0, 0, 0);
           return orderDate.getTime() === today.getTime();
         }).length || 0,
+        latestNewAt: todayNewOrders[0]?.created_at || null,
       };
 
       setStats(orderStats);
