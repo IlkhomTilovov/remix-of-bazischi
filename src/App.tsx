@@ -142,6 +142,9 @@ const App = () => (
                               <Route path="/catalogue" element={<Navigate to="/catalog" replace />} />
                               <Route path="/paint" element={<Navigate to="/catalog" replace />} />
                               <Route path="/window" element={<Navigate to="/catalog" replace />} />
+                              <Route path="/fitting" element={<Navigate to="/catalog" replace />} />
+                              <Route path="/tinting" element={<Navigate to="/catalog" replace />} />
+                              <Route path="/film" element={<Navigate to="/catalog" replace />} />
                               <Route path="/precut" element={<Navigate to="/catalog" replace />} />
                               <Route path="/products" element={<Navigate to="/catalog" replace />} />
                               <Route path="/shop" element={<Navigate to="/catalog" replace />} />
