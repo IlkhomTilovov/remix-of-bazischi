@@ -205,7 +205,7 @@ export function OrderForm({ open, onOpenChange }: OrderFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">{text.message}</Label>
+            <Label htmlFor="message">{text.message} <span className="text-muted-foreground font-normal">({language === 'uz' ? 'ixtiyoriy' : 'необязательно'})</span></Label>
             <Textarea
               id="message"
               placeholder={text.messagePlaceholder}
