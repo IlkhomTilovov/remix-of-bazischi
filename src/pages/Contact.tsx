@@ -36,7 +36,7 @@ export default function Contact() {
         name: form.name.trim() || 'Mehmon',
         phone: form.phone.trim(),
         email: form.email?.trim() || null,
-        message: form.message.trim(),
+        message: form.message.trim() || '-',
       });
 
       if (error) throw error;
@@ -153,11 +153,12 @@ export default function Contact() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block text-foreground">{t.contact.form.message}</label>
+                    <label className="text-sm font-medium mb-2 block text-foreground">
+                      {t.contact.form.message} <span className="text-muted-foreground font-normal">({language === 'uz' ? 'ixtiyoriy' : 'необязательно'})</span>
+                    </label>
                     <Textarea
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      required
                       maxLength={1000}
                       rows={5}
                       placeholder="Xabaringizni yozing..."
