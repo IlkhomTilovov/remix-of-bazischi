@@ -50,13 +50,15 @@ export default function ThankYou() {
         </div>
 
         {/* Contact Info */}
-        <div className="flex items-center justify-center gap-2 text-muted-foreground mb-8">
-          <Phone className="w-4 h-4" />
-          <span>{language === 'uz' ? 'Savollar uchun' : 'По вопросам'}:</span>
-          <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="font-medium text-primary hover:underline">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-x-2 gap-y-1 text-muted-foreground mb-8 text-center flex-wrap">
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4 shrink-0" />
+            <span>{language === 'uz' ? 'Savollar uchun' : 'По вопросам'}:</span>
+          </div>
+          <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="font-medium text-primary hover:underline whitespace-nowrap">
             {contactPhone}
           </a>
-          <span className="font-medium text-foreground">Qahramon</span>
+          <span className="font-medium text-foreground">— Qahramon</span>
         </div>
 
         {/* Action Buttons */}
