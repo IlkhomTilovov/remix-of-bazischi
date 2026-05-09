@@ -4,33 +4,28 @@ import { useLocation } from 'react-router-dom';
 /**
  * Hook to handle scroll behavior on route changes
  * - If URL has a hash, scroll to that element
- * - Otherwise scroll to hero section or top of page
+ * - Otherwise always scroll to the top of the page (hero section)
  */
 export function useScrollToTop() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // Small delay to ensure DOM is ready
-    const timeout = setTimeout(() => {
-      if (hash) {
-        // Scroll to hash element
+    if (hash) {
+      // Defer to allow target element to mount
+      const timeout = setTimeout(() => {
         const element = document.querySelector(hash);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
-          return;
+        } else {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
         }
-      }
+      }, 0);
+      return () => clearTimeout(timeout);
+    }
 
-      // Try to scroll to hero section first
-      const heroElement = document.getElementById('hero');
-      if (heroElement) {
-        heroElement.scrollIntoView({ behavior: 'instant' });
-      } else {
-        // Fallback to top of page
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }
-    }, 0);
-
-    return () => clearTimeout(timeout);
+    // Immediately jump to the top so the new page starts from its hero/top
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, [pathname, hash]);
 }
