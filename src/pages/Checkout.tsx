@@ -69,9 +69,14 @@ export default function Checkout() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
+    const nameFieldId = checkoutFields.find(f => f.field_type === 'text' && f.sort_order === 0)?.id;
+
     checkoutFields.forEach(field => {
       const value = fieldValues[field.id]?.trim() || '';
-      
+
+      // Name field is never required
+      if (field.id === nameFieldId) return;
+
       if (field.is_required && !value) {
         if (field.field_type === 'radio') {
           newErrors[field.id] = language === 'uz' ? 'Tanlash shart' : 'Выберите вариант';
@@ -113,7 +118,7 @@ export default function Checkout() {
       const nameField = checkoutFields.find(f => f.field_type === 'text' && f.sort_order === 0);
       const phoneField = checkoutFields.find(f => f.field_type === 'phone');
       
-      const customerName = nameField ? (fieldValues[nameField.id] || '').trim() : '';
+      const customerName = (nameField ? (fieldValues[nameField.id] || '').trim() : '') || 'Mijoz';
       const customerPhone = phoneField ? (fieldValues[phoneField.id] || '').replace(/\s/g, '') : '';
 
       // Build customer message from all other fields
@@ -140,17 +145,6 @@ export default function Checkout() {
           color: item.selectedColor,
         },
       }));
-
-      // Fallback: if no name/phone fields found from dynamic fields, show error
-      if (!customerName) {
-        toast({
-          title: language === 'uz' ? 'Xatolik' : 'Ошибка',
-          description: language === 'uz' ? 'Ismingizni kiriting' : 'Введите имя',
-          variant: 'destructive',
-        });
-        setIsSubmitting(false);
-        return;
-      }
 
       if (!customerPhone || customerPhone.length < 13) {
         toast({
