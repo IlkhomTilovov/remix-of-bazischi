@@ -113,6 +113,10 @@ export default function Catalog() {
   });
 
   useEffect(() => {
+    // Wait until slug→UUID resolution finishes, otherwise we'd wipe the
+    // ?category=... param before sidebarFilters has had a chance to sync.
+    if (resolvedCategoryId === null) return;
+
     const params = new URLSearchParams();
     if (sidebarFilters.categoryId !== 'all') {
       // Write slug to URL for better readability
@@ -129,7 +133,7 @@ export default function Catalog() {
     if (sidebarFilters.discounted) params.set('discount', '1');
     if (currentPage > 1) params.set('page', currentPage.toString());
     setSearchParams(params, { replace: true });
-  }, [sidebarFilters, currentPage, setSearchParams, filterOptions.maxPrice]);
+  }, [sidebarFilters, currentPage, setSearchParams, filterOptions.maxPrice, resolvedCategoryId]);
 
   const handleApplyFilters = useCallback((newFilters: SidebarFilters) => {
     setSidebarFilters(newFilters);
