@@ -76,11 +76,23 @@ export default function AdminLayout() {
 
   useEffect(() => {
     const fetchNewOrders = async () => {
-      const { count } = await supabase
+      const { data } = await supabase
         .from('orders')
-        .select('*', { count: 'exact', head: true })
+        .select('id')
         .eq('status', 'new');
-      setNewOrders(count || 0);
+      let seen: string[] = [];
+      try {
+        seen = JSON.parse(localStorage.getItem('seen_order_ids') || '[]');
+      } catch { seen = []; }
+      const seenSet = new Set(seen);
+      const unseen = (data || []).filter(o => !seenSet.has(o.id));
+      // Prune seen ids that no longer exist as 'new'
+      const currentIds = new Set((data || []).map(o => o.id));
+      const pruned = seen.filter(id => currentIds.has(id));
+      if (pruned.length !== seen.length) {
+        localStorage.setItem('seen_order_ids', JSON.stringify(pruned));
+      }
+      setNewOrders(unseen.length);
     };
     fetchNewOrders();
 
@@ -89,7 +101,13 @@ export default function AdminLayout() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchNewOrders)
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    const handleSeen = () => fetchNewOrders();
+    window.addEventListener('orders-seen-updated', handleSeen);
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener('orders-seen-updated', handleSeen);
+    };
   }, []);
 
   const isActive = (path: string) => {
