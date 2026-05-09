@@ -922,14 +922,7 @@ export default function ProductsNew() {
 
               <Separator />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={formData.is_negotiable}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_negotiable: checked })}
-                  />
-                  <Label>Kelishiladi</Label>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={formData.in_stock}
