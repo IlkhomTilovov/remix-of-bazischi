@@ -34,9 +34,13 @@ export default function Catalog() {
   // Resolve slug to category ID for filtering - only return UUID or 'all'
   const resolvedCategoryId = useMemo(() => {
     if (initialCategoryParam === 'all') return 'all';
+    if (categories.length === 0) return null; // categories still loading
     const found = categories.find(c => c.slug === initialCategoryParam || c.id === initialCategoryParam);
-    return found ? found.id : null; // null means still resolving
+    return found ? found.id : 'all';
   }, [initialCategoryParam, categories]);
+
+  // True while we know the URL has a category slug but categories haven't loaded yet
+  const isResolvingCategory = initialCategoryParam !== 'all' && resolvedCategoryId === null;
 
   const [sidebarFilters, setSidebarFilters] = useState<SidebarFilters>({
     categoryId: 'all',
@@ -81,9 +85,10 @@ export default function Catalog() {
     const f: ProductFilters = { isActive: true };
 
     if (debouncedSearch) f.search = debouncedSearch;
-    // Only pass category if it's a valid UUID
-    if (sidebarFilters.categoryId !== 'all' && isUUID(sidebarFilters.categoryId)) {
-      f.categoryId = sidebarFilters.categoryId;
+    // Use URL-resolved category as source of truth so products match URL immediately
+    const effectiveCategoryId = resolvedCategoryId ?? sidebarFilters.categoryId;
+    if (effectiveCategoryId !== 'all' && isUUID(effectiveCategoryId)) {
+      f.categoryId = effectiveCategoryId;
     }
     // Price filter removed from UI — do not apply
     if (sidebarFilters.materials.length > 0) f.materials = sidebarFilters.materials;
@@ -94,9 +99,10 @@ export default function Catalog() {
     if (sidebarFilters.discounted) f.discounted = true;
 
     return f;
-  }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice]);
+  }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
 
-  const { products, totalCount, totalPages, loading } = useProducts(currentPage, filters, PAGE_SIZE);
+  const { products, totalCount, totalPages, loading: productsLoading } = useProducts(currentPage, filters, PAGE_SIZE);
+  const loading = productsLoading || isResolvingCategory;
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
