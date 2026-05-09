@@ -58,7 +58,7 @@ export default function ThankYou() {
           <a href={`tel:${contactPhone.replace(/\s/g, '')}`} className="font-medium text-primary hover:underline whitespace-nowrap">
             {contactPhone}
           </a>
-          <span className="font-medium text-foreground">— Qahramon</span>
+          <span className="font-medium text-foreground">Qahramon</span>
         </div>
 
         {/* Action Buttons */}
