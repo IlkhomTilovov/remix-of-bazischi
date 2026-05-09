@@ -47,6 +47,7 @@ export interface Category {
   meta_description_uz: string | null;
   meta_description_ru: string | null;
   meta_keywords: string | null;
+  product_count?: number;
 }
 
 export interface ProductFilters {
