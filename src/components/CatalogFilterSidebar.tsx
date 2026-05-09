@@ -85,8 +85,14 @@ export function CatalogFilterSidebar({ categories, onApply, initialFilters, dyna
     });
   };
 
-  // Auto-apply filters whenever they change
+  // Auto-apply filters whenever they change (skip first mount to avoid
+  // overwriting parent's URL-resolved state before it can sync down).
+  const isFirstRun = useRef(true);
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
     onApply(filters);
   }, [filters]);
 
