@@ -101,7 +101,8 @@ export default function Catalog() {
     return f;
   }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
 
-  const { products, totalCount, totalPages, loading } = useProducts(currentPage, filters, PAGE_SIZE);
+  const { products, totalCount, totalPages, loading: productsLoading } = useProducts(currentPage, filters, PAGE_SIZE);
+  const loading = productsLoading || isResolvingCategory;
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
