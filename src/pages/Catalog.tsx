@@ -28,6 +28,12 @@ export default function Catalog() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(initialPage);
 
+  // When user navigates to a different category via footer/header links
+  // (same /catalog route, only ?category= changes), reset scroll to top.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [initialCategoryParam]);
+
   const { options: filterOptions } = useProductFilterOptions();
   const { categories } = useCategories();
 
