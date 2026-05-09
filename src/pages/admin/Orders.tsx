@@ -193,6 +193,19 @@ export default function Orders() {
 
   const fetchOrderDetails = async (orderId: string) => {
     try {
+      // Mark this order as seen so the sidebar badge decreases
+      try {
+        const seen: string[] = JSON.parse(localStorage.getItem('seen_order_ids') || '[]');
+        if (!seen.includes(orderId)) {
+          seen.push(orderId);
+          localStorage.setItem('seen_order_ids', JSON.stringify(seen));
+          window.dispatchEvent(new Event('orders-seen-updated'));
+        }
+      } catch {
+        localStorage.setItem('seen_order_ids', JSON.stringify([orderId]));
+        window.dispatchEvent(new Event('orders-seen-updated'));
+      }
+
       const { data: orderItems, error } = await supabase
         .from('order_items')
         .select('*')
