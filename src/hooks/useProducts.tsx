@@ -255,7 +255,21 @@ export function useCategories() {
           .order('sort_order', { ascending: true });
 
         if (error) throw error;
-        setCategories(data || []);
+
+        // Fetch product counts per category (only active products)
+        const { data: productRows, error: prodErr } = await supabase
+          .from('products')
+          .select('category_id')
+          .eq('is_active', true);
+
+        if (prodErr) throw prodErr;
+
+        const counts = new Map<string, number>();
+        (productRows || []).forEach((row: { category_id: string | null }) => {
+          if (row.category_id) counts.set(row.category_id, (counts.get(row.category_id) || 0) + 1);
+        });
+
+        setCategories((data || []).map((c: any) => ({ ...c, product_count: counts.get(c.id) || 0 })));
       } catch (err) {
         console.error('Error fetching categories:', err);
       } finally {
