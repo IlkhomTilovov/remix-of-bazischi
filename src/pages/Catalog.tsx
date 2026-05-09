@@ -85,9 +85,10 @@ export default function Catalog() {
     const f: ProductFilters = { isActive: true };
 
     if (debouncedSearch) f.search = debouncedSearch;
-    // Only pass category if it's a valid UUID
-    if (sidebarFilters.categoryId !== 'all' && isUUID(sidebarFilters.categoryId)) {
-      f.categoryId = sidebarFilters.categoryId;
+    // Use URL-resolved category as source of truth so products match URL immediately
+    const effectiveCategoryId = resolvedCategoryId ?? sidebarFilters.categoryId;
+    if (effectiveCategoryId !== 'all' && isUUID(effectiveCategoryId)) {
+      f.categoryId = effectiveCategoryId;
     }
     // Price filter removed from UI — do not apply
     if (sidebarFilters.materials.length > 0) f.materials = sidebarFilters.materials;
@@ -98,7 +99,7 @@ export default function Catalog() {
     if (sidebarFilters.discounted) f.discounted = true;
 
     return f;
-  }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice]);
+  }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
 
   const { products, totalCount, totalPages, loading } = useProducts(currentPage, filters, PAGE_SIZE);
 
