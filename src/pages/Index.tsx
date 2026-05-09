@@ -206,6 +206,9 @@ export default function Index() {
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                    <div className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white text-xs font-medium">
+                      {cat.product_count ?? 0} {language === 'uz' ? 'ta' : 'шт'}
+                    </div>
                     <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                       <h3 className="font-serif text-xl font-semibold text-white mb-1">
                         {name}
