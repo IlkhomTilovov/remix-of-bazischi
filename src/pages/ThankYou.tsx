@@ -63,13 +63,13 @@ export default function ThankYou() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button asChild size="lg" className="flex-1 rounded-full gap-2 h-20 sm:h-12 text-base">
+          <Button asChild size="lg" className="flex-1 rounded-full gap-2 h-40 sm:h-12 text-base">
             <Link to="/">
               <Home className="w-4 h-4" />
               {language === 'uz' ? 'Bosh sahifaga' : 'На главную'}
             </Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="flex-1 rounded-full gap-2 h-20 sm:h-12 text-base">
+          <Button asChild variant="outline" size="lg" className="flex-1 rounded-full gap-2 h-40 sm:h-12 text-base">
             <Link to="/catalog">
               <ShoppingBag className="w-4 h-4" />
               {language === 'uz' ? 'Katalogga qaytish' : 'Вернуться в каталог'}
