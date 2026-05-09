@@ -375,7 +375,7 @@ export default function ProductDetails() {
               }}
               disabled={!product.in_stock}
             >
-              <Phone className="w-4 h-4" /> {t.products.requestConsultation}
+              {t.products.requestConsultation}
             </Button>
 
             {/* Materials */}
