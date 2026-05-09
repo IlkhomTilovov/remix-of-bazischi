@@ -113,13 +113,15 @@ export default function Catalog() {
   });
 
   useEffect(() => {
-    // Wait until slug→UUID resolution finishes, otherwise we'd wipe the
-    // ?category=... param before sidebarFilters has had a chance to sync.
+    // Wait until slug→UUID resolution finishes.
     if (resolvedCategoryId === null) return;
+    // Avoid race conditions: only write URL when sidebarFilters.categoryId is
+    // already in sync with the URL-derived resolvedCategoryId. Otherwise we'd
+    // overwrite the freshly-changed URL with the stale category.
+    if (sidebarFilters.categoryId !== resolvedCategoryId) return;
 
     const params = new URLSearchParams();
     if (sidebarFilters.categoryId !== 'all') {
-      // Write slug to URL for better readability
       const cat = categories.find(c => c.id === sidebarFilters.categoryId);
       params.set('category', cat?.slug || sidebarFilters.categoryId);
     }
@@ -136,9 +138,22 @@ export default function Catalog() {
   }, [sidebarFilters, currentPage, setSearchParams, filterOptions.maxPrice, resolvedCategoryId]);
 
   const handleApplyFilters = useCallback((newFilters: SidebarFilters) => {
+    // If user changed the category via the dropdown, push it into the URL
+    // immediately so the URL stays the source of truth.
+    if (newFilters.categoryId !== sidebarFilters.categoryId) {
+      const params = new URLSearchParams(searchParams);
+      if (newFilters.categoryId === 'all') {
+        params.delete('category');
+      } else {
+        const cat = categories.find(c => c.id === newFilters.categoryId);
+        params.set('category', cat?.slug || newFilters.categoryId);
+      }
+      params.delete('page');
+      setSearchParams(params, { replace: true });
+    }
     setSidebarFilters(newFilters);
     setCurrentPage(1);
-  }, []);
+  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
