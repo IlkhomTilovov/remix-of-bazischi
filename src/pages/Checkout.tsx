@@ -202,11 +202,13 @@ export default function Checkout() {
     const label = getFieldLabel(field);
     const value = fieldValues[field.id] || '';
     const error = errors[field.id];
+    const isNameField = field.field_type === 'text' && field.sort_order === 0;
+    const showRequired = field.is_required && !isNameField;
 
     const labelElement = (
       <Label htmlFor={field.id} className="flex items-center gap-2">
         {IconComponent && <IconComponent className="w-4 h-4" />}
-        {label} {field.is_required && <span className="text-red-500">*</span>}
+        {label} {showRequired && <span className="text-red-500">*</span>}
       </Label>
     );
 
