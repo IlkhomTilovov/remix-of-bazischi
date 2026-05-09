@@ -242,6 +242,11 @@ export default function AdminLayout() {
                     {unreadMessages}
                   </span>
                 )}
+                {item.url === '/admin/orders' && newOrders > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold animate-pulse">
+                    {newOrders}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>
