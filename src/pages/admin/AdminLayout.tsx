@@ -51,6 +51,7 @@ const navItems: NavItem[] = [
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [newOrders, setNewOrders] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const { canViewModule, userRole, user, signOut } = useAuth();
@@ -68,6 +69,24 @@ export default function AdminLayout() {
     const channel = supabase
       .channel('contact_messages_changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_messages' }, fetchUnread)
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  useEffect(() => {
+    const fetchNewOrders = async () => {
+      const { count } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'new');
+      setNewOrders(count || 0);
+    };
+    fetchNewOrders();
+
+    const channel = supabase
+      .channel('orders_changes_badge')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchNewOrders)
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
@@ -157,6 +176,11 @@ export default function AdminLayout() {
                   {unreadMessages}
                 </span>
               )}
+              {item.url === '/admin/orders' && newOrders > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold animate-pulse">
+                  {newOrders}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
@@ -216,6 +240,11 @@ export default function AdminLayout() {
                 {item.url === '/admin/messages' && unreadMessages > 0 && (
                   <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold">
                     {unreadMessages}
+                  </span>
+                )}
+                {item.url === '/admin/orders' && newOrders > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold animate-pulse">
+                    {newOrders}
                   </span>
                 )}
               </Link>
