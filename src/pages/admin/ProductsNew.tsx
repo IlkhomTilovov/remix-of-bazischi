@@ -922,7 +922,7 @@ export default function ProductsNew() {
 
               <Separator />
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={formData.is_negotiable}
@@ -936,13 +936,6 @@ export default function ProductsNew() {
                     onCheckedChange={(checked) => setFormData({ ...formData, in_stock: checked })}
                   />
                   <Label>Mavjud</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={formData.is_featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
-                  />
-                  <Label>Tanlangan</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Switch
