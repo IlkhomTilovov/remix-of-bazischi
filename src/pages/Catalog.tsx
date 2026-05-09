@@ -34,9 +34,13 @@ export default function Catalog() {
   // Resolve slug to category ID for filtering - only return UUID or 'all'
   const resolvedCategoryId = useMemo(() => {
     if (initialCategoryParam === 'all') return 'all';
+    if (categories.length === 0) return null; // categories still loading
     const found = categories.find(c => c.slug === initialCategoryParam || c.id === initialCategoryParam);
-    return found ? found.id : null; // null means still resolving
+    return found ? found.id : 'all';
   }, [initialCategoryParam, categories]);
+
+  // True while we know the URL has a category slug but categories haven't loaded yet
+  const isResolvingCategory = initialCategoryParam !== 'all' && resolvedCategoryId === null;
 
   const [sidebarFilters, setSidebarFilters] = useState<SidebarFilters>({
     categoryId: 'all',
