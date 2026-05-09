@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, ShoppingBag, MessageCircle, Phone, Check, Loader2, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,6 +28,7 @@ export default function ProductDetails() {
   const { settings } = useSystemSettings();
   const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
   const { addItem, isInCart } = useCart();
+  const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
@@ -363,10 +364,18 @@ export default function ProductDetails() {
               </Button>
             </div>
 
-            <Button asChild variant="ghost" className="w-full gap-2 mb-4">
-              <a href={`tel:${contactPhone.replace(/\s/g, '')}`}>
-                <Phone className="w-4 h-4" /> {t.products.requestConsultation}
-              </a>
+            <Button
+              variant="ghost"
+              className="w-full gap-2 mb-4"
+              onClick={() => {
+                if (!isInCart(product.id)) {
+                  addItem(product as any, 1, selectedSize, selectedColor);
+                }
+                navigate('/checkout');
+              }}
+              disabled={!product.in_stock}
+            >
+              <Phone className="w-4 h-4" /> {t.products.requestConsultation}
             </Button>
 
             {/* Materials */}
