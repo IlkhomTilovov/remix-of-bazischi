@@ -92,10 +92,10 @@ export function Footer() {
             />
             <ul className="space-y-3">
               {navLinks.map((link) => (
-                <li key={link.to}>
+                <li key={link.to} className="w-fit">
                   <Link
                     to={link.to}
-                    className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300"
+                    className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300 inline-block"
                   >
                     {link.label}
                   </Link>
