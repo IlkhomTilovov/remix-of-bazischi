@@ -90,7 +90,7 @@ export function Footer() {
               className="font-serif text-lg font-semibold text-foreground mb-6 tracking-wide"
               section="footer"
             />
-            <ul className="space-y-3">
+            <ul className="space-y-3 w-fit">
               {navLinks.map((link) => (
                 <li key={link.to} className="w-fit">
                   <Link
