@@ -37,7 +37,7 @@ export function Footer() {
   return (
     <footer className="bg-secondary border-t border-border">
       <div className="container mx-auto px-4 lg:px-8 py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 items-start">
           {/* Brand */}
           <div className="space-y-6">
             <Link to="/" className="inline-block">
@@ -82,7 +82,7 @@ export function Footer() {
           </div>
 
           {/* Navigation */}
-          <div>
+          <div className="lg:justify-self-center">
             <EditableText
               contentKey="footer_nav_title"
               fallback="Sahifalar"
@@ -105,7 +105,7 @@ export function Footer() {
           </div>
 
           {/* Services - editable */}
-          <div>
+          <div className="lg:justify-self-center">
             <EditableText
               contentKey="footer_services_title"
               fallback="Xizmatlar"
@@ -132,7 +132,7 @@ export function Footer() {
           </div>
 
           {/* Contact - editable */}
-          <div>
+          <div className="lg:justify-self-center">
             <EditableText
               contentKey="footer_contact_title"
               fallback="Bog'lanish"
