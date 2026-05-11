@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import {
   Plus,
@@ -21,6 +21,9 @@ import {
   Gauge,
   ShieldCheck,
   Info,
+  Save,
+  FolderOpen,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,12 +35,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface Specification {
   id: string;
   label: string;
   value: string;
   icon?: string;
+}
+
+interface SpecTemplate {
+  id: string;
+  name: string;
+  specs: Specification[];
 }
 
 export const SPEC_ICONS: Record<string, any> = {
@@ -81,6 +110,31 @@ interface Props {
 
 export function SpecificationsBuilder({ value, onChange }: Props) {
   const specs = value || [];
+  const [templates, setTemplates] = useState<SpecTemplate[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [loadOpen, setLoadOpen] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const fetchTemplates = async () => {
+    setLoadingTemplates(true);
+    const { data, error } = await (supabase as any)
+      .from('spec_templates')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      setTemplates(
+        data.map((t: any) => ({ id: t.id, name: t.name, specs: t.specs || [] }))
+      );
+    }
+    setLoadingTemplates(false);
+  };
+
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
 
   const addSpec = (preset?: Omit<Specification, 'id'>) => {
     const newSpec: Specification = {
@@ -105,16 +159,92 @@ export function SpecificationsBuilder({ value, onChange }: Props) {
     onChange([...specs, ...presetSpecs]);
   };
 
+  const handleSaveTemplate = async () => {
+    if (!templateName.trim()) {
+      toast.error('Shablon nomini kiriting');
+      return;
+    }
+    if (specs.length === 0) {
+      toast.error("Saqlash uchun xususiyatlar yo'q");
+      return;
+    }
+    setSaving(true);
+    const cleanSpecs = specs.map((s) => ({
+      id: s.id,
+      label: s.label,
+      value: s.value,
+      icon: s.icon || 'info',
+    }));
+    const { error } = await (supabase as any).from('spec_templates').insert({
+      name: templateName.trim(),
+      specs: cleanSpecs,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error('Saqlashda xatolik: ' + error.message);
+      return;
+    }
+    toast.success('Shablon saqlandi');
+    setTemplateName('');
+    setSaveOpen(false);
+    fetchTemplates();
+  };
+
+  const handleLoadTemplate = (tpl: SpecTemplate, mode: 'replace' | 'append') => {
+    const loaded = (tpl.specs || []).map((s) => ({
+      ...s,
+      id: crypto.randomUUID(),
+      icon: s.icon || 'info',
+    }));
+    onChange(mode === 'replace' ? loaded : [...specs, ...loaded]);
+    toast.success(`"${tpl.name}" yuklandi`);
+    setLoadOpen(false);
+  };
+
+  const handleDeleteTemplate = async () => {
+    if (!deleteId) return;
+    const { error } = await (supabase as any)
+      .from('spec_templates')
+      .delete()
+      .eq('id', deleteId);
+    if (error) {
+      toast.error("O'chirishda xatolik");
+      return;
+    }
+    toast.success("Shablon o'chirildi");
+    setDeleteId(null);
+    fetchTemplates();
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <Label className="text-base font-semibold">Xususiyatlar</Label>
           <p className="text-xs text-muted-foreground mt-0.5">
             Mahsulot uchun texnik ma'lumotlarni qo'shing
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setLoadOpen(true)}
+          >
+            <FolderOpen className="w-4 h-4 mr-1.5" />
+            Shablonlar ({templates.length})
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setSaveOpen(true)}
+            disabled={specs.length === 0}
+          >
+            <Save className="w-4 h-4 mr-1.5" />
+            Shablon sifatida saqlash
+          </Button>
           {specs.length === 0 && (
             <Button type="button" variant="outline" size="sm" onClick={loadPresets}>
               <Sparkles className="w-4 h-4 mr-1.5" />
@@ -135,7 +265,7 @@ export function SpecificationsBuilder({ value, onChange }: Props) {
             Hali xususiyatlar qo'shilmagan
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            "Qo'shish" yoki "Namuna yuklash" tugmasini bosing
+            "Shablonlar"dan tanlang yoki "Qo'shish" tugmasini bosing
           </p>
         </div>
       ) : (
@@ -164,7 +294,6 @@ export function SpecificationsBuilder({ value, onChange }: Props) {
                     </div>
 
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2">
-                      {/* Icon */}
                       <div className="md:col-span-3">
                         <Select
                           value={spec.icon || 'info'}
@@ -192,7 +321,6 @@ export function SpecificationsBuilder({ value, onChange }: Props) {
                         </Select>
                       </div>
 
-                      {/* Label */}
                       <Input
                         className="md:col-span-5"
                         placeholder="Nomi (masalan: UV Himoya)"
@@ -200,7 +328,6 @@ export function SpecificationsBuilder({ value, onChange }: Props) {
                         onChange={(e) => updateSpec(spec.id, { label: e.target.value })}
                       />
 
-                      {/* Value */}
                       <Input
                         className="md:col-span-4"
                         placeholder="Qiymat (masalan: 99%)"
@@ -260,6 +387,133 @@ export function SpecificationsBuilder({ value, onChange }: Props) {
           </div>
         </motion.div>
       )}
+
+      {/* Save Template Dialog */}
+      <Dialog open={saveOpen} onOpenChange={setSaveOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Shablon sifatida saqlash</DialogTitle>
+            <DialogDescription>
+              Joriy {specs.length} ta xususiyatni keyinchalik qayta ishlatish uchun nom bilan saqlang.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label>Shablon nomi</Label>
+            <Input
+              placeholder="Masalan: Avtomobil tanirovkasi"
+              value={templateName}
+              onChange={(e) => setTemplateName(e.target.value)}
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSaveOpen(false)}>
+              Bekor qilish
+            </Button>
+            <Button onClick={handleSaveTemplate} disabled={saving}>
+              {saving && <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />}
+              Saqlash
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Load Template Dialog */}
+      <Dialog open={loadOpen} onOpenChange={setLoadOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Saqlangan shablonlar</DialogTitle>
+            <DialogDescription>
+              Shablonni tanlang — joriy xususiyatlar ustiga qo'shish yoki almashtirish.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto space-y-2">
+            {loadingTemplates ? (
+              <div className="py-8 text-center text-muted-foreground">
+                <Loader2 className="w-5 h-5 mx-auto animate-spin" />
+              </div>
+            ) : templates.length === 0 ? (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                Hali shablonlar saqlanmagan
+              </div>
+            ) : (
+              templates.map((tpl) => (
+                <div
+                  key={tpl.id}
+                  className="border rounded-xl p-3 hover:border-primary/40 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate">{tpl.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {tpl.specs.length} ta xususiyat
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {tpl.specs.slice(0, 5).map((s, i) => (
+                          <span
+                            key={i}
+                            className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
+                          >
+                            {s.label}: {s.value}
+                          </span>
+                        ))}
+                        {tpl.specs.length > 5 && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                            +{tpl.specs.length - 5}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      <Button
+                        size="sm"
+                        onClick={() => handleLoadTemplate(tpl, 'replace')}
+                      >
+                        Almashtirish
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleLoadTemplate(tpl, 'append')}
+                      >
+                        Qo'shish
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDeleteId(tpl.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Shablonni o'chirish?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bu amalni qaytarib bo'lmaydi.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Bekor</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteTemplate}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              O'chirish
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
