@@ -529,6 +529,30 @@ export type Database = {
         }
         Relationships: []
       }
+      spec_templates: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          specs: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          specs?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          specs?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       system_settings: {
         Row: {
           address_ru: string | null
