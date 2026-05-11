@@ -37,7 +37,7 @@ export function Footer() {
   return (
     <footer className="bg-secondary border-t border-border">
       <div className="container mx-auto px-4 lg:px-8 py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:1fr_1fr_1.5fr_1fr] gap-12 items-start justify-items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:1.3fr_0.7fr_1.6fr_1fr] gap-12 items-start justify-items-start">
           {/* Brand */}
           <div className="space-y-6">
             <Link to="/" className="inline-block">
