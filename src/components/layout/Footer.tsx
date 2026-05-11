@@ -82,7 +82,7 @@ export function Footer() {
           </div>
 
           {/* Navigation */}
-          <div className="lg:justify-self-center">
+          <div>
             <EditableText
               contentKey="footer_nav_title"
               fallback="Sahifalar"
@@ -105,7 +105,7 @@ export function Footer() {
           </div>
 
           {/* Services - editable */}
-          <div className="lg:justify-self-center">
+          <div>
             <EditableText
               contentKey="footer_services_title"
               fallback="Xizmatlar"
@@ -132,7 +132,7 @@ export function Footer() {
           </div>
 
           {/* Contact - editable */}
-          <div className="lg:justify-self-center">
+          <div>
             <EditableText
               contentKey="footer_contact_title"
               fallback="Bog'lanish"
