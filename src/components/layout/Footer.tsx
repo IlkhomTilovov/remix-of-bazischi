@@ -37,7 +37,7 @@ export function Footer() {
   return (
     <footer className="bg-secondary border-t border-border">
       <div className="container mx-auto px-4 lg:px-8 py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 items-start justify-items-start">
           {/* Brand */}
           <div className="space-y-6">
             <Link to="/" className="inline-block">
@@ -82,7 +82,7 @@ export function Footer() {
           </div>
 
           {/* Navigation */}
-          <div className="w-fit">
+          <div>
             <EditableText
               contentKey="footer_nav_title"
               fallback="Sahifalar"
@@ -90,7 +90,7 @@ export function Footer() {
               className="font-serif text-lg font-semibold text-foreground mb-6 tracking-wide"
               section="footer"
             />
-            <ul className="space-y-3 w-fit">
+            <ul className="space-y-3">
               {navLinks.map((link) => (
                 <li key={link.to} className="w-fit">
                   <Link
