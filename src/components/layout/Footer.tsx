@@ -82,7 +82,7 @@ export function Footer() {
           </div>
 
           {/* Navigation */}
-          <div>
+          <div className="w-fit">
             <EditableText
               contentKey="footer_nav_title"
               fallback="Sahifalar"
