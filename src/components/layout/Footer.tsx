@@ -81,29 +81,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <EditableText
-              contentKey="footer_nav_title"
-              fallback="Sahifalar"
-              as="h4"
-              className="font-serif text-lg font-semibold text-foreground mb-6 tracking-wide"
-              section="footer"
-            />
-            <ul className="space-y-3">
-              {navLinks.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Services - editable */}
           <div>
             <EditableText
@@ -128,6 +105,29 @@ export function Footer() {
               ) : (
                 <li className="text-muted-foreground text-sm">—</li>
               )}
+            </ul>
+          </div>
+
+          {/* Navigation */}
+          <div>
+            <EditableText
+              contentKey="footer_nav_title"
+              fallback="Sahifalar"
+              as="h4"
+              className="font-serif text-lg font-semibold text-foreground mb-6 tracking-wide"
+              section="footer"
+            />
+            <ul className="space-y-3">
+              {navLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-muted-foreground hover:text-primary text-sm transition-colors duration-300"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
