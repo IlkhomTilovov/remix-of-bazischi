@@ -105,7 +105,7 @@ export function Footer() {
           </div>
 
           {/* Services - editable */}
-          <div className="lg:ml-[30px]">
+          <div>
             <EditableText
               contentKey="footer_services_title"
               fallback="Xizmatlar"
