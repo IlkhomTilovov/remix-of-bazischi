@@ -536,6 +536,7 @@ export default function ProductsNew() {
       variants_uz: (formData.variants_uz || []).length > 0 ? formData.variants_uz : [],
       variants_ru: (formData.variants_ru || []).length > 0 ? formData.variants_ru : [],
       specifications: (formData.specifications || []) as any,
+      sort_order: formData.sort_order ? parseInt(formData.sort_order, 10) || 0 : 0,
     };
 
     try {
