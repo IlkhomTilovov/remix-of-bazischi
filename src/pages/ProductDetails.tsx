@@ -397,6 +397,9 @@ export default function ProductDetails() {
         {(fullDescription || description) && (
           <div className="mt-12">
             <div className="p-6 bg-card rounded-xl">
+              <h2 className="text-xl font-semibold text-foreground mb-4">
+                {language === 'uz' ? "To'liq tavsif" : 'Полное описание'}
+              </h2>
               <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
                 {fullDescription || description}
               </div>
