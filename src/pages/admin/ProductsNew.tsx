@@ -76,6 +76,7 @@ interface Product {
   keyword_ru: string | null;
   variants_uz: string[] | null;
   variants_ru: string[] | null;
+  sort_order: number | null;
 }
 
 interface FormData {
@@ -111,6 +112,7 @@ interface FormData {
   variants_uz: string[];
   variants_ru: string[];
   specifications: Specification[];
+  sort_order: string;
 }
 
 const emptyForm: FormData = {
@@ -146,6 +148,7 @@ const emptyForm: FormData = {
   variants_uz: [],
   variants_ru: [],
   specifications: [],
+  sort_order: '',
 };
 
 const ADMIN_PAGE_SIZE = 20;
@@ -385,6 +388,7 @@ export default function ProductsNew() {
       variants_uz: (product as any).variants_uz || product.keyword_variations || [],
       variants_ru: (product as any).variants_ru || [],
       specifications: ((product as any).specifications as Specification[]) || [],
+      sort_order: product.sort_order?.toString() || '',
     });
     setSlugError('');
     setActiveTab('basic');
@@ -532,6 +536,7 @@ export default function ProductsNew() {
       variants_uz: (formData.variants_uz || []).length > 0 ? formData.variants_uz : [],
       variants_ru: (formData.variants_ru || []).length > 0 ? formData.variants_ru : [],
       specifications: (formData.specifications || []) as any,
+      sort_order: formData.sort_order ? parseInt(formData.sort_order, 10) || 0 : 0,
     };
 
     try {
@@ -861,6 +866,19 @@ export default function ProductsNew() {
                     placeholder="На русском"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Tartib raqami</Label>
+                <Input
+                  type="number"
+                  value={formData.sort_order}
+                  onChange={(e) => setFormData({ ...formData, sort_order: e.target.value })}
+                  placeholder="0"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Kichik raqam birinchi ko'rinadi
+                </p>
               </div>
 
               <div className="space-y-2">
