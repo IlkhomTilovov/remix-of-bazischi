@@ -240,6 +240,7 @@ export default function ProductsNew() {
       const to = from + ADMIN_PAGE_SIZE - 1;
 
       query = query
+        .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false })
         .range(from, to);
 
