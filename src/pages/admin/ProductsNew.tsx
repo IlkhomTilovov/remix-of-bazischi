@@ -148,6 +148,7 @@ const emptyForm: FormData = {
   variants_uz: [],
   variants_ru: [],
   specifications: [],
+  sort_order: '',
 };
 
 const ADMIN_PAGE_SIZE = 20;
