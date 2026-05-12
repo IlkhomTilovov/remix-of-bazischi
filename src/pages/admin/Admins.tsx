@@ -491,12 +491,12 @@ export default function Admins() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Email *</Label>
+              <Label>Login *</Label>
               <Input
                 type="email"
                 value={formEmail}
                 onChange={(e) => setFormEmail(e.target.value)}
-                placeholder="email@example.com"
+                placeholder="login@gmail.com"
               />
             </div>
             <div className="space-y-2">
