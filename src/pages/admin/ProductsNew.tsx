@@ -869,6 +869,19 @@ export default function ProductsNew() {
               </div>
 
               <div className="space-y-2">
+                <Label>Tartib raqami</Label>
+                <Input
+                  type="number"
+                  value={formData.sort_order}
+                  onChange={(e) => setFormData({ ...formData, sort_order: e.target.value })}
+                  placeholder="0"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Kichik raqam birinchi ko'rinadi
+                </p>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Slug (URL)</Label>
                 <Input
                   value={formData.slug}
