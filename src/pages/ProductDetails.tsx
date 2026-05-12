@@ -215,7 +215,7 @@ export default function ProductDetails() {
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Images */}
-          <div>
+          <div className="min-w-0">
             <div 
               className="aspect-square rounded-2xl overflow-hidden bg-muted mb-4 cursor-zoom-in"
               onClick={() => images.length > 0 && setLightboxOpen(true)}
@@ -283,7 +283,7 @@ export default function ProductDetails() {
           </div>
 
           {/* Info */}
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2 mb-2">
               {product.in_stock ? (
                 <span className="text-sm text-green-600 font-medium">{t.products.inStock}</span>
@@ -292,7 +292,7 @@ export default function ProductDetails() {
               )}
             </div>
 
-            <h1 className="font-serif text-3xl font-bold mb-4">{h1Text}</h1>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold mb-4 break-words">{h1Text}</h1>
             {targetKeyword && targetKeyword !== name && <p className="text-lg text-muted-foreground mb-2">{name}</p>}
             {description && <p className="text-muted-foreground mb-6">{description}</p>}
 
