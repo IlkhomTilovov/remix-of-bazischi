@@ -388,6 +388,7 @@ export default function ProductsNew() {
       variants_uz: (product as any).variants_uz || product.keyword_variations || [],
       variants_ru: (product as any).variants_ru || [],
       specifications: ((product as any).specifications as Specification[]) || [],
+      sort_order: product.sort_order?.toString() || '',
     });
     setSlugError('');
     setActiveTab('basic');
