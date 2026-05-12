@@ -496,7 +496,7 @@ export default function Admins() {
                 type="email"
                 value={formEmail}
                 onChange={(e) => setFormEmail(e.target.value)}
-                placeholder="email@example.com"
+                placeholder="login@gmail.com"
               />
             </div>
             <div className="space-y-2">
