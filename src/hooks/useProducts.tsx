@@ -30,9 +30,20 @@ export interface Product {
   meta_description_uz: string | null;
   meta_description_ru: string | null;
   meta_keywords: string | null;
+  sort_order: number | null;
   created_at: string;
   updated_at: string;
 }
+
+const getSortRank = (sortOrder: number | null | undefined) =>
+  typeof sortOrder === 'number' && sortOrder > 0 ? sortOrder : Number.MAX_SAFE_INTEGER;
+
+const sortProductsByManualOrder = (products: Product[]) =>
+  [...products].sort((a, b) => {
+    const rankDiff = getSortRank(a.sort_order) - getSortRank(b.sort_order);
+    if (rankDiff !== 0) return rankDiff;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
 export interface Category {
   id: string;
@@ -165,7 +176,7 @@ export function useProducts(
       if (queryError) throw queryError;
 
       // Client-side filter for discounted (original_price > price)
-      let filteredProducts = (products || []) as Product[];
+      let filteredProducts = sortProductsByManualOrder((products || []) as Product[]);
       if (filters.discounted) {
         filteredProducts = filteredProducts.filter(
           p => p.original_price && p.price && p.original_price > p.price
