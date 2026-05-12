@@ -219,25 +219,21 @@ export function useFeaturedProducts(limit: number = 8) {
           .from('products')
           .select('*')
           .eq('is_active', true)
-          .eq('is_featured', true)
-          .order('sort_order', { ascending: true })
-          .limit(limit);
+          .eq('is_featured', true);
 
         if (featuredError) throw featuredError;
 
         // If no featured products, show all active products
         if (featured && featured.length > 0) {
-          setProducts(featured);
+          setProducts(sortProductsByManualOrder(featured as Product[]).slice(0, limit));
         } else {
           const { data: allActive, error: allError } = await supabase
             .from('products')
             .select('*')
-            .eq('is_active', true)
-            .order('created_at', { ascending: false })
-            .limit(limit);
+            .eq('is_active', true);
 
           if (allError) throw allError;
-          setProducts(allActive || []);
+          setProducts(sortProductsByManualOrder((allActive || []) as Product[]).slice(0, limit));
         }
       } catch (err) {
         console.error('Error fetching featured products:', err);
