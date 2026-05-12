@@ -112,6 +112,7 @@ interface FormData {
   variants_uz: string[];
   variants_ru: string[];
   specifications: Specification[];
+  sort_order: string;
 }
 
 const emptyForm: FormData = {
