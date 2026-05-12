@@ -76,6 +76,7 @@ interface Product {
   keyword_ru: string | null;
   variants_uz: string[] | null;
   variants_ru: string[] | null;
+  sort_order: number | null;
 }
 
 interface FormData {
