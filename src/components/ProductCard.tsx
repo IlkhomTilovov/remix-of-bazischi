@@ -69,7 +69,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
         <div className="flex items-center justify-between">
           {price > 0 && (
             <div>
-              <span className="font-serif font-bold text-lg text-foreground">
+              <span className="font-bold text-lg text-foreground">
                 {formatPrice(price)}
               </span>
               <span className="text-xs text-muted-foreground ml-1">{t.products.currency}</span>
