@@ -154,9 +154,13 @@ export default function Catalog() {
     if (sidebarFilters.applications.length > 0) params.set('application', sidebarFilters.applications.join(','));
     if (sidebarFilters.inStock) params.set('in_stock', '1');
     if (sidebarFilters.discounted) params.set('discount', '1');
-    if (currentPage > 1) params.set('page', currentPage.toString());
+    // Preserve current page from URL (handled separately by handlePageChange)
+    const currentUrlPage = searchParams.get('page');
+    if (currentUrlPage && parseInt(currentUrlPage, 10) > 1) {
+      params.set('page', currentUrlPage);
+    }
     setSearchParams(params, { replace: true });
-  }, [sidebarFilters, currentPage, setSearchParams, filterOptions.maxPrice, resolvedCategoryId]);
+  }, [sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
 
   const handleApplyFilters = useCallback((newFilters: SidebarFilters) => {
     // If user changed the category via the dropdown, push it into the URL
