@@ -78,8 +78,13 @@ export default function Catalog() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setCurrentPage(1);
+      setDebouncedSearch(prev => {
+        if (prev !== search) {
+          setCurrentPage(1);
+          return search;
+        }
+        return prev;
+      });
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
