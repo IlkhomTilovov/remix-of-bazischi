@@ -215,7 +215,11 @@ export default function ProductDetails() {
           className="mb-6 gap-2"
           onClick={() => {
             const state = location.state as { fromCatalog?: boolean; catalogSearch?: string } | null;
-            if (state?.fromCatalog) {
+            // Prefer native browser back so the previous catalog history entry
+            // (with its scroll position and pagination) is restored exactly.
+            if (state?.fromCatalog && window.history.length > 1) {
+              navigate(-1);
+            } else if (state?.fromCatalog) {
               navigate(`/catalog${state.catalogSearch || ''}`, { replace: true, state: { restoreCatalogScroll: true } });
             } else if (window.history.length > 1) {
               navigate(-1);
