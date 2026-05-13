@@ -155,12 +155,12 @@ export default function Catalog() {
     if (sidebarFilters.inStock) params.set('in_stock', '1');
     if (sidebarFilters.discounted) params.set('discount', '1');
     // Preserve current page from URL (handled separately by handlePageChange)
-    const currentUrlPage = searchParams.get('page');
+    const currentUrlPage = new URLSearchParams(window.location.search).get('page');
     if (currentUrlPage && parseInt(currentUrlPage, 10) > 1) {
       params.set('page', currentUrlPage);
     }
     setSearchParams(params, { replace: true });
-  }, [sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
+  }, [sidebarFilters, filterOptions.maxPrice, resolvedCategoryId, setSearchParams]);
 
   const handleApplyFilters = useCallback((newFilters: SidebarFilters) => {
     // If user changed the category via the dropdown, push it into the URL
