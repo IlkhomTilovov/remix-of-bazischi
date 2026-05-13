@@ -20,9 +20,10 @@ interface ProductCardProps {
     slug?: string | null;
     original_price?: number | null;
   };
+  onOpen?: () => void;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, onOpen }: ProductCardProps) {
   const { language, t } = useLanguage();
   const { addItem, isInCart } = useCart();
   const inCart = isInCart(product.id);
@@ -39,8 +40,11 @@ export function ProductCard({ product }: ProductCardProps) {
     : `/product/${product.id}`;
 
   return (
-    <div className="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-300">
-      <Link to={productUrl} className="block relative aspect-[4/3] overflow-hidden">
+    <div
+      data-catalog-product-id={product.id}
+      className="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-300"
+    >
+      <Link to={productUrl} onClick={onOpen} className="block relative aspect-[4/3] overflow-hidden">
         <LazyImage
           src={images[0] || '/placeholder.svg'}
           alt={name}
@@ -55,7 +59,7 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
       </Link>
       <div className="p-4">
-        <Link to={productUrl}>
+        <Link to={productUrl} onClick={onOpen}>
           <h3 className="font-medium text-foreground line-clamp-2 hover:text-primary transition-colors mb-2">
             {name}
           </h3>
