@@ -5,6 +5,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { LazyImage } from '@/components/LazyImage';
 import type { Product } from '@/hooks/useProducts';
+import type { Product as CartProduct } from '@/lib/data';
 
 // Support both database and static data types
 interface ProductCardProps {
@@ -91,10 +92,23 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
                   id: product.id,
                   name_uz: product.name_uz,
                   name_ru: product.name_ru,
+                  description_uz: 'description_uz' in product ? product.description_uz || '' : '',
+                  description_ru: 'description_ru' in product ? product.description_ru || '' : '',
+                  fullDescription_uz: 'full_description_uz' in product ? product.full_description_uz || '' : '',
+                  fullDescription_ru: 'full_description_ru' in product ? product.full_description_ru || '' : '',
                   price,
                   images,
+                  categoryId: 'category_id' in product ? product.category_id || '' : '',
+                  materials: 'materials' in product ? product.materials || [] : [],
+                  sizes: 'sizes' in product ? product.sizes || [] : [],
+                  colors: 'colors' in product ? product.colors || [] : [],
+                  rating: 'rating' in product ? product.rating || 0 : 0,
+                  reviewCount: 'reviewCount' in product ? product.reviewCount || 0 : 0,
+                  inStock: 'in_stock' in product ? Boolean(product.in_stock) : true,
+                  featured: 'is_featured' in product ? Boolean(product.is_featured) : false,
+                  active: 'is_active' in product ? Boolean(product.is_active) : true,
                 };
-                addItem(cartProduct as any);
+                addItem(cartProduct as CartProduct);
               }
             }}
           >
