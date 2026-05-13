@@ -23,16 +23,11 @@ export default function Catalog() {
   
   const initialCategoryParam = searchParams.get('category') || 'all';
   const initialPage = parseInt(searchParams.get('page') || '1', 10);
-  
+
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(initialPage);
-
-  // Keep currentPage in sync with URL ?page= param (e.g. on back/forward nav)
-  useEffect(() => {
-    const urlPage = parseInt(searchParams.get('page') || '1', 10);
-    setCurrentPage(prev => (prev === urlPage ? prev : urlPage));
-  }, [searchParams]);
+  // Derive currentPage directly from URL — single source of truth, no race conditions
+  const currentPage = initialPage;
 
   // When user navigates to a different category via footer/header links
   // (same /catalog route, only ?category= changes), reset scroll to top.
