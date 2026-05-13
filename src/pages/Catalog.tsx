@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigationType } from 'react-router-dom';
 import { Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,7 @@ export default function Catalog() {
   const { settings } = useSystemSettings();
   const { isAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigationType = useNavigationType();
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
@@ -31,9 +32,11 @@ export default function Catalog() {
 
   // When user navigates to a different category via footer/header links
   // (same /catalog route, only ?category= changes), reset scroll to top.
+  // Skip on POP (back/forward) — we restore the saved scroll position below.
   useEffect(() => {
+    if (navigationType === 'POP') return;
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-  }, [initialCategoryParam]);
+  }, [initialCategoryParam, navigationType]);
 
   const { options: filterOptions } = useProductFilterOptions();
   const { categories } = useCategories();
@@ -118,6 +121,43 @@ export default function Catalog() {
 
   const { products, totalCount, totalPages, loading: productsLoading } = useProducts(currentPage, filters, PAGE_SIZE);
   const loading = productsLoading || isResolvingCategory;
+
+  // Persist scroll position per URL so back-navigation lands exactly where the user was.
+  const scrollKey = `catalog-scroll:${searchParams.toString()}`;
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    let raf = 0;
+    const save = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        sessionStorage.setItem(scrollKey, String(window.scrollY));
+      });
+    };
+    window.addEventListener('scroll', save, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', save);
+      cancelAnimationFrame(raf);
+    };
+  }, [scrollKey]);
+
+  // Restore scroll once products have rendered, only for back/forward navigation.
+  const restoredKeyRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (navigationType !== 'POP') return;
+    if (loading) return;
+    if (restoredKeyRef.current === scrollKey) return;
+    const saved = sessionStorage.getItem(scrollKey);
+    if (saved) {
+      const y = parseInt(saved, 10);
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: y, left: 0, behavior: 'instant' as ScrollBehavior });
+      });
+    }
+    restoredKeyRef.current = scrollKey;
+  }, [loading, navigationType, scrollKey]);
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
