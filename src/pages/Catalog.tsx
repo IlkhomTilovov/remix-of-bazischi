@@ -170,7 +170,9 @@ export default function Catalog() {
 
   const rememberCatalogPosition = useCallback((productId: string) => {
     const returnKey = getCatalogReturnKey(searchParams.toString());
-    sessionStorage.setItem(returnKey, JSON.stringify({ productId, scrollY: window.scrollY }));
+    const element = document.querySelector(`[data-catalog-product-id="${CSS.escape(productId)}"]`);
+    const productTop = element?.getBoundingClientRect().top ?? null;
+    sessionStorage.setItem(returnKey, JSON.stringify({ productId, scrollY: window.scrollY, productTop }));
     sessionStorage.setItem(scrollKey, String(window.scrollY));
   }, [searchParams, scrollKey]);
 
@@ -183,16 +185,19 @@ export default function Catalog() {
     const returnState = sessionStorage.getItem(getCatalogReturnKey(searchParams.toString()));
     if (returnState) {
       try {
-        const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number };
+        const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number; productTop?: number | null };
         const selector = parsed.productId ? `[data-catalog-product-id="${CSS.escape(parsed.productId)}"]` : '';
         const element = selector ? document.querySelector(selector) : null;
-        requestAnimationFrame(() => {
-          if (element) {
-            element.scrollIntoView({ block: 'center', behavior: 'instant' as ScrollBehavior });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (element && typeof parsed.productTop === 'number') {
+            const nextTop = window.scrollY + element.getBoundingClientRect().top - parsed.productTop;
+            window.scrollTo({ top: nextTop, left: 0, behavior: 'instant' as ScrollBehavior });
           } else if (typeof parsed.scrollY === 'number') {
             window.scrollTo({ top: parsed.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+          } else if (element) {
+            element.scrollIntoView({ block: 'nearest', behavior: 'instant' as ScrollBehavior });
           }
-        });
+        }));
         restoredKeyRef.current = scrollKey;
         return;
       } catch {
