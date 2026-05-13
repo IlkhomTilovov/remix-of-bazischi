@@ -37,6 +37,8 @@ const didPageAffectingFiltersChange = (current: SidebarFilters, next: SidebarFil
     return currentValue !== nextValue;
   });
 
+const getCatalogReturnKey = (search: string) => `catalog-return:${search}`;
+
 export default function Catalog() {
   const { language, t } = useLanguage();
   const { settings } = useSystemSettings();
@@ -166,12 +168,37 @@ export default function Catalog() {
     };
   }, [scrollKey]);
 
+  const rememberCatalogPosition = useCallback((productId: string) => {
+    const returnKey = getCatalogReturnKey(searchParams.toString());
+    sessionStorage.setItem(returnKey, JSON.stringify({ productId, scrollY: window.scrollY }));
+    sessionStorage.setItem(scrollKey, String(window.scrollY));
+  }, [searchParams, scrollKey]);
+
   // Restore scroll once products have rendered, only for back/forward navigation.
   const restoredKeyRef = useRef<string | null>(null);
   useEffect(() => {
     if (navigationType !== 'POP') return;
     if (loading) return;
     if (restoredKeyRef.current === scrollKey) return;
+    const returnState = sessionStorage.getItem(getCatalogReturnKey(searchParams.toString()));
+    if (returnState) {
+      try {
+        const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number };
+        const selector = parsed.productId ? `[data-catalog-product-id="${CSS.escape(parsed.productId)}"]` : '';
+        const element = selector ? document.querySelector(selector) : null;
+        requestAnimationFrame(() => {
+          if (element) {
+            element.scrollIntoView({ block: 'center', behavior: 'instant' as ScrollBehavior });
+          } else if (typeof parsed.scrollY === 'number') {
+            window.scrollTo({ top: parsed.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+          }
+        });
+        restoredKeyRef.current = scrollKey;
+        return;
+      } catch {
+        sessionStorage.removeItem(getCatalogReturnKey(searchParams.toString()));
+      }
+    }
     const saved = sessionStorage.getItem(scrollKey);
     if (saved) {
       const y = parseInt(saved, 10);
@@ -180,7 +207,7 @@ export default function Catalog() {
       });
     }
     restoredKeyRef.current = scrollKey;
-  }, [loading, navigationType, scrollKey]);
+  }, [loading, navigationType, searchParams, scrollKey]);
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
