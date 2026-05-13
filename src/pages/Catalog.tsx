@@ -32,9 +32,11 @@ export default function Catalog() {
 
   // When user navigates to a different category via footer/header links
   // (same /catalog route, only ?category= changes), reset scroll to top.
+  // Skip on POP (back/forward) — we restore the saved scroll position below.
   useEffect(() => {
+    if (navigationType === 'POP') return;
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-  }, [initialCategoryParam]);
+  }, [initialCategoryParam, navigationType]);
 
   const { options: filterOptions } = useProductFilterOptions();
   const { categories } = useCategories();
