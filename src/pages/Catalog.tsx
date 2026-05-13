@@ -11,6 +11,14 @@ import { useSEO } from '@/hooks/useSEO';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
 import { useAuth } from '@/hooks/useAuth';
 import { CatalogFilterSidebar, SidebarFilters } from '@/components/CatalogFilterSidebar';
+import {
+  clearCatalogRestoreRequest,
+  getCatalogProductSelector,
+  getCatalogScrollKey,
+  hasCatalogRestoreRequest,
+  persistCatalogReturnState,
+  readCatalogReturnState,
+} from '@/lib/catalogReturn';
 
 const PAGE_SIZE = 24;
 
@@ -36,8 +44,6 @@ const didPageAffectingFiltersChange = (current: SidebarFilters, next: SidebarFil
     }
     return currentValue !== nextValue;
   });
-
-const getCatalogReturnKey = (search: string) => `catalog-return:${search}`;
 
 export default function Catalog() {
   const { language, t } = useLanguage();
@@ -149,7 +155,7 @@ export default function Catalog() {
   const loading = productsLoading || isResolvingCategory;
 
   // Persist scroll position per URL so back-navigation lands exactly where the user was.
-  const scrollKey = `catalog-scroll:${searchParams.toString()}`;
+  const scrollKey = getCatalogScrollKey(searchParams);
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if ('scrollRestoration' in window.history) {
