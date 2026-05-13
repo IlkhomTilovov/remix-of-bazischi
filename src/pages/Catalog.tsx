@@ -176,10 +176,9 @@ export default function Catalog() {
   }, [scrollKey]);
 
   const rememberCatalogPosition = useCallback((productId: string) => {
-    const returnKey = getCatalogReturnKey(searchParams.toString());
-    const element = document.querySelector(`[data-catalog-product-id="${CSS.escape(productId)}"]`);
+    const element = document.querySelector(getCatalogProductSelector(productId));
     const productTop = element?.getBoundingClientRect().top ?? null;
-    sessionStorage.setItem(returnKey, JSON.stringify({ productId, scrollY: window.scrollY, productTop }));
+    persistCatalogReturnState({ productId, scrollY: window.scrollY, productTop, search: searchParams.toString() });
     sessionStorage.setItem(scrollKey, String(window.scrollY));
   }, [searchParams, scrollKey]);
 
@@ -190,44 +189,39 @@ export default function Catalog() {
   const restoredRef = useRef(false);
   const lastNavSignatureRef = useRef<string>('');
   useEffect(() => {
-    const stateFlag = Boolean((location.state as { restoreCatalogScroll?: boolean } | null)?.restoreCatalogScroll);
+    const locationState = location.state as { restoreCatalogScroll?: boolean; catalogProductId?: string; catalogScrollY?: number; catalogProductTop?: number | null; catalogSearchSignature?: string } | null;
+    const stateFlag = Boolean(locationState?.restoreCatalogScroll);
     const navSignature = `${navigationType}:${location.key}`;
     // Reset the lock whenever a fresh navigation arrives (POP back/forward, or new push with flag).
     if (lastNavSignatureRef.current !== navSignature) {
       lastNavSignatureRef.current = navSignature;
       restoredRef.current = false;
     }
-    const shouldRestore = navigationType === 'POP' || stateFlag;
+    const shouldRestore = navigationType === 'POP' || stateFlag || hasCatalogRestoreRequest(searchParams);
     if (!shouldRestore) return;
     if (loading) return;
     if (restoredRef.current) return;
 
-    const currentSearch = searchParams.toString();
-    const returnState = sessionStorage.getItem(getCatalogReturnKey(currentSearch));
+    const returnState = readCatalogReturnState(searchParams, locationState);
     const performScroll = () => {
       if (returnState) {
-        try {
-          const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number; productTop?: number | null };
-          const selector = parsed.productId ? `[data-catalog-product-id="${CSS.escape(parsed.productId)}"]` : '';
-          const element = selector ? document.querySelector(selector) : null;
-          if (element && typeof parsed.productTop === 'number') {
-            const nextTop = window.scrollY + element.getBoundingClientRect().top - parsed.productTop;
-            window.scrollTo({ top: Math.max(0, nextTop), left: 0, behavior: 'instant' as ScrollBehavior });
-            return;
-          }
-          if (typeof parsed.scrollY === 'number') {
-            window.scrollTo({ top: parsed.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
-            return;
-          }
-          if (element) {
-            element.scrollIntoView({ block: 'nearest', behavior: 'instant' as ScrollBehavior });
-            return;
-          }
-        } catch {
-          sessionStorage.removeItem(getCatalogReturnKey(currentSearch));
+        const selector = returnState.productId ? getCatalogProductSelector(returnState.productId) : '';
+        const element = selector ? document.querySelector(selector) : null;
+        if (element && typeof returnState.productTop === 'number') {
+          const nextTop = window.scrollY + element.getBoundingClientRect().top - returnState.productTop;
+          window.scrollTo({ top: Math.max(0, nextTop), left: 0, behavior: 'instant' as ScrollBehavior });
+          return;
+        }
+        if (typeof returnState.scrollY === 'number') {
+          window.scrollTo({ top: returnState.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+          return;
+        }
+        if (element) {
+          element.scrollIntoView({ block: 'center', behavior: 'instant' as ScrollBehavior });
+          return;
         }
       }
-      const saved = sessionStorage.getItem(`catalog-scroll:${currentSearch}`);
+      const saved = sessionStorage.getItem(scrollKey);
       if (saved) {
         const y = parseInt(saved, 10);
         if (Number.isFinite(y)) {
@@ -243,7 +237,8 @@ export default function Catalog() {
     if (stateFlag) {
       window.history.replaceState({ ...(window.history.state || {}), usr: null }, '');
     }
-  }, [loading, location.state, location.key, navigationType, searchParams]);
+    clearCatalogRestoreRequest();
+  }, [loading, location.state, location.key, navigationType, searchParams, scrollKey]);
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
