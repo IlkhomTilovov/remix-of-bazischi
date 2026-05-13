@@ -171,13 +171,23 @@ export default function Catalog() {
       }
       params.delete('page');
       setSearchParams(params, { replace: true });
+    } else if (currentPage > 1) {
+      // Reset to page 1 when filters change
+      const params = new URLSearchParams(searchParams);
+      params.delete('page');
+      setSearchParams(params, { replace: true });
     }
     setSidebarFilters(newFilters);
-    setCurrentPage(1);
-  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams]);
+  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams, currentPage]);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams);
+    if (page > 1) {
+      params.set('page', page.toString());
+    } else {
+      params.delete('page');
+    }
+    setSearchParams(params, { replace: true });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
