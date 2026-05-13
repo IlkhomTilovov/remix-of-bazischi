@@ -19,6 +19,7 @@ export default function Catalog() {
   const { settings } = useSystemSettings();
   const { isAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigationType = useNavigationType();
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
