@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigationType } from 'react-router-dom';
 
 /**
  * Hook to handle scroll behavior on route changes
  * - If URL has a hash, scroll to that element
- * - Otherwise always scroll to the top of the page (hero section)
+ * - On POP (back/forward) preserve native scroll restoration
+ * - Otherwise scroll to the top
  */
 export function useScrollToTop() {
   const { pathname, hash } = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
     if (hash) {
-      // Defer to allow target element to mount
       const timeout = setTimeout(() => {
         const element = document.querySelector(hash);
         if (element) {
@@ -23,9 +24,11 @@ export function useScrollToTop() {
       return () => clearTimeout(timeout);
     }
 
-    // Immediately jump to the top so the new page starts from its hero/top
+    // Don't override scroll on back/forward navigation — let browser restore
+    if (navigationType === 'POP') return;
+
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-  }, [pathname, hash]);
+  }, [pathname, hash, navigationType]);
 }
