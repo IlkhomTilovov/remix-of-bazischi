@@ -320,7 +320,7 @@ export default function ProductDetails() {
 
             {price > 0 && (
               <div className="flex items-baseline gap-3 mb-6">
-                <span className="font-serif text-3xl font-bold">{formatPrice(price)}</span>
+                <span className="text-3xl font-bold">{formatPrice(price)}</span>
                 <span className="text-muted-foreground">{t.products.currency}</span>
                 {product.original_price && product.original_price > price && (
                   <span className="text-lg text-muted-foreground line-through">
