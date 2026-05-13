@@ -14,6 +14,29 @@ import { CatalogFilterSidebar, SidebarFilters } from '@/components/CatalogFilter
 
 const PAGE_SIZE = 24;
 
+const pageAffectingFilterKeys: (keyof SidebarFilters)[] = [
+  'categoryId',
+  'materials',
+  'colors',
+  'furLengths',
+  'applications',
+  'inStock',
+  'discounted',
+];
+
+const areArraysEqual = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((item, index) => item === b[index]);
+
+const didPageAffectingFiltersChange = (current: SidebarFilters, next: SidebarFilters) =>
+  pageAffectingFilterKeys.some(key => {
+    const currentValue = current[key];
+    const nextValue = next[key];
+    if (Array.isArray(currentValue) && Array.isArray(nextValue)) {
+      return !areArraysEqual(currentValue, nextValue);
+    }
+    return currentValue !== nextValue;
+  });
+
 export default function Catalog() {
   const { language, t } = useLanguage();
   const { settings } = useSystemSettings();
@@ -23,12 +46,12 @@ export default function Catalog() {
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
-  const initialPage = parseInt(searchParams.get('page') || '1', 10);
+  const pageParam = Number.parseInt(searchParams.get('page') || '1', 10);
 
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   // Derive currentPage directly from URL — single source of truth, no race conditions
-  const currentPage = initialPage;
+  const currentPage = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 
   // When user navigates to a different category via footer/header links
   // (same /catalog route, only ?category= changes), reset scroll to top.
@@ -69,7 +92,7 @@ export default function Catalog() {
     if (resolvedCategoryId !== null && resolvedCategoryId !== sidebarFilters.categoryId) {
       setSidebarFilters(prev => ({ ...prev, categoryId: resolvedCategoryId }));
     }
-  }, [resolvedCategoryId]);
+  }, [resolvedCategoryId, sidebarFilters.categoryId]);
 
   // Sync priceMax with dynamic maxPrice once it loads (only first time, before user customizes)
   const priceMaxSynced = useRef(false);
@@ -117,7 +140,7 @@ export default function Catalog() {
     if (sidebarFilters.discounted) f.discounted = true;
 
     return f;
-  }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
+  }, [debouncedSearch, sidebarFilters, resolvedCategoryId]);
 
   const { products, totalCount, totalPages, loading: productsLoading } = useProducts(currentPage, filters, PAGE_SIZE);
   const loading = productsLoading || isResolvingCategory;
@@ -194,17 +217,19 @@ export default function Catalog() {
     if (sidebarFilters.applications.length > 0) params.set('application', sidebarFilters.applications.join(','));
     if (sidebarFilters.inStock) params.set('in_stock', '1');
     if (sidebarFilters.discounted) params.set('discount', '1');
-    // Preserve current page from URL (handled separately by handlePageChange)
-    const currentUrlPage = new URLSearchParams(window.location.search).get('page');
-    if (currentUrlPage && parseInt(currentUrlPage, 10) > 1) {
-      params.set('page', currentUrlPage);
+    if (currentPage > 1) {
+      params.set('page', currentPage.toString());
     }
-    setSearchParams(params, { replace: true });
-  }, [sidebarFilters, filterOptions.maxPrice, resolvedCategoryId, setSearchParams]);
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [sidebarFilters, filterOptions.maxPrice, resolvedCategoryId, categories, currentPage, searchParams, setSearchParams]);
 
   const handleApplyFilters = useCallback((newFilters: SidebarFilters) => {
     // If user changed the category via the dropdown, push it into the URL
     // immediately so the URL stays the source of truth.
+    const filtersChanged = didPageAffectingFiltersChange(sidebarFilters, newFilters);
+
     if (newFilters.categoryId !== sidebarFilters.categoryId) {
       const params = new URLSearchParams(searchParams);
       if (newFilters.categoryId === 'all') {
@@ -215,14 +240,14 @@ export default function Catalog() {
       }
       params.delete('page');
       setSearchParams(params, { replace: true });
-    } else if (currentPage > 1) {
+    } else if (filtersChanged && currentPage > 1) {
       // Reset to page 1 when filters change
       const params = new URLSearchParams(searchParams);
       params.delete('page');
       setSearchParams(params, { replace: true });
     }
     setSidebarFilters(newFilters);
-  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams, currentPage]);
+  }, [sidebarFilters, categories, searchParams, setSearchParams, currentPage]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
