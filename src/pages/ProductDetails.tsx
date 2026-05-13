@@ -14,6 +14,7 @@ import { useCart } from '@/hooks/useCart';
 import { useProductById, useProducts, useCategories, Product } from '@/hooks/useProducts';
 import { useAuth } from '@/hooks/useAuth';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
+import { requestCatalogRestore } from '@/lib/catalogReturn';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -215,6 +216,9 @@ export default function ProductDetails() {
           className="mb-6 gap-2"
           onClick={() => {
             const state = location.state as { fromCatalog?: boolean; catalogSearch?: string } | null;
+            if (state?.fromCatalog) {
+              requestCatalogRestore(state.catalogSearch || '');
+            }
             // Prefer native browser back so the previous catalog history entry
             // (with its scroll position and pagination) is restored exactly.
             if (state?.fromCatalog && window.history.length > 1) {
