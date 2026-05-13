@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Star, ShoppingBag, MessageCircle, Phone, Check, Loader2, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,6 +29,7 @@ export default function ProductDetails() {
   const contactPhone = settings?.contact_phone || '+998 95 707 00 08';
   const { addItem, isInCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAdmin } = useAuth();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
@@ -213,7 +214,10 @@ export default function ProductDetails() {
           variant="ghost"
           className="mb-6 gap-2"
           onClick={() => {
-            if (window.history.length > 1) {
+            const state = location.state as { fromCatalog?: boolean; catalogSearch?: string } | null;
+            if (state?.fromCatalog) {
+              navigate(`/catalog${state.catalogSearch || ''}`, { replace: true, state: { restoreCatalogScroll: true } });
+            } else if (window.history.length > 1) {
               navigate(-1);
             } else {
               navigate('/catalog');
