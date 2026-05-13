@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams, useNavigationType } from 'react-router-dom';
+import { useSearchParams, useNavigationType, useLocation } from 'react-router-dom';
 import { Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +45,7 @@ export default function Catalog() {
   const { isAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
@@ -179,7 +180,8 @@ export default function Catalog() {
   // Restore scroll once products have rendered, only for back/forward navigation.
   const restoredKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (navigationType !== 'POP') return;
+    const shouldRestore = navigationType === 'POP' || Boolean((location.state as { restoreCatalogScroll?: boolean } | null)?.restoreCatalogScroll);
+    if (!shouldRestore) return;
     if (loading) return;
     if (restoredKeyRef.current === scrollKey) return;
     const returnState = sessionStorage.getItem(getCatalogReturnKey(searchParams.toString()));
@@ -212,7 +214,7 @@ export default function Catalog() {
       });
     }
     restoredKeyRef.current = scrollKey;
-  }, [loading, navigationType, searchParams, scrollKey]);
+  }, [loading, location.state, navigationType, searchParams, scrollKey]);
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
