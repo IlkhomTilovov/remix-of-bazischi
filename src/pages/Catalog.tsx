@@ -23,10 +23,11 @@ export default function Catalog() {
   
   const initialCategoryParam = searchParams.get('category') || 'all';
   const initialPage = parseInt(searchParams.get('page') || '1', 10);
-  
+
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  // Derive currentPage directly from URL — single source of truth, no race conditions
+  const currentPage = initialPage;
 
   // When user navigates to a different category via footer/header links
   // (same /catalog route, only ?category= changes), reset scroll to top.
@@ -80,14 +81,17 @@ export default function Catalog() {
     const timer = setTimeout(() => {
       setDebouncedSearch(prev => {
         if (prev !== search) {
-          setCurrentPage(1);
+          // Reset to page 1 when search query actually changes
+          const params = new URLSearchParams(searchParams);
+          params.delete('page');
+          setSearchParams(params, { replace: true });
           return search;
         }
         return prev;
       });
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, searchParams, setSearchParams]);
 
   // Map sidebar filters to DB query filters
   const isUUID = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
@@ -150,9 +154,13 @@ export default function Catalog() {
     if (sidebarFilters.applications.length > 0) params.set('application', sidebarFilters.applications.join(','));
     if (sidebarFilters.inStock) params.set('in_stock', '1');
     if (sidebarFilters.discounted) params.set('discount', '1');
-    if (currentPage > 1) params.set('page', currentPage.toString());
+    // Preserve current page from URL (handled separately by handlePageChange)
+    const currentUrlPage = new URLSearchParams(window.location.search).get('page');
+    if (currentUrlPage && parseInt(currentUrlPage, 10) > 1) {
+      params.set('page', currentUrlPage);
+    }
     setSearchParams(params, { replace: true });
-  }, [sidebarFilters, currentPage, setSearchParams, filterOptions.maxPrice, resolvedCategoryId]);
+  }, [sidebarFilters, filterOptions.maxPrice, resolvedCategoryId, setSearchParams]);
 
   const handleApplyFilters = useCallback((newFilters: SidebarFilters) => {
     // If user changed the category via the dropdown, push it into the URL
@@ -167,13 +175,23 @@ export default function Catalog() {
       }
       params.delete('page');
       setSearchParams(params, { replace: true });
+    } else if (currentPage > 1) {
+      // Reset to page 1 when filters change
+      const params = new URLSearchParams(searchParams);
+      params.delete('page');
+      setSearchParams(params, { replace: true });
     }
     setSidebarFilters(newFilters);
-    setCurrentPage(1);
-  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams]);
+  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams, currentPage]);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams);
+    if (page > 1) {
+      params.set('page', page.toString());
+    } else {
+      params.delete('page');
+    }
+    setSearchParams(params, { replace: true });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
