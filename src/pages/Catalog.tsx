@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams, useNavigationType } from 'react-router-dom';
+import { useSearchParams, useNavigationType, useLocation } from 'react-router-dom';
 import { Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,12 +37,15 @@ const didPageAffectingFiltersChange = (current: SidebarFilters, next: SidebarFil
     return currentValue !== nextValue;
   });
 
+const getCatalogReturnKey = (search: string) => `catalog-return:${search}`;
+
 export default function Catalog() {
   const { language, t } = useLanguage();
   const { settings } = useSystemSettings();
   const { isAdmin } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
@@ -166,12 +169,43 @@ export default function Catalog() {
     };
   }, [scrollKey]);
 
+  const rememberCatalogPosition = useCallback((productId: string) => {
+    const returnKey = getCatalogReturnKey(searchParams.toString());
+    const element = document.querySelector(`[data-catalog-product-id="${CSS.escape(productId)}"]`);
+    const productTop = element?.getBoundingClientRect().top ?? null;
+    sessionStorage.setItem(returnKey, JSON.stringify({ productId, scrollY: window.scrollY, productTop }));
+    sessionStorage.setItem(scrollKey, String(window.scrollY));
+  }, [searchParams, scrollKey]);
+
   // Restore scroll once products have rendered, only for back/forward navigation.
   const restoredKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (navigationType !== 'POP') return;
+    const shouldRestore = navigationType === 'POP' || Boolean((location.state as { restoreCatalogScroll?: boolean } | null)?.restoreCatalogScroll);
+    if (!shouldRestore) return;
     if (loading) return;
     if (restoredKeyRef.current === scrollKey) return;
+    const returnState = sessionStorage.getItem(getCatalogReturnKey(searchParams.toString()));
+    if (returnState) {
+      try {
+        const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number; productTop?: number | null };
+        const selector = parsed.productId ? `[data-catalog-product-id="${CSS.escape(parsed.productId)}"]` : '';
+        const element = selector ? document.querySelector(selector) : null;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (element && typeof parsed.productTop === 'number') {
+            const nextTop = window.scrollY + element.getBoundingClientRect().top - parsed.productTop;
+            window.scrollTo({ top: nextTop, left: 0, behavior: 'instant' as ScrollBehavior });
+          } else if (typeof parsed.scrollY === 'number') {
+            window.scrollTo({ top: parsed.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+          } else if (element) {
+            element.scrollIntoView({ block: 'nearest', behavior: 'instant' as ScrollBehavior });
+          }
+        }));
+        restoredKeyRef.current = scrollKey;
+        return;
+      } catch {
+        sessionStorage.removeItem(getCatalogReturnKey(searchParams.toString()));
+      }
+    }
     const saved = sessionStorage.getItem(scrollKey);
     if (saved) {
       const y = parseInt(saved, 10);
@@ -180,7 +214,7 @@ export default function Catalog() {
       });
     }
     restoredKeyRef.current = scrollKey;
-  }, [loading, navigationType, scrollKey]);
+  }, [loading, location.state, navigationType, searchParams, scrollKey]);
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
@@ -357,7 +391,11 @@ export default function Catalog() {
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                   {products.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onOpen={() => rememberCatalogPosition(product.id)}
+                    />
                   ))}
                 </div>
 

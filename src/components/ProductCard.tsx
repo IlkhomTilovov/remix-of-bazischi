@@ -5,6 +5,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { LazyImage } from '@/components/LazyImage';
 import type { Product } from '@/hooks/useProducts';
+import type { Product as CartProduct } from '@/lib/data';
 
 // Support both database and static data types
 interface ProductCardProps {
@@ -20,9 +21,10 @@ interface ProductCardProps {
     slug?: string | null;
     original_price?: number | null;
   };
+  onOpen?: () => void;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, onOpen }: ProductCardProps) {
   const { language, t } = useLanguage();
   const { addItem, isInCart } = useCart();
   const inCart = isInCart(product.id);
@@ -37,10 +39,14 @@ export function ProductCard({ product }: ProductCardProps) {
   const productUrl = 'slug' in product && product.slug 
     ? `/product/${product.slug}` 
     : `/product/${product.id}`;
+  const linkState = { fromCatalog: true, catalogSearch: window.location.search };
 
   return (
-    <div className="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-300">
-      <Link to={productUrl} className="block relative aspect-[4/3] overflow-hidden">
+    <div
+      data-catalog-product-id={product.id}
+      className="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-300"
+    >
+      <Link to={productUrl} state={linkState} onClick={onOpen} className="block relative aspect-[4/3] overflow-hidden">
         <LazyImage
           src={images[0] || '/placeholder.svg'}
           alt={name}
@@ -55,7 +61,7 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
       </Link>
       <div className="p-4">
-        <Link to={productUrl}>
+        <Link to={productUrl} state={linkState} onClick={onOpen}>
           <h3 className="font-medium text-foreground line-clamp-2 hover:text-primary transition-colors mb-2">
             {name}
           </h3>
@@ -87,10 +93,23 @@ export function ProductCard({ product }: ProductCardProps) {
                   id: product.id,
                   name_uz: product.name_uz,
                   name_ru: product.name_ru,
+                  description_uz: 'description_uz' in product ? product.description_uz || '' : '',
+                  description_ru: 'description_ru' in product ? product.description_ru || '' : '',
+                  fullDescription_uz: 'full_description_uz' in product ? product.full_description_uz || '' : '',
+                  fullDescription_ru: 'full_description_ru' in product ? product.full_description_ru || '' : '',
                   price,
                   images,
+                  categoryId: 'category_id' in product ? product.category_id || '' : '',
+                  materials: 'materials' in product ? product.materials || [] : [],
+                  sizes: 'sizes' in product ? product.sizes || [] : [],
+                  colors: 'colors' in product ? product.colors || [] : [],
+                  rating: 'rating' in product ? product.rating || 0 : 0,
+                  reviewCount: 'reviewCount' in product ? product.reviewCount || 0 : 0,
+                  inStock: 'in_stock' in product ? Boolean(product.in_stock) : true,
+                  featured: 'is_featured' in product ? Boolean(product.is_featured) : false,
+                  active: 'is_active' in product ? Boolean(product.is_active) : true,
                 };
-                addItem(cartProduct as any);
+                addItem(cartProduct as CartProduct);
               }
             }}
           >
