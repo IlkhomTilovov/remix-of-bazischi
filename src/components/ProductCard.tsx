@@ -39,13 +39,14 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
   const productUrl = 'slug' in product && product.slug 
     ? `/product/${product.slug}` 
     : `/product/${product.id}`;
+  const linkState = { fromCatalog: true, catalogSearch: window.location.search };
 
   return (
     <div
       data-catalog-product-id={product.id}
       className="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-300"
     >
-      <Link to={productUrl} onClick={onOpen} className="block relative aspect-[4/3] overflow-hidden">
+      <Link to={productUrl} state={linkState} onClick={onOpen} className="block relative aspect-[4/3] overflow-hidden">
         <LazyImage
           src={images[0] || '/placeholder.svg'}
           alt={name}
@@ -60,7 +61,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
         )}
       </Link>
       <div className="p-4">
-        <Link to={productUrl} onClick={onOpen}>
+        <Link to={productUrl} state={linkState} onClick={onOpen}>
           <h3 className="font-medium text-foreground line-clamp-2 hover:text-primary transition-colors mb-2">
             {name}
           </h3>
