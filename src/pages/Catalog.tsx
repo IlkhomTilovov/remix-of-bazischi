@@ -92,7 +92,7 @@ export default function Catalog() {
     if (resolvedCategoryId !== null && resolvedCategoryId !== sidebarFilters.categoryId) {
       setSidebarFilters(prev => ({ ...prev, categoryId: resolvedCategoryId }));
     }
-  }, [resolvedCategoryId]);
+  }, [resolvedCategoryId, sidebarFilters.categoryId]);
 
   // Sync priceMax with dynamic maxPrice once it loads (only first time, before user customizes)
   const priceMaxSynced = useRef(false);
@@ -140,7 +140,7 @@ export default function Catalog() {
     if (sidebarFilters.discounted) f.discounted = true;
 
     return f;
-  }, [debouncedSearch, sidebarFilters, filterOptions.maxPrice, resolvedCategoryId]);
+  }, [debouncedSearch, sidebarFilters, resolvedCategoryId]);
 
   const { products, totalCount, totalPages, loading: productsLoading } = useProducts(currentPage, filters, PAGE_SIZE);
   const loading = productsLoading || isResolvingCategory;
@@ -247,7 +247,7 @@ export default function Catalog() {
       setSearchParams(params, { replace: true });
     }
     setSidebarFilters(newFilters);
-  }, [sidebarFilters.categoryId, categories, searchParams, setSearchParams, currentPage]);
+  }, [sidebarFilters, categories, searchParams, setSearchParams, currentPage]);
 
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams);
