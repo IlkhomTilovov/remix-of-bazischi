@@ -177,44 +177,67 @@ export default function Catalog() {
     sessionStorage.setItem(scrollKey, String(window.scrollY));
   }, [searchParams, scrollKey]);
 
-  // Restore scroll once products have rendered, only for back/forward navigation.
-  const restoredKeyRef = useRef<string | null>(null);
+  // Restore scroll once products have rendered, only for back/forward navigation
+  // or when explicitly requested via location.state.restoreCatalogScroll.
+  // We lock restoration to the first eligible run after a navigation event so
+  // subsequent filter / page changes don't re-trigger an old scroll position.
+  const restoredRef = useRef(false);
+  const lastNavSignatureRef = useRef<string>('');
   useEffect(() => {
-    const shouldRestore = navigationType === 'POP' || Boolean((location.state as { restoreCatalogScroll?: boolean } | null)?.restoreCatalogScroll);
+    const stateFlag = Boolean((location.state as { restoreCatalogScroll?: boolean } | null)?.restoreCatalogScroll);
+    const navSignature = `${navigationType}:${location.key}`;
+    // Reset the lock whenever a fresh navigation arrives (POP back/forward, or new push with flag).
+    if (lastNavSignatureRef.current !== navSignature) {
+      lastNavSignatureRef.current = navSignature;
+      restoredRef.current = false;
+    }
+    const shouldRestore = navigationType === 'POP' || stateFlag;
     if (!shouldRestore) return;
     if (loading) return;
-    if (restoredKeyRef.current === scrollKey) return;
-    const returnState = sessionStorage.getItem(getCatalogReturnKey(searchParams.toString()));
-    if (returnState) {
-      try {
-        const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number; productTop?: number | null };
-        const selector = parsed.productId ? `[data-catalog-product-id="${CSS.escape(parsed.productId)}"]` : '';
-        const element = selector ? document.querySelector(selector) : null;
-        requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (restoredRef.current) return;
+
+    const currentSearch = searchParams.toString();
+    const returnState = sessionStorage.getItem(getCatalogReturnKey(currentSearch));
+    const performScroll = () => {
+      if (returnState) {
+        try {
+          const parsed = JSON.parse(returnState) as { productId?: string; scrollY?: number; productTop?: number | null };
+          const selector = parsed.productId ? `[data-catalog-product-id="${CSS.escape(parsed.productId)}"]` : '';
+          const element = selector ? document.querySelector(selector) : null;
           if (element && typeof parsed.productTop === 'number') {
             const nextTop = window.scrollY + element.getBoundingClientRect().top - parsed.productTop;
-            window.scrollTo({ top: nextTop, left: 0, behavior: 'instant' as ScrollBehavior });
-          } else if (typeof parsed.scrollY === 'number') {
-            window.scrollTo({ top: parsed.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
-          } else if (element) {
-            element.scrollIntoView({ block: 'nearest', behavior: 'instant' as ScrollBehavior });
+            window.scrollTo({ top: Math.max(0, nextTop), left: 0, behavior: 'instant' as ScrollBehavior });
+            return;
           }
-        }));
-        restoredKeyRef.current = scrollKey;
-        return;
-      } catch {
-        sessionStorage.removeItem(getCatalogReturnKey(searchParams.toString()));
+          if (typeof parsed.scrollY === 'number') {
+            window.scrollTo({ top: parsed.scrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+            return;
+          }
+          if (element) {
+            element.scrollIntoView({ block: 'nearest', behavior: 'instant' as ScrollBehavior });
+            return;
+          }
+        } catch {
+          sessionStorage.removeItem(getCatalogReturnKey(currentSearch));
+        }
       }
+      const saved = sessionStorage.getItem(`catalog-scroll:${currentSearch}`);
+      if (saved) {
+        const y = parseInt(saved, 10);
+        if (Number.isFinite(y)) {
+          window.scrollTo({ top: y, left: 0, behavior: 'instant' as ScrollBehavior });
+        }
+      }
+    };
+    // Two RAFs to ensure layout is fully painted (images may shift content).
+    requestAnimationFrame(() => requestAnimationFrame(performScroll));
+    restoredRef.current = true;
+
+    // Clear the one-shot flag so subsequent filter/page edits don't re-restore.
+    if (stateFlag) {
+      window.history.replaceState({ ...(window.history.state || {}), usr: null }, '');
     }
-    const saved = sessionStorage.getItem(scrollKey);
-    if (saved) {
-      const y = parseInt(saved, 10);
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: y, left: 0, behavior: 'instant' as ScrollBehavior });
-      });
-    }
-    restoredKeyRef.current = scrollKey;
-  }, [loading, location.state, navigationType, searchParams, scrollKey]);
+  }, [loading, location.state, location.key, navigationType, searchParams]);
 
   const selectedCategory = categories?.find(c => c.slug === sidebarFilters.categoryId || c.id === sidebarFilters.categoryId);
   const categoryName = selectedCategory
