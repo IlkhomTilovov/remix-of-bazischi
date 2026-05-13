@@ -81,14 +81,17 @@ export default function Catalog() {
     const timer = setTimeout(() => {
       setDebouncedSearch(prev => {
         if (prev !== search) {
-          setCurrentPage(1);
+          // Reset to page 1 when search query actually changes
+          const params = new URLSearchParams(searchParams);
+          params.delete('page');
+          setSearchParams(params, { replace: true });
           return search;
         }
         return prev;
       });
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, searchParams, setSearchParams]);
 
   // Map sidebar filters to DB query filters
   const isUUID = (s: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
