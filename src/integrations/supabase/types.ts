@@ -308,6 +308,27 @@ export type Database = {
           },
         ]
       }
+      page_visits: {
+        Row: {
+          created_at: string
+          id: number
+          path: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          path: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          path?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           application: string[] | null
