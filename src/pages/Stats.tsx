@@ -229,7 +229,7 @@ export default function Stats() {
         label: t('Hozir onlayn', 'Сейчас онлайн'),
         value: onlineNow,
         icon: Activity,
-        sub: t("Oxirgi 5 daqiqa", 'Последние 5 минут'),
+        sub: t("Hozirgi vaqtda", 'Прямо сейчас'),
         accent: 'text-emerald-500',
       },
       {
