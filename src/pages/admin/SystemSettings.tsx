@@ -183,8 +183,8 @@ export default function SystemSettings() {
       return;
     }
 
-    if (file.size > 1024 * 1024) {
-      toast({ variant: 'destructive', title: 'Xatolik', description: 'Fayl hajmi 1MB dan katta bo\'lmasligi kerak' });
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ variant: 'destructive', title: 'Xatolik', description: 'Fayl hajmi 5MB dan katta bo\'lmasligi kerak' });
       return;
     }
 
