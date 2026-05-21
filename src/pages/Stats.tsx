@@ -409,6 +409,63 @@ export default function Stats() {
             </ul>
           )}
         </div>
+
+        {/* Trafik manbalari */}
+        <div className="rounded-xl border border-border bg-card p-5 md:p-6 mt-6">
+          <div className="flex items-center gap-2 mb-5">
+            <Globe2 className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-base md:text-lg text-foreground">
+              {t('Trafik manbalari (30 kun)', 'Источники трафика (30 дней)')}
+            </h2>
+          </div>
+          {loading ? (
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-8 w-full" />
+              ))}
+            </div>
+          ) : sources.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              {t("Hozircha ma'lumot yo'q", 'Пока нет данных')}
+            </p>
+          ) : (
+            (() => {
+              const totalSrc = sources.reduce((s, x) => s + x.count, 0) || 1;
+              return (
+                <ul className="space-y-3">
+                  {sources.map((s) => {
+                    const { label, Icon, color } = sourceLabel(s.source, lang);
+                    const pct = Math.round((s.count / totalSrc) * 100);
+                    return (
+                      <li key={s.source}>
+                        <div className="flex items-center justify-between gap-3 mb-1.5">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Icon className={`w-4 h-4 ${color} flex-shrink-0`} />
+                            <span className="text-sm font-medium text-foreground truncate">
+                              {label}
+                            </span>
+                          </div>
+                          <span className="text-sm font-semibold text-foreground tabular-nums flex-shrink-0">
+                            {s.count.toLocaleString(lang === 'ru' ? 'ru-RU' : 'uz-UZ')}
+                            <span className="text-muted-foreground font-normal ml-2">
+                              {pct}%
+                            </span>
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              );
+            })()
+          )}
+        </div>
       </div>
     </div>
   );
