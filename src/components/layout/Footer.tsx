@@ -175,14 +175,14 @@ export function Footer() {
                   section="footer"
                 />
               </li>
-              <li className="flex items-center gap-3 pt-3 mt-1 border-t border-border/60">
-                <Eye className="w-4 h-4 flex-shrink-0 text-primary" />
-                <span className="text-muted-foreground text-sm">
-                  {language === 'ru' ? 'Посетителей: ' : 'Tashrif buyuruvchilar: '}
-                  <span className="font-semibold text-foreground tabular-nums">
-                    {visits === null ? '—' : visits.toLocaleString('uz-UZ')}
-                  </span>
-                </span>
+              <li>
+                <Link
+                  to="/stats"
+                  className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                >
+                  <Eye className="w-4 h-4" />
+                  {language === 'ru' ? 'Статистика сайта' : 'Sayt statistikasi'}
+                </Link>
               </li>
             </ul>
           </div>
