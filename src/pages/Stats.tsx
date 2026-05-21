@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp } from 'lucide-react';
+import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
@@ -64,6 +64,7 @@ export default function Stats() {
   const [onlineNow, setOnlineNow] = useState(0);
   const [productViews, setProductViews] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
+  const [uniqueDevices, setUniqueDevices] = useState(0);
   const [weekData, setWeekData] = useState<DayPoint[]>([]);
   const [topPages, setTopPages] = useState<TopPage[]>([]);
 
@@ -93,6 +94,7 @@ export default function Stats() {
         ordersRes,
         weekRes,
         topRes,
+        devicesRes,
       ] = await Promise.all([
         supabase.from('page_visits').select('id', { count: 'exact', head: true }),
         supabase
@@ -117,6 +119,10 @@ export default function Stats() {
           .from('page_visits')
           .select('path')
           .gte('created_at', start30.toISOString()),
+        supabase
+          .from('page_visits')
+          .select('device_id')
+          .not('device_id', 'is', null),
       ]);
 
       setTotalVisits(totalRes.count ?? 0);
@@ -129,6 +135,11 @@ export default function Stats() {
 
       setProductViews(productRes.count ?? 0);
       setOrdersCount(ordersRes.count ?? 0);
+
+      const distinctDevices = new Set(
+        (devicesRes.data ?? []).map((r: any) => r.device_id).filter(Boolean),
+      );
+      setUniqueDevices(distinctDevices.size);
 
       // So'nggi 7 kun
       const buckets: Record<string, number> = {};
@@ -180,6 +191,13 @@ export default function Stats() {
         accent: 'text-emerald-500',
       },
       {
+        label: t('Unikal qurilmalar', 'Уникальные устройства'),
+        value: uniqueDevices,
+        icon: Smartphone,
+        sub: t("Har xil qurilmalar soni", 'Количество разных устройств'),
+        accent: 'text-blue-500',
+      },
+      {
         label: t('Bugungi tashriflar', 'Посетители сегодня'),
         value: todayVisits,
         icon: Eye,
@@ -208,7 +226,7 @@ export default function Stats() {
         accent: 'text-primary',
       },
     ],
-    [onlineNow, todayVisits, totalVisits, productViews, ordersCount, language],
+    [onlineNow, uniqueDevices, todayVisits, totalVisits, productViews, ordersCount, language],
   );
 
   return (
@@ -228,7 +246,7 @@ export default function Stats() {
         </div>
 
         {/* Kartochkalar */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
           {cards.map((c) => {
             const Icon = c.icon;
             return (
