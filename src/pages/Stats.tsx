@@ -314,6 +314,7 @@ export default function Stats() {
                   <Line
                     type="monotone"
                     dataKey="visits"
+                    name={t('Tashriflar', 'Посещения')}
                     stroke="hsl(var(--primary))"
                     strokeWidth={2.5}
                     dot={{ fill: 'hsl(var(--primary))', r: 3 }}
