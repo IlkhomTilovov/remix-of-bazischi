@@ -39,11 +39,48 @@ function getDeviceId(): string {
 }
 
 /**
+ * Qisqa kod yoki to'liq nomdan standart manba nomini qaytaradi.
+ */
+function normalizeSource(raw: string): string | null {
+  const v = raw.toLowerCase().trim();
+  if (!v) return null;
+  const aliases: Record<string, string> = {
+    tg: 'telegram', telegram: 'telegram',
+    ig: 'instagram', insta: 'instagram', instagram: 'instagram',
+    fb: 'facebook', facebook: 'facebook',
+    tt: 'tiktok', tiktok: 'tiktok',
+    yt: 'youtube', youtube: 'youtube',
+    wa: 'whatsapp', whatsapp: 'whatsapp',
+    twitter: 'twitter', x: 'twitter',
+    google: 'google', bing: 'bing', yandex: 'yandex', duckduckgo: 'duckduckgo',
+    linkedin: 'linkedin', pinterest: 'pinterest', reddit: 'reddit',
+    direct: 'direct', other: 'other',
+  };
+  return aliases[v] || v;
+}
+
+/**
  * Referrer URL'dan manba nomini aniqlaydi.
- * Misol: "https://t.me/..." => "telegram"
+ * android-app:// va ios-app:// sxemalarini ham qo'llab-quvvatlaydi.
  */
 function detectSource(referrer: string, currentHost: string): string {
   if (!referrer) return 'direct';
+
+  // Mobil ilovalardan kelgan linklar: android-app://org.telegram.messenger
+  const appMatch = referrer.match(/^(?:android|ios)-app:\/\/([^/]+)/i);
+  if (appMatch) {
+    const pkg = appMatch[1].toLowerCase();
+    if (pkg.includes('telegram')) return 'telegram';
+    if (pkg.includes('instagram')) return 'instagram';
+    if (pkg.includes('facebook') || pkg.includes('katana')) return 'facebook';
+    if (pkg.includes('whatsapp')) return 'whatsapp';
+    if (pkg.includes('tiktok') || pkg.includes('zhiliaoapp')) return 'tiktok';
+    if (pkg.includes('youtube')) return 'youtube';
+    if (pkg.includes('twitter') || pkg.includes('com.x.')) return 'twitter';
+    if (pkg.includes('google')) return 'google';
+    return 'other';
+  }
+
   let host = '';
   try {
     host = new URL(referrer).hostname.toLowerCase().replace(/^www\./, '');
@@ -54,8 +91,8 @@ function detectSource(referrer: string, currentHost: string): string {
 
   const map: Array<{ test: RegExp; name: string }> = [
     { test: /(^|\.)(instagram\.com|cdninstagram\.com|l\.instagram\.com)$/, name: 'instagram' },
-    { test: /(^|\.)(t\.me|telegram\.org|telegram\.me)$/, name: 'telegram' },
-    { test: /(^|\.)(facebook\.com|fb\.com|m\.facebook\.com|l\.facebook\.com|fb\.me)$/, name: 'facebook' },
+    { test: /(^|\.)(t\.me|telegram\.org|telegram\.me|web\.telegram\.org)$/, name: 'telegram' },
+    { test: /(^|\.)(facebook\.com|fb\.com|m\.facebook\.com|l\.facebook\.com|fb\.me|lm\.facebook\.com)$/, name: 'facebook' },
     { test: /(^|\.)(tiktok\.com)$/, name: 'tiktok' },
     { test: /(^|\.)(youtube\.com|youtu\.be|m\.youtube\.com)$/, name: 'youtube' },
     { test: /(^|\.)(twitter\.com|x\.com|t\.co)$/, name: 'twitter' },
@@ -74,16 +111,35 @@ function detectSource(referrer: string, currentHost: string): string {
   return 'other';
 }
 
+/**
+ * URL parametrlaridan manba aniqlanadi: ?utm_source=telegram, ?from=tg, ?ref=ig
+ */
+function detectFromUrlParams(): string | null {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw =
+      params.get('utm_source') ||
+      params.get('source') ||
+      params.get('from') ||
+      params.get('ref') ||
+      '';
+    return raw ? normalizeSource(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 function getReferrerInfo(): { referrer: string | null; source: string } {
   try {
-    // Sessiyada birinchi marta saqlangan referrer'ni ishlatamiz
     const cachedRef = sessionStorage.getItem(REFERRER_KEY);
     const cachedSrc = sessionStorage.getItem(REFERRER_SOURCE_KEY);
     if (cachedRef !== null && cachedSrc) {
       return { referrer: cachedRef || null, source: cachedSrc };
     }
     const ref = document.referrer || '';
-    const source = detectSource(ref, window.location.hostname);
+    // 1-navbat: URL paramlari (eng aniq)
+    const fromUrl = detectFromUrlParams();
+    const source = fromUrl || detectSource(ref, window.location.hostname);
     sessionStorage.setItem(REFERRER_KEY, ref);
     sessionStorage.setItem(REFERRER_SOURCE_KEY, source);
     return { referrer: ref || null, source };
