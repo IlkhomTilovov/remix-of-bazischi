@@ -182,6 +182,7 @@ export function PageViewTracker() {
   // Jonli "hozir onlayn" uchun Presence kanali (faqat bir marta ulanadi)
   useEffect(() => {
     if (location.pathname.startsWith('/admin')) return;
+    if (isBot()) return; // Botlarni "onlayn" ga hisoblamaymiz
     const deviceId = getDeviceId();
     const sessionId = getSessionId();
     const channel = supabase.channel('online-users', {
