@@ -84,6 +84,8 @@ export default function Stats() {
   const brand = 'Tanirovka.uz';
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [totalVisits, setTotalVisits] = useState(0);
   const [todayVisits, setTodayVisits] = useState(0);
   const [onlineNow, setOnlineNow] = useState(0);
