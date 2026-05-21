@@ -207,6 +207,17 @@ export default function Stats() {
         }));
       setTopPages(sorted);
 
+      // Trafik manbalari (30 kun)
+      const srcCounts: Record<string, number> = {};
+      (sourcesRes.data ?? []).forEach((row: any) => {
+        const key = (row.referrer_source as string) || 'direct';
+        srcCounts[key] = (srcCounts[key] ?? 0) + 1;
+      });
+      const sourcesSorted = Object.entries(srcCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([source, count]) => ({ source, count }));
+      setSources(sourcesSorted);
+
       setLoading(false);
     }
     load();
