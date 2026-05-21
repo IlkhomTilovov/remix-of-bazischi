@@ -19,6 +19,7 @@ import { EditorPanel } from "@/components/editor/EditorPanel";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { FacebookPixel } from "@/components/FacebookPixel";
+import { PageViewTracker } from "@/components/PageViewTracker";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import ProductDetails from "./pages/ProductDetails";
@@ -63,6 +64,7 @@ const App = () => (
                     <BrowserRouter>
                       <ScrollToTop />
                       <FacebookPixel />
+                      <PageViewTracker />
                       <Routes>
                         {/* Admin Auth */}
                         <Route path="/admin/auth" element={<AdminAuth />} />
