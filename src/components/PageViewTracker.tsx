@@ -129,6 +129,29 @@ function detectFromUrlParams(): string | null {
   }
 }
 
+/**
+ * User-Agent orajasidan botlarni aniqlaydi.
+ */
+function isBot(): boolean {
+  try {
+    const ua = (navigator.userAgent || '').toLowerCase();
+    const botPatterns = [
+      /bot/, /crawler/, /spider/, /scraper/,
+      /googlebot/, /bingbot/, /yandexbot/, /duckduckbot/,
+      /facebookexternalhit/, /facebot/, /twitterbot/,
+      /linkedinbot/, /pinterest/, /telegrambot/, /whatsapp/,
+      /applebot/, /semrush/, /ahrefs/, /mj12bot/, /dotbot/,
+      /baiduspider/, /sogou/, /exabot/, /ia_archiver/,
+      /chrome-lighthouse/, /pagespeed/, /gtmetrix/, /pingdom/,
+      /slackbot/, /discordbot/, /skypeuripreview/,
+      /phantomjs/, /headlesschrome/, /selenium/,
+    ];
+    return botPatterns.some((p) => p.test(ua));
+  } catch {
+    return false;
+  }
+}
+
 function getReferrerInfo(): { referrer: string | null; source: string } {
   try {
     const cachedRef = sessionStorage.getItem(REFERRER_KEY);
@@ -159,6 +182,7 @@ export function PageViewTracker() {
   // Jonli "hozir onlayn" uchun Presence kanali (faqat bir marta ulanadi)
   useEffect(() => {
     if (location.pathname.startsWith('/admin')) return;
+    if (isBot()) return; // Botlarni "onlayn" ga hisoblamaymiz
     const deviceId = getDeviceId();
     const sessionId = getSessionId();
     const channel = supabase.channel('online-users', {
@@ -178,6 +202,7 @@ export function PageViewTracker() {
   useEffect(() => {
     const path = location.pathname;
     if (path.startsWith('/admin')) return;
+    if (isBot()) return; // Botlarni sahifa tashrifi va sayt tashrifi sanagichidan cheklaymiz
 
     const sessionId = getSessionId();
     const deviceId = getDeviceId();
