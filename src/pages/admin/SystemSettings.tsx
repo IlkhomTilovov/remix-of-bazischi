@@ -183,8 +183,8 @@ export default function SystemSettings() {
       return;
     }
 
-    if (file.size > 1024 * 1024) {
-      toast({ variant: 'destructive', title: 'Xatolik', description: 'Fayl hajmi 1MB dan katta bo\'lmasligi kerak' });
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ variant: 'destructive', title: 'Xatolik', description: 'Fayl hajmi 5MB dan katta bo\'lmasligi kerak' });
       return;
     }
 
@@ -456,7 +456,7 @@ export default function SystemSettings() {
                     <Upload className="h-4 w-4 mr-2" />
                     {uploadingFavicon ? 'Yuklanmoqda...' : 'Favicon yuklash'}
                   </Button>
-                  <span className="text-xs text-muted-foreground">SVG, PNG, ICO (max 1MB)</span>
+                  <span className="text-xs text-muted-foreground">SVG, PNG, ICO (max 5MB)</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Favicon brauzer tabida ko'rinadi. 32x32 yoki 64x64 piksel o'lcham tavsiya etiladi.
