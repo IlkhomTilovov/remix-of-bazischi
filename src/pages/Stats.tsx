@@ -344,7 +344,27 @@ export default function Stats() {
               `Открытые данные о посетителях и активности на сайте ${brand}. Никакие персональные данные не сохраняются.`,
             )}
           </p>
+          <div className="mt-5 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setReloadKey((k) => k + 1)}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card hover:bg-accent px-4 py-2 text-sm font-medium text-foreground transition-colors disabled:opacity-60"
+            >
+              <Activity className={`w-4 h-4 ${loading ? 'animate-pulse text-primary' : 'text-muted-foreground'}`} />
+              {loading ? t('Yuklanmoqda…', 'Загрузка…') : t('Yangilash', 'Обновить')}
+            </button>
+          </div>
+          {loadError && !loading && (
+            <div className="mt-4 mx-auto max-w-xl rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              {t(
+                "Ma'lumotlarni yuklab bo'lmadi. Internet aloqasini tekshirib, yuqoridagi “Yangilash” tugmasini bosing.",
+                'Не удалось загрузить данные. Проверьте интернет и нажмите «Обновить» выше.',
+              )}
+            </div>
+          )}
         </div>
+
 
         {/* Kartochkalar */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
