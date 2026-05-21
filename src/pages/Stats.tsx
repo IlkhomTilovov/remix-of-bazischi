@@ -174,7 +174,7 @@ export default function Stats() {
           .not('device_id', 'is', null),
         supabase
           .from('page_visits')
-          .select('referrer_source')
+          .select('referrer_source, device_id, session_id')
           .gte('created_at', start30.toISOString()),
       ]);
 
@@ -229,15 +229,18 @@ export default function Stats() {
         }));
       setTopPages(sorted);
 
-      // Trafik manbalari (30 kun)
-      const srcCounts: Record<string, number> = {};
+      // Trafik manbalari (30 kun) — unikal odamlar soni (device_id bo'yicha, bo'lmasa session_id)
+      const srcDevices: Record<string, Set<string>> = {};
       (sourcesRes.data ?? []).forEach((row: any) => {
         const key = (row.referrer_source as string) || 'direct';
-        srcCounts[key] = (srcCounts[key] ?? 0) + 1;
+        const uniqueKey = row.device_id || row.session_id;
+        if (!uniqueKey) return;
+        if (!srcDevices[key]) srcDevices[key] = new Set();
+        srcDevices[key].add(uniqueKey);
       });
-      const sourcesSorted = Object.entries(srcCounts)
-        .sort((a, b) => b[1] - a[1])
-        .map(([source, count]) => ({ source, count }));
+      const sourcesSorted = Object.entries(srcDevices)
+        .map(([source, set]) => ({ source, count: set.size }))
+        .sort((a, b) => b.count - a.count);
       setSources(sourcesSorted);
 
       setLoading(false);
