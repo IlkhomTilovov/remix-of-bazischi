@@ -98,6 +98,28 @@ export default function Stats() {
     document.title = t('Sayt statistikasi', 'Статистика сайта');
   }, [language]);
 
+  // Jonli "Hozir onlayn" — Realtime Presence
+  useEffect(() => {
+    const channel = supabase.channel('online-users', {
+      config: { presence: { key: `stats_${Math.random().toString(36).slice(2, 10)}` } },
+    });
+    const update = () => {
+      const state = channel.presenceState();
+      setOnlineNow(Object.keys(state).length);
+    };
+    channel
+      .on('presence', { event: 'sync' }, update)
+      .on('presence', { event: 'join' }, update)
+      .on('presence', { event: 'leave' }, update)
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') update();
+      });
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+
   useEffect(() => {
     async function load() {
       setLoading(true);
@@ -229,7 +251,7 @@ export default function Stats() {
         label: t('Hozir onlayn', 'Сейчас онлайн'),
         value: onlineNow,
         icon: Activity,
-        sub: t("Oxirgi 5 daqiqa", 'Последние 5 минут'),
+        sub: t("Hozirgi vaqtda", 'Прямо сейчас'),
         accent: 'text-emerald-500',
       },
       {
