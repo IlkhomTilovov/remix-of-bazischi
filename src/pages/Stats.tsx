@@ -111,11 +111,8 @@ export default function Stats() {
       .on('presence', { event: 'sync' }, update)
       .on('presence', { event: 'join' }, update)
       .on('presence', { event: 'leave' }, update)
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({ viewer: true });
-          update();
-        }
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') update();
       });
     return () => {
       supabase.removeChannel(channel);
