@@ -252,24 +252,26 @@ export default function Stats() {
             return (
               <div
                 key={c.label}
-                className="rounded-xl border border-border bg-card p-4 md:p-5 hover:shadow-md transition-shadow"
+                className="rounded-xl border border-border bg-card p-4 md:p-5 hover:shadow-md transition-shadow flex flex-col"
               >
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <p className="text-xs md:text-sm text-muted-foreground leading-tight">
+                <div className="flex items-start justify-between gap-2 mb-3 min-h-[2.5rem]">
+                  <p className="text-xs md:text-sm text-muted-foreground leading-tight line-clamp-2">
                     {c.label}
                   </p>
                   <Icon className={`w-4 h-4 ${c.accent} flex-shrink-0`} />
                 </div>
-                {loading ? (
-                  <Skeleton className="h-8 w-16" />
-                ) : (
-                  <div className="text-2xl md:text-3xl font-bold text-foreground tabular-nums">
-                    {c.value.toLocaleString(lang === 'ru' ? 'ru-RU' : 'uz-UZ')}
-                  </div>
-                )}
-                {c.sub && (
-                  <p className="text-[11px] text-muted-foreground mt-1">{c.sub}</p>
-                )}
+                <div className="min-h-[2.25rem] md:min-h-[2.5rem] flex items-center">
+                  {loading ? (
+                    <Skeleton className="h-8 w-16" />
+                  ) : (
+                    <div className="text-2xl md:text-3xl font-bold text-foreground tabular-nums">
+                      {c.value.toLocaleString(lang === 'ru' ? 'ru-RU' : 'uz-UZ')}
+                    </div>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1 min-h-[1rem]">
+                  {c.sub || '\u00A0'}
+                </p>
               </div>
             );
           })}
