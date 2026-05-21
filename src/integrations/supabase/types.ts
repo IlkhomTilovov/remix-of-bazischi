@@ -529,6 +529,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_visits: {
+        Row: {
+          id: number
+          total_visits: number
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          total_visits?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          total_visits?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       spec_templates: {
         Row: {
           created_at: string
@@ -709,6 +727,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_site_visit: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "editor" | "seller" | "manager"

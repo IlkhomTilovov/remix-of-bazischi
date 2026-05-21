@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom';
-import { Phone, Send, Instagram, Clock, MapPin } from 'lucide-react';
+import { Phone, Send, Instagram, Clock, MapPin, Eye } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
 import { EditableText } from '@/components/EditableText';
 import { EditableLink } from '@/components/EditableLink';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useSiteVisits } from '@/hooks/useSiteVisits';
 
 export function Footer() {
   const { language } = useLanguage();
   const { settings, getAddress, getWorkingHours } = useSystemSettings();
+  const visits = useSiteVisits();
 
   const { data: categories } = useQuery({
     queryKey: ['footer-categories'],
@@ -172,6 +174,15 @@ export function Footer() {
                   multiline
                   section="footer"
                 />
+              </li>
+              <li className="flex items-center gap-3 pt-3 mt-1 border-t border-border/60">
+                <Eye className="w-4 h-4 flex-shrink-0 text-primary" />
+                <span className="text-muted-foreground text-sm">
+                  {language === 'ru' ? 'Посетителей: ' : 'Tashrif buyuruvchilar: '}
+                  <span className="font-semibold text-foreground tabular-nums">
+                    {visits === null ? '—' : visits.toLocaleString('uz-UZ')}
+                  </span>
+                </span>
               </li>
             </ul>
           </div>
