@@ -230,9 +230,15 @@ export default function Stats() {
       setTopPages(sorted);
 
       // Trafik manbalari (30 kun) — unikal odamlar soni (device_id bo'yicha, bo'lmasa session_id)
+      const knownSources = new Set([
+        'direct', 'google', 'instagram', 'facebook', 'telegram',
+        'whatsapp', 'youtube', 'tiktok', 'twitter', 'linkedin',
+        'yandex', 'bing', 'duckduckgo',
+      ]);
       const srcDevices: Record<string, Set<string>> = {};
       (sourcesRes.data ?? []).forEach((row: any) => {
-        const key = (row.referrer_source as string) || 'direct';
+        const raw = (row.referrer_source as string) || 'direct';
+        const key = knownSources.has(raw) ? raw : 'other';
         const uniqueKey = row.device_id || row.session_id;
         if (!uniqueKey) return;
         if (!srcDevices[key]) srcDevices[key] = new Set();
