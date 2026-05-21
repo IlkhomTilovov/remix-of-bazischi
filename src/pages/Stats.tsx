@@ -56,7 +56,7 @@ export default function Stats() {
   const { settings } = useSystemSettings();
   const t = (uz: string, ru: string) => (language === 'ru' ? ru : uz);
   const lang = language === 'ru' ? 'ru' : 'uz';
-  const brand = settings?.site_name || 'MIR MEXA';
+  const brand = 'Tanirovka.uz';
 
   const [loading, setLoading] = useState(true);
   const [totalVisits, setTotalVisits] = useState(0);
