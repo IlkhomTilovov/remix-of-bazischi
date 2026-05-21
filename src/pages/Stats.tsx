@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone } from 'lucide-react';
+import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone, Globe2, Instagram, Send, Facebook, Search, Youtube, MessageCircle, Link2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
@@ -16,6 +16,31 @@ import {
 
 type DayPoint = { date: string; label: string; visits: number };
 type TopPage = { path: string; count: number; title: string };
+type SourceItem = { source: string; count: number };
+
+const SOURCE_META: Record<string, { label_uz: string; label_ru: string; icon: any; color: string }> = {
+  direct: { label_uz: "To'g'ridan-to'g'ri", label_ru: 'Прямые заходы', icon: Link2, color: 'text-slate-500' },
+  instagram: { label_uz: 'Instagram', label_ru: 'Instagram', icon: Instagram, color: 'text-pink-500' },
+  telegram: { label_uz: 'Telegram', label_ru: 'Telegram', icon: Send, color: 'text-sky-500' },
+  facebook: { label_uz: 'Facebook', label_ru: 'Facebook', icon: Facebook, color: 'text-blue-600' },
+  tiktok: { label_uz: 'TikTok', label_ru: 'TikTok', icon: Activity, color: 'text-fuchsia-500' },
+  youtube: { label_uz: 'YouTube', label_ru: 'YouTube', icon: Youtube, color: 'text-red-500' },
+  twitter: { label_uz: 'Twitter / X', label_ru: 'Twitter / X', icon: Globe2, color: 'text-slate-700' },
+  google: { label_uz: 'Google qidiruv', label_ru: 'Поиск Google', icon: Search, color: 'text-emerald-500' },
+  bing: { label_uz: 'Bing', label_ru: 'Bing', icon: Search, color: 'text-emerald-500' },
+  yandex: { label_uz: 'Yandex', label_ru: 'Yandex', icon: Search, color: 'text-yellow-500' },
+  duckduckgo: { label_uz: 'DuckDuckGo', label_ru: 'DuckDuckGo', icon: Search, color: 'text-emerald-500' },
+  whatsapp: { label_uz: 'WhatsApp', label_ru: 'WhatsApp', icon: MessageCircle, color: 'text-green-500' },
+  linkedin: { label_uz: 'LinkedIn', label_ru: 'LinkedIn', icon: Globe2, color: 'text-blue-700' },
+  pinterest: { label_uz: 'Pinterest', label_ru: 'Pinterest', icon: Globe2, color: 'text-red-600' },
+  reddit: { label_uz: 'Reddit', label_ru: 'Reddit', icon: Globe2, color: 'text-orange-500' },
+  other: { label_uz: 'Boshqa saytlar', label_ru: 'Другие сайты', icon: Globe2, color: 'text-muted-foreground' },
+};
+
+function sourceLabel(source: string, lang: 'uz' | 'ru'): { label: string; Icon: any; color: string } {
+  const meta = SOURCE_META[source] || SOURCE_META.other;
+  return { label: lang === 'ru' ? meta.label_ru : meta.label_uz, Icon: meta.icon, color: meta.color };
+}
 
 const PAGE_TITLES_UZ: Record<string, string> = {
   '/': 'Bosh sahifa',
@@ -67,6 +92,7 @@ export default function Stats() {
   const [uniqueDevices, setUniqueDevices] = useState(0);
   const [weekData, setWeekData] = useState<DayPoint[]>([]);
   const [topPages, setTopPages] = useState<TopPage[]>([]);
+  const [sources, setSources] = useState<SourceItem[]>([]);
 
   useEffect(() => {
     document.title = t('Sayt statistikasi', 'Статистика сайта');
@@ -95,6 +121,7 @@ export default function Stats() {
         weekRes,
         topRes,
         devicesRes,
+        sourcesRes,
       ] = await Promise.all([
         supabase.from('page_visits').select('id', { count: 'exact', head: true }),
         supabase
@@ -123,6 +150,10 @@ export default function Stats() {
           .from('page_visits')
           .select('device_id')
           .not('device_id', 'is', null),
+        supabase
+          .from('page_visits')
+          .select('referrer_source')
+          .gte('created_at', start30.toISOString()),
       ]);
 
       setTotalVisits(totalRes.count ?? 0);
@@ -175,6 +206,17 @@ export default function Stats() {
           title: titleForPath(path, lang),
         }));
       setTopPages(sorted);
+
+      // Trafik manbalari (30 kun)
+      const srcCounts: Record<string, number> = {};
+      (sourcesRes.data ?? []).forEach((row: any) => {
+        const key = (row.referrer_source as string) || 'direct';
+        srcCounts[key] = (srcCounts[key] ?? 0) + 1;
+      });
+      const sourcesSorted = Object.entries(srcCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([source, count]) => ({ source, count }));
+      setSources(sourcesSorted);
 
       setLoading(false);
     }
@@ -365,6 +407,63 @@ export default function Stats() {
                 </li>
               ))}
             </ul>
+          )}
+        </div>
+
+        {/* Trafik manbalari */}
+        <div className="rounded-xl border border-border bg-card p-5 md:p-6 mt-6">
+          <div className="flex items-center gap-2 mb-5">
+            <Globe2 className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-base md:text-lg text-foreground">
+              {t('Trafik manbalari (30 kun)', 'Источники трафика (30 дней)')}
+            </h2>
+          </div>
+          {loading ? (
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-8 w-full" />
+              ))}
+            </div>
+          ) : sources.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              {t("Hozircha ma'lumot yo'q", 'Пока нет данных')}
+            </p>
+          ) : (
+            (() => {
+              const totalSrc = sources.reduce((s, x) => s + x.count, 0) || 1;
+              return (
+                <ul className="space-y-3">
+                  {sources.map((s) => {
+                    const { label, Icon, color } = sourceLabel(s.source, lang);
+                    const pct = Math.round((s.count / totalSrc) * 100);
+                    return (
+                      <li key={s.source}>
+                        <div className="flex items-center justify-between gap-3 mb-1.5">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Icon className={`w-4 h-4 ${color} flex-shrink-0`} />
+                            <span className="text-sm font-medium text-foreground truncate">
+                              {label}
+                            </span>
+                          </div>
+                          <span className="text-sm font-semibold text-foreground tabular-nums flex-shrink-0">
+                            {s.count.toLocaleString(lang === 'ru' ? 'ru-RU' : 'uz-UZ')}
+                            <span className="text-muted-foreground font-normal ml-2">
+                              {pct}%
+                            </span>
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full transition-all"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              );
+            })()
           )}
         </div>
       </div>
