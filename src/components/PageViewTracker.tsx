@@ -156,6 +156,25 @@ function getReferrerInfo(): { referrer: string | null; source: string } {
 export function PageViewTracker() {
   const location = useLocation();
 
+  // Jonli "hozir onlayn" uchun Presence kanali (faqat bir marta ulanadi)
+  useEffect(() => {
+    if (location.pathname.startsWith('/admin')) return;
+    const deviceId = getDeviceId();
+    const sessionId = getSessionId();
+    const channel = supabase.channel('online-users', {
+      config: { presence: { key: deviceId } },
+    });
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await channel.track({ session_id: sessionId, online_at: Date.now() });
+      }
+    });
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const path = location.pathname;
     if (path.startsWith('/admin')) return;
@@ -186,3 +205,4 @@ export function PageViewTracker() {
 
   return null;
 }
+
