@@ -314,6 +314,8 @@ export type Database = {
           device_id: string | null
           id: number
           path: string
+          referrer: string | null
+          referrer_source: string | null
           session_id: string
         }
         Insert: {
@@ -321,6 +323,8 @@ export type Database = {
           device_id?: string | null
           id?: number
           path: string
+          referrer?: string | null
+          referrer_source?: string | null
           session_id: string
         }
         Update: {
@@ -328,6 +332,8 @@ export type Database = {
           device_id?: string | null
           id?: number
           path?: string
+          referrer?: string | null
+          referrer_source?: string | null
           session_id?: string
         }
         Relationships: []
