@@ -123,8 +123,21 @@ export default function Stats() {
 
 
   useEffect(() => {
+    let cancelled = false;
+
+    // Bitta so'rovni xatolikda 1 marta qayta urinish bilan bajaradi
+    async function runWithRetry<T>(fn: () => Promise<T>): Promise<T> {
+      try {
+        return await fn();
+      } catch {
+        await new Promise((r) => setTimeout(r, 400));
+        return await fn();
+      }
+    }
+
     async function load() {
       setLoading(true);
+      setLoadError(false);
       const now = new Date();
       const startToday = new Date(now);
       startToday.setHours(0, 0, 0, 0);
@@ -136,125 +149,138 @@ export default function Stats() {
       start30.setHours(0, 0, 0, 0);
       const start5min = new Date(now.getTime() - 5 * 60 * 1000);
 
-      const [
-        totalRes,
-        todayRes,
-        onlineRes,
-        productRes,
-        ordersRes,
-        weekRes,
-        topRes,
-        devicesRes,
-        sourcesRes,
-      ] = await Promise.all([
-        supabase.from('page_visits').select('id', { count: 'exact', head: true }),
-        supabase
-          .from('page_visits')
-          .select('id', { count: 'exact', head: true })
-          .gte('created_at', startToday.toISOString()),
-        supabase
-          .from('page_visits')
-          .select('session_id')
-          .gte('created_at', start5min.toISOString()),
-        supabase
-          .from('page_visits')
-          .select('id', { count: 'exact', head: true })
-          .like('path', '/product/%'),
-        supabase.from('orders').select('id', { count: 'exact', head: true }),
-        supabase
-          .from('page_visits')
-          .select('created_at')
-          .gte('created_at', start7.toISOString())
-          .order('created_at', { ascending: true }),
-        supabase
-          .from('page_visits')
-          .select('path')
-          .gte('created_at', start30.toISOString()),
-        supabase
-          .from('page_visits')
-          .select('device_id')
-          .not('device_id', 'is', null),
-        supabase
-          .from('page_visits')
-          .select('referrer_source, device_id, session_id')
-          .gte('created_at', start30.toISOString()),
-      ]);
+      try {
+        // 1-batch: oddiy count va onlayn
+        const [totalRes, todayRes, onlineRes, productRes, ordersRes] = await runWithRetry(() =>
+          Promise.all([
+            supabase.from('page_visits').select('id', { count: 'exact', head: true }),
+            supabase
+              .from('page_visits')
+              .select('id', { count: 'exact', head: true })
+              .gte('created_at', startToday.toISOString()),
+            supabase
+              .from('page_visits')
+              .select('session_id')
+              .gte('created_at', start5min.toISOString()),
+            supabase
+              .from('page_visits')
+              .select('id', { count: 'exact', head: true })
+              .like('path', '/product/%'),
+            supabase.from('orders').select('id', { count: 'exact', head: true }),
+          ]),
+        );
+        if (cancelled) return;
 
-      setTotalVisits(totalRes.count ?? 0);
-      setTodayVisits(todayRes.count ?? 0);
+        setTotalVisits(totalRes.count ?? 0);
+        setTodayVisits(todayRes.count ?? 0);
+        const distinctSessions = new Set(
+          (onlineRes.data ?? []).map((r: any) => r.session_id),
+        );
+        setOnlineNow(distinctSessions.size);
+        setProductViews(productRes.count ?? 0);
+        setOrdersCount(ordersRes.count ?? 0);
 
-      const distinctSessions = new Set(
-        (onlineRes.data ?? []).map((r: any) => r.session_id),
-      );
-      setOnlineNow(distinctSessions.size);
+        // 2-batch: 7-kun grafigi va eng mashhur sahifalar
+        const [weekRes, topRes] = await runWithRetry(() =>
+          Promise.all([
+            supabase
+              .from('page_visits')
+              .select('created_at')
+              .gte('created_at', start7.toISOString())
+              .order('created_at', { ascending: true }),
+            supabase
+              .from('page_visits')
+              .select('path')
+              .gte('created_at', start30.toISOString()),
+          ]),
+        );
+        if (cancelled) return;
 
-      setProductViews(productRes.count ?? 0);
-      setOrdersCount(ordersRes.count ?? 0);
+        const buckets: Record<string, number> = {};
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(now);
+          d.setDate(d.getDate() - i);
+          const key = d.toISOString().slice(0, 10);
+          buckets[key] = 0;
+        }
+        (weekRes.data ?? []).forEach((row: any) => {
+          const key = String(row.created_at).slice(0, 10);
+          if (key in buckets) buckets[key]++;
+        });
+        setWeekData(
+          Object.entries(buckets).map(([date, visits]) => ({
+            date,
+            label: date.slice(5),
+            visits,
+          })),
+        );
 
-      const distinctDevices = new Set(
-        (devicesRes.data ?? []).map((r: any) => r.device_id).filter(Boolean),
-      );
-      setUniqueDevices(distinctDevices.size);
+        const pageCounts: Record<string, number> = {};
+        (topRes.data ?? []).forEach((row: any) => {
+          pageCounts[row.path] = (pageCounts[row.path] ?? 0) + 1;
+        });
+        const sorted = Object.entries(pageCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([path, count]) => ({
+            path,
+            count,
+            title: titleForPath(path, lang),
+          }));
+        setTopPages(sorted);
 
-      // So'nggi 7 kun
-      const buckets: Record<string, number> = {};
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().slice(0, 10);
-        buckets[key] = 0;
+        // 3-batch: unikal qurilmalar va trafik manbalari
+        const [devicesRes, sourcesRes] = await runWithRetry(() =>
+          Promise.all([
+            supabase
+              .from('page_visits')
+              .select('device_id')
+              .not('device_id', 'is', null),
+            supabase
+              .from('page_visits')
+              .select('referrer_source, device_id, session_id')
+              .gte('created_at', start30.toISOString()),
+          ]),
+        );
+        if (cancelled) return;
+
+        const distinctDevices = new Set(
+          (devicesRes.data ?? []).map((r: any) => r.device_id).filter(Boolean),
+        );
+        setUniqueDevices(distinctDevices.size);
+
+        const knownSources = new Set([
+          'direct', 'google', 'instagram', 'facebook', 'telegram',
+          'whatsapp', 'youtube', 'tiktok', 'twitter', 'linkedin',
+          'yandex', 'bing', 'duckduckgo',
+        ]);
+        const srcDevices: Record<string, Set<string>> = {};
+        (sourcesRes.data ?? []).forEach((row: any) => {
+          const raw = (row.referrer_source as string) || 'direct';
+          const key = knownSources.has(raw) ? raw : 'other';
+          const uniqueKey = row.device_id || row.session_id;
+          if (!uniqueKey) return;
+          if (!srcDevices[key]) srcDevices[key] = new Set();
+          srcDevices[key].add(uniqueKey);
+        });
+        const sourcesSorted = Object.entries(srcDevices)
+          .map(([source, set]) => ({ source, count: set.size }))
+          .sort((a, b) => b.count - a.count);
+        setSources(sourcesSorted);
+      } catch (err) {
+        console.error('[Stats] load error:', err);
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      (weekRes.data ?? []).forEach((row: any) => {
-        const key = String(row.created_at).slice(0, 10);
-        if (key in buckets) buckets[key]++;
-      });
-      setWeekData(
-        Object.entries(buckets).map(([date, visits]) => ({
-          date,
-          label: date.slice(5),
-          visits,
-        })),
-      );
-
-      // Eng mashhur sahifalar
-      const pageCounts: Record<string, number> = {};
-      (topRes.data ?? []).forEach((row: any) => {
-        pageCounts[row.path] = (pageCounts[row.path] ?? 0) + 1;
-      });
-      const sorted = Object.entries(pageCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10)
-        .map(([path, count]) => ({
-          path,
-          count,
-          title: titleForPath(path, lang),
-        }));
-      setTopPages(sorted);
-
-      // Trafik manbalari (30 kun) — unikal odamlar soni (device_id bo'yicha, bo'lmasa session_id)
-      const knownSources = new Set([
-        'direct', 'google', 'instagram', 'facebook', 'telegram',
-        'whatsapp', 'youtube', 'tiktok', 'twitter', 'linkedin',
-        'yandex', 'bing', 'duckduckgo',
-      ]);
-      const srcDevices: Record<string, Set<string>> = {};
-      (sourcesRes.data ?? []).forEach((row: any) => {
-        const raw = (row.referrer_source as string) || 'direct';
-        const key = knownSources.has(raw) ? raw : 'other';
-        const uniqueKey = row.device_id || row.session_id;
-        if (!uniqueKey) return;
-        if (!srcDevices[key]) srcDevices[key] = new Set();
-        srcDevices[key].add(uniqueKey);
-      });
-      const sourcesSorted = Object.entries(srcDevices)
-        .map(([source, set]) => ({ source, count: set.size }))
-        .sort((a, b) => b.count - a.count);
-      setSources(sourcesSorted);
-
-      setLoading(false);
     }
+
     load();
-  }, [language]);
+    return () => {
+      cancelled = true;
+    };
+  }, [language, reloadKey]);
+
 
   const cards = useMemo(
     () => [
