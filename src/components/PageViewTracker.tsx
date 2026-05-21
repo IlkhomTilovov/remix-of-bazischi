@@ -202,6 +202,7 @@ export function PageViewTracker() {
   useEffect(() => {
     const path = location.pathname;
     if (path.startsWith('/admin')) return;
+    if (isBot()) return; // Botlarni sahifa tashrifi va sayt tashrifi sanagichidan cheklaymiz
 
     const sessionId = getSessionId();
     const deviceId = getDeviceId();
