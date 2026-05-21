@@ -311,18 +311,21 @@ export type Database = {
       page_visits: {
         Row: {
           created_at: string
+          device_id: string | null
           id: number
           path: string
           session_id: string
         }
         Insert: {
           created_at?: string
+          device_id?: string | null
           id?: number
           path: string
           session_id: string
         }
         Update: {
           created_at?: string
+          device_id?: string | null
           id?: number
           path?: string
           session_id?: string
