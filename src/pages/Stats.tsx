@@ -174,7 +174,7 @@ export default function Stats() {
           .not('device_id', 'is', null),
         supabase
           .from('page_visits')
-          .select('referrer_source')
+          .select('referrer_source, device_id, session_id')
           .gte('created_at', start30.toISOString()),
       ]);
 
@@ -229,15 +229,18 @@ export default function Stats() {
         }));
       setTopPages(sorted);
 
-      // Trafik manbalari (30 kun)
-      const srcCounts: Record<string, number> = {};
+      // Trafik manbalari (30 kun) — unikal odamlar soni (device_id bo'yicha, bo'lmasa session_id)
+      const srcDevices: Record<string, Set<string>> = {};
       (sourcesRes.data ?? []).forEach((row: any) => {
         const key = (row.referrer_source as string) || 'direct';
-        srcCounts[key] = (srcCounts[key] ?? 0) + 1;
+        const uniqueKey = row.device_id || row.session_id;
+        if (!uniqueKey) return;
+        if (!srcDevices[key]) srcDevices[key] = new Set();
+        srcDevices[key].add(uniqueKey);
       });
-      const sourcesSorted = Object.entries(srcCounts)
-        .sort((a, b) => b[1] - a[1])
-        .map(([source, count]) => ({ source, count }));
+      const sourcesSorted = Object.entries(srcDevices)
+        .map(([source, set]) => ({ source, count: set.size }))
+        .sort((a, b) => b.count - a.count);
       setSources(sourcesSorted);
 
       setLoading(false);
@@ -434,12 +437,15 @@ export default function Stats() {
 
         {/* Trafik manbalari */}
         <div className="rounded-xl border border-border bg-card p-5 md:p-6 mt-6">
-          <div className="flex items-center gap-2 mb-5">
+          <div className="flex items-center gap-2 mb-1">
             <Globe2 className="w-5 h-5 text-primary" />
             <h2 className="font-semibold text-base md:text-lg text-foreground">
               {t('Trafik manbalari (30 kun)', 'Источники трафика (30 дней)')}
             </h2>
           </div>
+          <p className="text-xs text-muted-foreground mb-5 ml-7">
+            {t('Unikal odamlar soni', 'Количество уникальных людей')}
+          </p>
           {loading ? (
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => (
