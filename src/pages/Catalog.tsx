@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams, useNavigationType, useLocation } from 'react-router-dom';
-import { Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSearchParams, useNavigationType, useLocation, useNavigate } from 'react-router-dom';
+import { Search, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -52,6 +52,7 @@ export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
@@ -339,7 +340,17 @@ export default function Catalog() {
     <div id="hero" className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         <div className="mb-8">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold mb-4">{t.catalog.title}</h1>
+          <div className="flex items-center gap-3 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
+              className="gap-2 rounded-xl"
+            >
+              <ArrowLeft className="w-4 h-4" /> Ortga
+            </Button>
+            <h1 className="font-serif text-3xl md:text-4xl font-bold">{t.catalog.title}</h1>
+          </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
