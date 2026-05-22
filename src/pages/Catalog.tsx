@@ -52,6 +52,7 @@ export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigationType = useNavigationType();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const initialCategoryParam = searchParams.get('category') || 'all';
