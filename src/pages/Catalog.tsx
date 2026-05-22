@@ -340,11 +340,11 @@ export default function Catalog() {
     <div id="hero" className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
             <Button
               size="sm"
               onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
-              className="gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
+              className="gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 self-start"
             >
               <ArrowLeft className="w-4 h-4" /> Ortga
             </Button>
