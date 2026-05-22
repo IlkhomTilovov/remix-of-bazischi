@@ -624,20 +624,17 @@ export default function ProductsNew() {
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        {pages.map((page, idx) =>
-          page === 'ellipsis' ? (
-            <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground">...</span>
-          ) : (
-            <Button
-              key={page}
-              variant={currentPage === page ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </Button>
-          )
-        )}
+        {pages.map((page) => (
+          <Button
+            key={page}
+            variant={currentPage === page ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => handlePageChange(page)}
+          >
+            {page}
+          </Button>
+        ))}
+
         <Button
           variant="outline"
           size="sm"
