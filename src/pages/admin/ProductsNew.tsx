@@ -731,6 +731,9 @@ export default function ProductsNew() {
         </CardContent>
       </Card>
 
+      {/* Top pagination */}
+      {renderPagination()}
+
       {/* Products Table */}
       <Card>
         <CardHeader className="pb-3">
