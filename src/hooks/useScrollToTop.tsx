@@ -14,11 +14,20 @@ const restoreSavedScroll = (locationKey: string) => {
   if (!saved) return;
 
   const y = Number.parseInt(saved, 10);
-  if (Number.isFinite(y)) {
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: y, left: 0, behavior: 'instant' as ScrollBehavior });
-    });
-  }
+  if (!Number.isFinite(y)) return;
+
+  // Retry over ~1.5s because the destination page's content (async data,
+  // images) grows after mount and the document may be too short initially.
+  const start = performance.now();
+  const DURATION = 1500;
+  const attempt = () => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: Math.min(y, Math.max(maxScroll, 0)), left: 0, behavior: 'instant' as ScrollBehavior });
+    if (maxScroll < y && performance.now() - start < DURATION) {
+      requestAnimationFrame(attempt);
+    }
+  };
+  requestAnimationFrame(attempt);
 };
 
 /**
