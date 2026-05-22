@@ -611,19 +611,9 @@ export default function ProductsNew() {
 
   const renderPagination = () => {
     if (totalPages <= 1) return null;
-    const pages: (number | 'ellipsis')[] = [];
-    const maxVisible = 5;
-    if (totalPages <= maxVisible + 2) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('ellipsis');
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push('ellipsis');
-      pages.push(totalPages);
-    }
+    const pages: number[] = [];
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+
     return (
       <div className="flex justify-center items-center gap-2">
         <Button
@@ -634,20 +624,17 @@ export default function ProductsNew() {
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        {pages.map((page, idx) =>
-          page === 'ellipsis' ? (
-            <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground">...</span>
-          ) : (
-            <Button
-              key={page}
-              variant={currentPage === page ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </Button>
-          )
-        )}
+        {pages.map((page) => (
+          <Button
+            key={page}
+            variant={currentPage === page ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => handlePageChange(page)}
+          >
+            {page}
+          </Button>
+        ))}
+
         <Button
           variant="outline"
           size="sm"
