@@ -342,10 +342,9 @@ export default function Catalog() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <Button
-              variant="outline"
               size="sm"
               onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
-              className="gap-2 rounded-xl"
+              className="gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <ArrowLeft className="w-4 h-4" /> Ortga
             </Button>
