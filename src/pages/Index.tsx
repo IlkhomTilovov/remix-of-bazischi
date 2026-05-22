@@ -196,7 +196,7 @@ export default function Index() {
                   <Link
                     to={`/catalog?category=${cat.slug}`}
                     key={cat.id}
-                    className={`group relative aspect-square rounded-sm overflow-hidden cursor-pointer bg-black transition-all duration-700 ${sectionServices.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+                    className={`group relative aspect-square rounded-sm overflow-hidden cursor-pointer bg-white transition-all duration-700 ${sectionServices.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
                     style={{ transitionDelay: `${i * 150}ms` }}
                   >
                     <img
