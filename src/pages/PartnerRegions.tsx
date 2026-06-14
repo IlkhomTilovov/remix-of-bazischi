@@ -37,28 +37,30 @@ export default function PartnerRegions() {
             {regions.map((r) => (
               <div
                 key={r.id}
-                className="group rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col"
+                className="group rounded-2xl border border-border bg-white shadow-sm hover:shadow-lg transition-all flex flex-col overflow-hidden"
               >
                 {r.image_url ? (
-                  <img src={r.image_url} alt={r.name} className="w-full h-36 rounded-xl object-cover mb-5" />
+                  <img src={r.image_url} alt={r.name} className="w-full h-44 object-cover" />
                 ) : (
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                    className="w-full h-44 flex items-center justify-center"
                     style={{ backgroundColor: `${BRAND}1a` }}
                   >
-                    <MapPin className="w-6 h-6" style={{ color: BRAND }} />
+                    <MapPin className="w-10 h-10" style={{ color: BRAND }} />
                   </div>
                 )}
-                <h2 className="font-serif text-xl font-bold text-foreground mb-1">{r.name}</h2>
-                <div className="mt-auto pt-5">
-                  <Link
-                    to={`/ustaxonalar/${r.id}`}
-                    className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: BRAND }}
-                  >
-                    Ustaxonalar
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
+                <div className="flex flex-col flex-1 p-6">
+                  <h2 className="font-serif text-xl font-bold text-foreground mb-1">{r.name}</h2>
+                  <div className="mt-auto pt-5">
+                    <Link
+                      to={`/ustaxonalar/${r.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: BRAND }}
+                    >
+                      Ustaxonalar
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
