@@ -272,7 +272,7 @@ export default function Stats() {
         setSources(sourcesSorted);
 
         // 4-batch: ustaxonalarga qo'ng'iroqlar
-        const callsRes = await runWithRetry(() =>
+        const callsRes = await runWithRetry(async () =>
           supabase
             .from('workshop_calls')
             .select('workshop_id, workshop_name, district_name, region_name, phone'),
