@@ -39,12 +39,16 @@ export default function PartnerRegions() {
                 key={r.id}
                 className="group rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col"
               >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                  style={{ backgroundColor: `${BRAND}1a` }}
-                >
-                  <MapPin className="w-6 h-6" style={{ color: BRAND }} />
-                </div>
+                {r.image_url ? (
+                  <img src={r.image_url} alt={r.name} className="w-full h-36 rounded-xl object-cover mb-5" />
+                ) : (
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                    style={{ backgroundColor: `${BRAND}1a` }}
+                  >
+                    <MapPin className="w-6 h-6" style={{ color: BRAND }} />
+                  </div>
+                )}
                 <h2 className="font-serif text-xl font-bold text-foreground mb-1">{r.name}</h2>
                 <div className="mt-auto pt-5">
                   <Link

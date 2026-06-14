@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 export interface PartnerRegion {
   id: string;
   name: string;
+  image_url?: string | null;
   sort_order: number | null;
   is_active: boolean | null;
   created_at?: string;

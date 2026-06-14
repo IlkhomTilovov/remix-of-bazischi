@@ -272,16 +272,20 @@ export default function Index() {
                       style={{ background: 'radial-gradient(600px circle at 50% 0%, hsl(var(--primary) / 0.12), transparent 60%)' }}
                     />
                     <div className="relative z-10 flex flex-col h-full">
-                      <div className="relative inline-flex mb-6">
-                        <div className="absolute inset-0 rounded-2xl bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <motion.div
-                          whileHover={{ scale: 1.08, rotate: -3 }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                          className="relative w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 shadow-[inset_0_1px_0_0_hsl(var(--foreground)/0.08),0_8px_24px_-8px_hsl(var(--primary)/0.4)]"
-                        >
-                          <MapPin className="w-6 h-6 text-primary" strokeWidth={1.75} />
-                        </motion.div>
-                      </div>
+                      {region.image_url ? (
+                        <img src={region.image_url} alt={region.name} className="w-full h-40 rounded-2xl object-cover mb-6" />
+                      ) : (
+                        <div className="relative inline-flex mb-6">
+                          <div className="absolute inset-0 rounded-2xl bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <motion.div
+                            whileHover={{ scale: 1.08, rotate: -3 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                            className="relative w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 shadow-[inset_0_1px_0_0_hsl(var(--foreground)/0.08),0_8px_24px_-8px_hsl(var(--primary)/0.4)]"
+                          >
+                            <MapPin className="w-6 h-6 text-primary" strokeWidth={1.75} />
+                          </motion.div>
+                        </div>
+                      )}
 
                       <h3 className="font-serif text-lg md:text-xl font-semibold text-foreground mb-5 tracking-tight">
                         {region.name}
