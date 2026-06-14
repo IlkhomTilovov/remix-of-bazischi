@@ -76,7 +76,7 @@ export default function PartnerWorkshops() {
             ))}
           </div>
         ) : workshops.length === 0 ? (
-          <p className="text-center text-muted-foreground py-20">Hozircha ustaxonalar mavjud emas.</p>
+          <p className="text-center text-muted-foreground py-20">{tx.empty}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
