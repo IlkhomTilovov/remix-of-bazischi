@@ -1,0 +1,61 @@
+import { Link, useParams } from 'react-router-dom';
+import { MapPin, ChevronRight, ArrowLeft, Wrench } from 'lucide-react';
+import { usePartnerDistricts, usePartnerRegion } from '@/hooks/usePartners';
+import { useSEO } from '@/hooks/useSEO';
+
+const BRAND = '#24A8F2';
+
+export default function PartnerDistricts() {
+  const { regionId } = useParams();
+  const { region } = usePartnerRegion(regionId);
+  const { districts, loading } = usePartnerDistricts(regionId);
+  useSEO({
+    title: region ? `${region.name} — Tumanlar` : 'Tumanlar',
+    description: 'Tumanlar bo\'yicha partner ustaxonalar.',
+  });
+
+  return (
+    <main className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-10 sm:py-16 max-w-6xl">
+        <Link to="/ustaxonalar" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Orqaga
+        </Link>
+        <header className="text-center mb-10 sm:mb-14">
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">{region?.name || 'Tumanlar'}</h1>
+          <p className="mt-3 text-muted-foreground text-sm sm:text-base">Tumanni tanlang</p>
+        </header>
+
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-40 rounded-2xl bg-muted animate-pulse" />
+            ))}
+          </div>
+        ) : districts.length === 0 ? (
+          <p className="text-center text-muted-foreground py-20">Hozircha tumanlar mavjud emas.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {districts.map((d) => (
+              <div key={d.id} className="group rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: `${BRAND}1a` }}>
+                  <Wrench className="w-6 h-6" style={{ color: BRAND }} />
+                </div>
+                <h2 className="font-serif text-xl font-bold text-foreground mb-1">{d.name}</h2>
+                <div className="mt-auto pt-5">
+                  <Link
+                    to={`/ustaxonalar/${regionId}/${d.id}`}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: BRAND }}
+                  >
+                    Ustaxonalar
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
