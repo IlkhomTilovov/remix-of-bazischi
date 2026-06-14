@@ -241,12 +241,23 @@ export default function Index() {
       {/* WHY US - editable */}
       <section id="partner-ustaxonalar" ref={sectionWhyUs.ref} className="py-20 md:py-28 bg-secondary">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${sectionWhyUs.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <EditableText contentKey="whyus_label" fallback="Afzalliklar" as="span" className="text-primary text-xs tracking-[0.3em] uppercase font-medium" section="whyus" />
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4">
-              <EditableText contentKey="whyus_title" fallback="Nega aynan biz" as="span" className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold" section="whyus" />
-            </h2>
+          <div className={`relative mb-16 transition-all duration-700 ${sectionWhyUs.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className="text-center">
+              <EditableText contentKey="whyus_label" fallback="Afzalliklar" as="span" className="text-primary text-xs tracking-[0.3em] uppercase font-medium" section="whyus" />
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4">
+                <EditableText contentKey="whyus_title" fallback="Nega aynan biz" as="span" className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold" section="whyus" />
+              </h2>
+            </div>
+            <Link
+              to="/ustaxonalar"
+              className="mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:absolute sm:right-0 sm:top-1/2 sm:mt-0 sm:w-auto sm:-translate-y-1/2"
+              style={{ backgroundColor: '#24A8F2' }}
+            >
+              Barchasini ko'rish
+              <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
             {partnerLoading ? (
