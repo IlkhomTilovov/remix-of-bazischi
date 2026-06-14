@@ -24,6 +24,7 @@ function getId(key: string, prefix: string): string {
 
 export default function PartnerWorkshops() {
   const { regionId, districtId } = useParams();
+  const navigate = useNavigate();
   const { language } = useLanguage();
   const { district } = usePartnerDistrict(districtId);
   const { workshops, loading } = usePartnerWorkshops(districtId);
