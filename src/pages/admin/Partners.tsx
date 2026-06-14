@@ -243,9 +243,10 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
       ) : (
         <div className="grid gap-3">
           {districts.length === 0 && <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>}
-          {districts.map((d) => (
+          {districts.map((d, i) => (
             <div key={d.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
               <div className="flex items-center gap-3">
+                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Wrench className="w-5 h-5 text-muted-foreground" />
                 <span className="font-medium">{d.name}</span>
                 <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
