@@ -295,17 +295,19 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PartnerWorkshop | null>(null);
-  const [form, setForm] = useState({ name: '', phone: '', address: '', experience_years: '', description: '', is_active: true });
+  const [form, setForm] = useState({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const reset = () => setForm({ name: '', phone: '', address: '', experience_years: '', description: '', is_active: true });
+  const reset = () => setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
   const openNew = () => { setEditing(null); reset(); setOpen(true); };
   const openEdit = (w: PartnerWorkshop) => {
     setEditing(w);
     setForm({
       name: w.name, phone: w.phone || '', address: w.address || '',
       experience_years: w.experience_years != null ? String(w.experience_years) : '',
-      description: w.description || '', is_active: w.is_active ?? true,
+      description: w.description || '',
+      sort_order: w.sort_order != null ? String(w.sort_order) : '',
+      is_active: w.is_active ?? true,
     });
     setOpen(true);
   };
