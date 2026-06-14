@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Settings2,
   MessageSquare,
+  Store,
   LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,7 @@ const navItems: NavItem[] = [
   { title: 'Buyurtmalar', url: '/admin/orders', icon: ShoppingCart, module: 'orders' },
   { title: 'Toifalar', url: '/admin/categories', icon: FolderTree, module: 'categories' },
   { title: 'Mahsulotlar', url: '/admin/products', icon: Package, module: 'products' },
+  { title: 'Ustaxonalar', url: '/admin/partners', icon: Store, module: 'categories' },
   
   { title: 'Xabarlar', url: '/admin/messages', icon: MessageSquare, module: 'customers' },
   { title: 'Sayt kontenti', url: '/admin/content', icon: FileText, module: 'siteContent' },
