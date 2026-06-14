@@ -134,9 +134,10 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
       <Button onClick={openNew}><Plus className="w-4 h-4 mr-1.5" /> Viloyat qo'shish</Button>
       <div className="grid gap-3">
         {regions.length === 0 && <p className="text-muted-foreground text-sm">Viloyatlar yo'q.</p>}
-        {regions.map((r) => (
+        {regions.map((r, i) => (
           <div key={r.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
             <div className="flex items-center gap-3">
+              <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
               {r.image_url ? (
                 <img src={r.image_url} alt={r.name} className="w-12 h-12 rounded-lg object-cover" />
               ) : (
