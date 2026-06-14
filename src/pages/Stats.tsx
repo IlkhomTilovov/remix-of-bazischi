@@ -96,6 +96,8 @@ export default function Stats() {
   const [weekData, setWeekData] = useState<DayPoint[]>([]);
   const [topPages, setTopPages] = useState<TopPage[]>([]);
   const [sources, setSources] = useState<SourceItem[]>([]);
+  const [calls, setCalls] = useState<CallItem[]>([]);
+  const [callsTotal, setCallsTotal] = useState(0);
 
   useEffect(() => {
     document.title = t('Sayt statistikasi', 'Статистика сайта');
