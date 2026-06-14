@@ -89,6 +89,15 @@ export default function Index() {
 
   const { regions: partnerRegions, loading: partnerLoading } = usePartnerRegions();
 
+  useEffect(() => {
+    if (window.location.hash === '#partner-ustaxonalar' && !partnerLoading) {
+      const el = document.getElementById('partner-ustaxonalar');
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+    }
+  }, [partnerLoading]);
+
   return (
     <div className="min-h-screen">
       {/* HERO */}
@@ -230,7 +239,7 @@ export default function Index() {
       </section>
 
       {/* WHY US - editable */}
-      <section ref={sectionWhyUs.ref} className="py-20 md:py-28 bg-secondary">
+      <section id="partner-ustaxonalar" ref={sectionWhyUs.ref} className="py-20 md:py-28 bg-secondary">
         <div className="container mx-auto px-4 lg:px-8">
           <div className={`text-center mb-16 transition-all duration-700 ${sectionWhyUs.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <EditableText contentKey="whyus_label" fallback="Afzalliklar" as="span" className="text-primary text-xs tracking-[0.3em] uppercase font-medium" section="whyus" />
