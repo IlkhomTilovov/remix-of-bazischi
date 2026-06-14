@@ -155,6 +155,7 @@ export default function WorkshopDetails() {
           {workshop.phone ? (
             <a
               href={`tel:${workshop.phone.replace(/\s/g, '')}`}
+              onClick={logCall}
               className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
               style={{ backgroundColor: BRAND }}
             >
