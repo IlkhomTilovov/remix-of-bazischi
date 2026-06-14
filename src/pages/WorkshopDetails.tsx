@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Phone, MapPin, ShieldCheck, Star } from 'lucide-react';
+import { ArrowLeft, Phone, MapPin, Award, Wrench } from 'lucide-react';
 import { usePartnerWorkshop } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
-import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
 
-const BRAND = '#2563EB';
+const BRAND = '#24A8F2';
 const db = supabase as any;
 
 function getId(key: string, prefix: string): string {
@@ -26,21 +25,8 @@ function getId(key: string, prefix: string): string {
 export default function WorkshopDetails() {
   const { workshopId } = useParams();
   const navigate = useNavigate();
-  const { language } = useLanguage();
   const { workshop, loading } = usePartnerWorkshop(workshopId);
   const [place, setPlace] = useState<{ region_id?: string; region_name?: string; district_id?: string; district_name?: string }>({});
-
-  const tx = {
-    back: language === 'uz' ? 'Barcha ustaxonalar' : 'Все мастерские',
-    info: language === 'uz' ? "Asosiy ma'lumotlar" : 'Основная информация',
-    address: language === 'uz' ? 'Manzil' : 'Адрес',
-    phone: language === 'uz' ? 'Telefon' : 'Телефон',
-    experience: language === 'uz' ? 'Tajriba' : 'Опыт',
-    years: language === 'uz' ? 'yil' : 'лет',
-    expBadge: (n: number) => (language === 'uz' ? `${n} yillik tajriba` : `Опыт ${n} лет`),
-    call: language === 'uz' ? "Qo'ng'iroq qilish" : 'Позвонить',
-    notFound: language === 'uz' ? 'Ustaxona topilmadi.' : 'Мастерская не найдена.',
-  };
 
   // Tuman va viloyat nomlarini yuklab olamiz (qo'ng'iroqni hisobga olish uchun)
   useEffect(() => {
@@ -90,9 +76,8 @@ export default function WorkshopDetails() {
   if (loading) {
     return (
       <main className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 py-10 sm:py-16 max-w-2xl">
-          <div className="h-6 w-40 rounded bg-muted animate-pulse mb-8" />
-          <div className="h-10 w-64 rounded bg-muted animate-pulse mb-4" />
+        <div className="container mx-auto px-4 py-16 max-w-3xl">
+          <div className="h-8 w-40 rounded bg-muted animate-pulse mb-8" />
           <div className="h-64 rounded-2xl bg-muted animate-pulse" />
         </div>
       </main>
@@ -102,68 +87,76 @@ export default function WorkshopDetails() {
   if (!workshop) {
     return (
       <main className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 py-20 max-w-2xl text-center">
-          <p className="text-muted-foreground">{tx.notFound}</p>
+        <div className="container mx-auto px-4 py-20 max-w-3xl text-center">
+          <p className="text-muted-foreground">Ustaxona topilmadi.</p>
           <button onClick={() => navigate(-1)} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium" style={{ color: BRAND }}>
-            <ArrowLeft className="w-4 h-4" /> {tx.back}
+            <ArrowLeft className="w-4 h-4" /> Orqaga
           </button>
         </div>
       </main>
     );
   }
 
-  const Row = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-    <div className="flex items-center justify-between gap-4 rounded-2xl bg-muted/50 px-5 py-4">
-      <div className="flex items-center gap-3">
-        <span className="shrink-0" style={{ color: BRAND }}>{icon}</span>
-        <span className="font-bold text-foreground">{label}</span>
-      </div>
-      <span className="text-right text-muted-foreground font-medium">{value}</span>
-    </div>
-  );
-
   return (
     <main className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8 sm:py-12 max-w-2xl">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-semibold mb-8" style={{ color: BRAND }}>
-          <ArrowLeft className="w-4 h-4" /> {tx.back}
+      <div className="container mx-auto px-4 py-10 sm:py-16 max-w-3xl">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-8">
+          <ArrowLeft className="w-4 h-4" /> Orqaga
         </button>
 
-        <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-foreground mb-5">{workshop.name}</h1>
-
-        {workshop.experience_years ? (
-          <div className="mb-6">
-            <span className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold" style={{ backgroundColor: `${BRAND}1a`, color: BRAND }}>
-              <Star className="w-4 h-4 fill-current" /> {tx.expBadge(workshop.experience_years)}
-            </span>
+        <div className="rounded-2xl border border-border bg-white p-6 sm:p-10 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: `${BRAND}1a` }}>
+            <Wrench className="w-7 h-7" style={{ color: BRAND }} />
           </div>
-        ) : null}
 
-        {workshop.phone ? (
-          <a
-            href={`tel:${workshop.phone.replace(/\s/g, '')}`}
-            onClick={logCall}
-            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl px-8 py-4 text-lg font-bold text-white transition-opacity hover:opacity-90 mb-10"
-            style={{ backgroundColor: BRAND }}
-          >
-            <Phone className="w-5 h-5" /> {tx.call}
-          </a>
-        ) : null}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <h1 className="font-serif text-2xl sm:text-4xl font-bold text-foreground">{workshop.name}</h1>
+          </div>
 
-        {workshop.description ? (
-          <p className="text-muted-foreground whitespace-pre-line mb-8">{workshop.description}</p>
-        ) : null}
 
-        <h2 className="font-serif text-xl font-bold text-foreground mb-4">{tx.info}</h2>
-        <div className="space-y-3">
-          {workshop.address ? (
-            <Row icon={<MapPin className="w-5 h-5" />} label={tx.address} value={workshop.address} />
+          {workshop.description ? (
+            <p className="text-muted-foreground whitespace-pre-line mb-8">{workshop.description}</p>
           ) : null}
+
+          <div className="space-y-4 mb-8">
+            {workshop.address ? (
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                <div>
+                  <p className="text-xs text-muted-foreground">Manzil</p>
+                  <p className="text-foreground font-medium">{workshop.address}</p>
+                </div>
+              </div>
+            ) : null}
+            {workshop.phone ? (
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                <div>
+                  <p className="text-xs text-muted-foreground">Telefon</p>
+                  <p className="text-foreground font-medium">{workshop.phone}</p>
+                </div>
+              </div>
+            ) : null}
+            {workshop.experience_years ? (
+              <div className="flex items-start gap-3">
+                <Award className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                <div>
+                  <p className="text-xs text-muted-foreground">Tajriba</p>
+                  <p className="text-foreground font-medium">{workshop.experience_years} yil</p>
+                </div>
+              </div>
+            ) : null}
+          </div>
+
           {workshop.phone ? (
-            <Row icon={<Phone className="w-5 h-5" />} label={tx.phone} value={workshop.phone} />
-          ) : null}
-          {workshop.experience_years ? (
-            <Row icon={<ShieldCheck className="w-5 h-5" />} label={tx.experience} value={`${workshop.experience_years} ${tx.years}`} />
+            <a
+              href={`tel:${workshop.phone.replace(/\s/g, '')}`}
+              onClick={logCall}
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: BRAND }}
+            >
+              <Phone className="w-5 h-5" /> Qo'ng'iroq qilish
+            </a>
           ) : null}
         </div>
       </div>
