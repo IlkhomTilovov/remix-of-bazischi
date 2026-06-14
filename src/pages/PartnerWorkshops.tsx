@@ -24,12 +24,24 @@ function getId(key: string, prefix: string): string {
 
 export default function PartnerWorkshops() {
   const { regionId, districtId } = useParams();
+  const { language } = useLanguage();
   const { district } = usePartnerDistrict(districtId);
   const { workshops, loading } = usePartnerWorkshops(districtId);
+  const tx = {
+    back: language === 'uz' ? 'Orqaga' : 'Назад',
+    title: language === 'uz' ? 'Ustaxonalar' : 'Мастерские',
+    subtitle: language === 'uz' ? 'Ustaxonani tanlang' : 'Выберите мастерскую',
+    empty: language === 'uz' ? 'Hozircha ustaxonalar mavjud emas.' : 'Пока нет мастерских.',
+    years: language === 'uz' ? 'yil' : 'лет',
+    address: language === 'uz' ? 'Manzil' : 'Адрес',
+    phone: language === 'uz' ? 'Telefon' : 'Телефон',
+    experience: language === 'uz' ? 'Tajriba' : 'Опыт',
+    call: language === 'uz' ? "Qo'ng'iroq qilish" : 'Позвонить',
+  };
 
   useSEO({
-    title: district ? `${district.name} — Ustaxonalar` : 'Ustaxonalar',
-    description: 'Tumandagi partner ustaxonalar ro\'yxati.',
+    title: district ? `${district.name} — ${tx.title}` : tx.title,
+    description: language === 'uz' ? 'Tumandagi partner ustaxonalar ro\'yxati.' : 'Список партнёрских мастерских в районе.',
   });
 
   const logCall = (w: typeof workshops[number]) => {
