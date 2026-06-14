@@ -529,7 +529,7 @@ export default function Stats() {
                       {p.title}
                     </p>
                     <p className="text-[11px] text-muted-foreground truncate">
-                      {p.path}
+                      {/^\/(ustaxona|ustaxonalar)\//.test(p.path) ? '/' + p.path.split('/').filter(Boolean)[0] : p.path}
                     </p>
                   </div>
                   <span className="text-sm font-semibold text-primary tabular-nums flex-shrink-0">
