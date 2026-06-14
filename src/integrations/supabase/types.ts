@@ -910,6 +910,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_workshop_call_counts: {
+        Args: never
+        Returns: {
+          call_count: number
+          district_name: string
+          region_name: string
+          workshop_id: string
+          workshop_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

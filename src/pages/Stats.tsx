@@ -271,44 +271,21 @@ export default function Stats() {
           .sort((a, b) => b.count - a.count);
         setSources(sourcesSorted);
 
-        // 4-batch: ustaxonalarga qo'ng'iroqlar + partner ma'lumotlari (nomlarni aniqlash uchun)
-        const [callsRes, wsRes, distRes, regRes] = await runWithRetry(async () =>
-          Promise.all([
-            (supabase as any).from('workshop_calls').select('workshop_id, workshop_name, district_id, district_name, region_id, region_name, phone'),
-            (supabase as any).from('partner_workshops').select('id, name, phone, district_id'),
-            (supabase as any).from('partner_districts').select('id, name, region_id'),
-            (supabase as any).from('partner_regions').select('id, name'),
-          ]),
+        // 4-batch: ustaxonalarga qo'ng'iroqlar (xavfsiz: faqat jamlangan sonlar, shaxsiy ma'lumotsiz)
+        const callsRes = await runWithRetry(async () =>
+          (supabase as any).rpc('get_workshop_call_counts'),
         );
         if (cancelled) return;
 
-        const wsMap: Record<string, any> = {};
-        (wsRes.data ?? []).forEach((w: any) => { wsMap[w.id] = w; });
-        const distMap: Record<string, any> = {};
-        (distRes.data ?? []).forEach((d: any) => { distMap[d.id] = d; });
-        const regMap: Record<string, any> = {};
-        (regRes.data ?? []).forEach((r: any) => { regMap[r.id] = r; });
-
-        const callMap: Record<string, CallItem> = {};
-        (callsRes.data ?? []).forEach((row: any) => {
-          const ws = row.workshop_id ? wsMap[row.workshop_id] : null;
-          const distId = ws?.district_id || row.district_id;
-          const dist = distId ? distMap[distId] : null;
-          const regId = dist?.region_id || row.region_id;
-          const reg = regId ? regMap[regId] : null;
-
-          const workshopName = ws?.name || row.workshop_name || '—';
-          const districtName = dist?.name || row.district_name || '—';
-          const regionName = reg?.name || row.region_name || '—';
-          const phone = ws?.phone || row.phone || '';
-
-          const key = row.workshop_id || `${regionName}|${districtName}|${workshopName}`;
-          if (!callMap[key]) {
-            callMap[key] = { key, region: regionName, district: districtName, workshop: workshopName, phone, count: 0 };
-          }
-          callMap[key].count++;
-        });
-        const callsSorted = Object.values(callMap).sort((a, b) => b.count - a.count);
+        const callsSorted: CallItem[] = (callsRes.data ?? []).map((row: any) => ({
+          key: row.workshop_id || `${row.region_name}|${row.district_name}|${row.workshop_name}`,
+          region: row.region_name || '—',
+          district: row.district_name || '—',
+          workshop: row.workshop_name || '—',
+          phone: '',
+          count: Number(row.call_count) || 0,
+        }));
+        callsSorted.sort((a, b) => b.count - a.count);
         setCalls(callsSorted);
         setCallsTotal(callsSorted.reduce((s, c) => s + c.count, 0));
       } catch (err) {
