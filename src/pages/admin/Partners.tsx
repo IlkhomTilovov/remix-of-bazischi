@@ -388,6 +388,7 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
             <div><Label>Manzil</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
             <div><Label>Tajriba (yil)</Label><Input type="number" value={form.experience_years} onChange={(e) => setForm({ ...form, experience_years: e.target.value })} /></div>
             <div><Label>Tavsif</Label><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+            <div><Label>Tartib raqami</Label><Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} placeholder="Masalan: 1" /><p className="text-xs text-muted-foreground mt-1">Kichik raqam birinchi ko'rsatiladi.</p></div>
             <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
