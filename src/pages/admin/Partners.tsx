@@ -114,7 +114,7 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
 
   const save = async () => {
     if (!name.trim()) { toast.error('Viloyat nomini kiriting'); return; }
-    const payload = { name: name.trim(), image_url: imageUrl || null, is_active: isActive };
+    const payload = { name: name.trim(), image_url: imageUrl || null, sort_order: sortOrder ? parseInt(sortOrder, 10) : null, is_active: isActive };
     const { error } = editing
       ? await partnersApi.from('partner_regions').update(payload).eq('id', editing.id)
       : await partnersApi.from('partner_regions').insert(payload);
