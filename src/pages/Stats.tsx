@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone, Globe2, Instagram, Send, Facebook, Search, Youtube, MessageCircle, Link2 } from 'lucide-react';
+import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone, Globe2, Instagram, Send, Facebook, Search, Youtube, MessageCircle, Link2, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
