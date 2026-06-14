@@ -81,7 +81,14 @@ export default function PartnerWorkshops() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
-              <div key={w.id} className="rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
+              <div
+                key={w.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/ustaxona/${w.id}`)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/ustaxona/${w.id}`); }}
+                className="cursor-pointer rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col"
+              >
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
                     <Wrench className="w-6 h-6" style={{ color: BRAND }} />
