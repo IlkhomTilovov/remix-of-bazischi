@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MapPin, ChevronRight } from 'lucide-react';
+import { MapPin, ChevronRight, ArrowLeft } from 'lucide-react';
 import { usePartnerRegions } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
 
@@ -15,6 +15,9 @@ export default function PartnerRegions() {
   return (
     <main className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-10 sm:py-16 max-w-6xl">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Orqaga
+        </Link>
         <header className="text-center mb-10 sm:mb-14">
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">Partner ustaxonalar</h1>
           <p className="mt-3 text-muted-foreground text-sm sm:text-base">Hududingizni tanlang</p>
