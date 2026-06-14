@@ -280,7 +280,7 @@ export default function Index() {
 
                       <div className="mt-auto">
                         <Link
-                          to={`/ustaxonalar/${region.id}`}
+                          to="/ustaxonalar"
                           className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                           style={{ backgroundColor: '#24A8F2' }}
                         >
