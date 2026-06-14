@@ -336,6 +336,43 @@ export default function Catalog() {
     return pages;
   };
 
+  const renderPagination = (key: string) =>
+    totalPages > 1 ? (
+      <div key={key} className="flex justify-center items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        {getPaginationNumbers().map((page, idx) =>
+          page === 'ellipsis' ? (
+            <span key={`${key}-ellipsis-${idx}`} className="px-2 text-muted-foreground">...</span>
+          ) : (
+            <Button
+              key={`${key}-${page}`}
+              variant={currentPage === page ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </Button>
+          )
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    ) : null;
+
+
   return (
     <div id="hero" className="min-h-screen py-8">
       <div className="container mx-auto px-4">
@@ -423,6 +460,8 @@ export default function Catalog() {
               </div>
             ) : products.length > 0 ? (
               <>
+                {totalPages > 1 && <div className="mb-6">{renderPagination('top')}</div>}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                   {products.map(product => (
                     <ProductCard
@@ -433,40 +472,7 @@ export default function Catalog() {
                   ))}
                 </div>
 
-                {totalPages > 1 && (
-                  <div className="flex justify-center items-center gap-2 mt-8">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    {getPaginationNumbers().map((page, idx) =>
-                      page === 'ellipsis' ? (
-                        <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground">...</span>
-                      ) : (
-                        <Button
-                          key={page}
-                          variant={currentPage === page ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => handlePageChange(page)}
-                        >
-                          {page}
-                        </Button>
-                      )
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
+                {totalPages > 1 && <div className="mt-8">{renderPagination('bottom')}</div>}
               </>
             ) : (
               <div className="text-center py-16">
