@@ -82,13 +82,14 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
   const [editing, setEditing] = useState<PartnerRegion | null>(null);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setIsActive(true); setOpen(true); };
-  const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setIsActive(r.is_active ?? true); setOpen(true); };
+  const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setSortOrder(''); setIsActive(true); setOpen(true); };
+  const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setSortOrder(r.sort_order != null ? String(r.sort_order) : ''); setIsActive(r.is_active ?? true); setOpen(true); };
 
   const handleUpload = async (file: File) => {
     if (!file) return;
@@ -113,7 +114,7 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
 
   const save = async () => {
     if (!name.trim()) { toast.error('Viloyat nomini kiriting'); return; }
-    const payload = { name: name.trim(), image_url: imageUrl || null, is_active: isActive };
+    const payload = { name: name.trim(), image_url: imageUrl || null, sort_order: sortOrder ? parseInt(sortOrder, 10) : null, is_active: isActive };
     const { error } = editing
       ? await partnersApi.from('partner_regions').update(payload).eq('id', editing.id)
       : await partnersApi.from('partner_regions').insert(payload);
@@ -161,6 +162,7 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
           <DialogHeader><DialogTitle>{editing ? 'Viloyatni tahrirlash' : "Viloyat qo'shish"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div><Label>Nomi</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Toshkent viloyati" /></div>
+            <div><Label>Tartib raqami</Label><Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Masalan: 1" /><p className="text-xs text-muted-foreground mt-1">Kichik raqam birinchi ko'rsatiladi.</p></div>
             <div>
               <Label>Rasm</Label>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
@@ -203,16 +205,17 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [editing, setEditing] = useState<PartnerDistrict | null>(null);
   const [name, setName] = useState('');
   const [regionId, setRegionId] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const openNew = () => { setEditing(null); setName(''); setRegionId(selectedRegion || ''); setIsActive(true); setOpen(true); };
-  const openEdit = (d: PartnerDistrict) => { setEditing(d); setName(d.name); setRegionId(d.region_id); setIsActive(d.is_active ?? true); setOpen(true); };
+  const openNew = () => { setEditing(null); setName(''); setRegionId(selectedRegion || ''); setSortOrder(''); setIsActive(true); setOpen(true); };
+  const openEdit = (d: PartnerDistrict) => { setEditing(d); setName(d.name); setRegionId(d.region_id); setSortOrder(d.sort_order != null ? String(d.sort_order) : ''); setIsActive(d.is_active ?? true); setOpen(true); };
 
   const save = async () => {
     if (!regionId) { toast.error('Viloyatni tanlang'); return; }
     if (!name.trim()) { toast.error('Tuman nomini kiriting'); return; }
-    const payload = { name: name.trim(), region_id: regionId, is_active: isActive };
+    const payload = { name: name.trim(), region_id: regionId, sort_order: sortOrder ? parseInt(sortOrder, 10) : null, is_active: isActive };
     const { error } = editing
       ? await partnersApi.from('partner_districts').update(payload).eq('id', editing.id)
       : await partnersApi.from('partner_districts').insert(payload);
@@ -272,6 +275,7 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
               </Select>
             </div>
             <div><Label>Nomi</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Chilonzor tumani" /></div>
+            <div><Label>Tartib raqami</Label><Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Masalan: 1" /><p className="text-xs text-muted-foreground mt-1">Kichik raqam birinchi ko'rsatiladi.</p></div>
             <div className="flex items-center gap-2"><Switch checked={isActive} onCheckedChange={setIsActive} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
@@ -291,17 +295,19 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PartnerWorkshop | null>(null);
-  const [form, setForm] = useState({ name: '', phone: '', address: '', experience_years: '', description: '', is_active: true });
+  const [form, setForm] = useState({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const reset = () => setForm({ name: '', phone: '', address: '', experience_years: '', description: '', is_active: true });
+  const reset = () => setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
   const openNew = () => { setEditing(null); reset(); setOpen(true); };
   const openEdit = (w: PartnerWorkshop) => {
     setEditing(w);
     setForm({
       name: w.name, phone: w.phone || '', address: w.address || '',
       experience_years: w.experience_years != null ? String(w.experience_years) : '',
-      description: w.description || '', is_active: w.is_active ?? true,
+      description: w.description || '',
+      sort_order: w.sort_order != null ? String(w.sort_order) : '',
+      is_active: w.is_active ?? true,
     });
     setOpen(true);
   };
@@ -316,6 +322,7 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
       address: form.address.trim() || null,
       experience_years: form.experience_years ? parseInt(form.experience_years, 10) : null,
       description: form.description.trim() || null,
+      sort_order: form.sort_order ? parseInt(form.sort_order, 10) : null,
       is_active: form.is_active,
     };
     const { error } = editing
@@ -381,6 +388,7 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
             <div><Label>Manzil</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
             <div><Label>Tajriba (yil)</Label><Input type="number" value={form.experience_years} onChange={(e) => setForm({ ...form, experience_years: e.target.value })} /></div>
             <div><Label>Tavsif</Label><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+            <div><Label>Tartib raqami</Label><Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} placeholder="Masalan: 1" /><p className="text-xs text-muted-foreground mt-1">Kichik raqam birinchi ko'rsatiladi.</p></div>
             <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
