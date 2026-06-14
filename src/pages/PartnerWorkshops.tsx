@@ -81,63 +81,62 @@ export default function PartnerWorkshops() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
               <div key={w.id} className="rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
-                    <Wrench className="w-6 h-6" style={{ color: BRAND }} />
-                  </div>
-                  {w.experience_years ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
-                      <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} {tx.years}
-                    </span>
-                  ) : null}
-                </div>
+                <h2 className="font-serif text-2xl font-bold text-foreground mb-3">{w.name}</h2>
 
-                <h2 className="font-serif text-xl font-bold text-foreground mb-4">{w.name}</h2>
-
-                <div className="space-y-4 border-t border-border pt-4">
-                  {w.description ? (
-                    <p className="text-sm text-muted-foreground whitespace-pre-line">{w.description}</p>
-                  ) : null}
-                  {w.address ? (
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
-                      <div>
-                        <p className="text-xs text-muted-foreground">{tx.address}</p>
-                        <p className="text-foreground font-medium">{w.address}</p>
-                      </div>
-                    </div>
-                  ) : null}
-                  {w.phone ? (
-                    <div className="flex items-start gap-3">
-                      <Phone className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
-                      <div>
-                        <p className="text-xs text-muted-foreground">{tx.phone}</p>
-                        <p className="text-foreground font-medium">{w.phone}</p>
-                      </div>
-                    </div>
-                  ) : null}
-                  {w.experience_years ? (
-                    <div className="flex items-start gap-3">
-                      <Award className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
-                      <div>
-                        <p className="text-xs text-muted-foreground">{tx.experience}</p>
-                        <p className="text-foreground font-medium">{w.experience_years} {tx.years}</p>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
+                {w.experience_years ? (
+                  <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-muted px-3 py-1 text-sm font-medium text-foreground mb-4">
+                    <Star className="w-4 h-4 fill-current" style={{ color: BRAND }} /> {w.experience_years} {tx.yearsExp}
+                  </span>
+                ) : null}
 
                 {w.phone ? (
                   <a
                     href={`tel:${w.phone.replace(/\s/g, '')}`}
                     onClick={() => logCall(w)}
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90 mb-5"
                     style={{ backgroundColor: BRAND }}
                   >
                     <Phone className="w-5 h-5" /> {tx.call}
                   </a>
                 ) : null}
+
+                {w.description ? (
+                  <p className="text-sm text-muted-foreground whitespace-pre-line mb-4">{w.description}</p>
+                ) : null}
+
+                <p className="text-sm font-bold text-foreground mb-3">{tx.mainInfo}</p>
+
+                <div className="divide-y divide-border border-t border-border">
+                  {w.address ? (
+                    <div className="flex items-center justify-between gap-3 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <MapPin className="w-4 h-4 shrink-0" style={{ color: BRAND }} />
+                        <span className="text-sm font-medium text-foreground">{tx.address}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground text-right">{w.address}</span>
+                    </div>
+                  ) : null}
+                  {w.phone ? (
+                    <div className="flex items-center justify-between gap-3 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <Phone className="w-4 h-4 shrink-0" style={{ color: BRAND }} />
+                        <span className="text-sm font-medium text-foreground">{tx.phone}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground text-right">{w.phone}</span>
+                    </div>
+                  ) : null}
+                  {w.experience_years ? (
+                    <div className="flex items-center justify-between gap-3 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <ShieldCheck className="w-4 h-4 shrink-0" style={{ color: BRAND }} />
+                        <span className="text-sm font-medium text-foreground">{tx.experience}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground text-right">{w.experience_years} {tx.years}</span>
+                    </div>
+                  ) : null}
+                </div>
               </div>
+
             ))}
           </div>
         )}
