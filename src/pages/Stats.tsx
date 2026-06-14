@@ -183,8 +183,8 @@ export default function Stats() {
         setProductViews(productRes.count ?? 0);
         setOrdersCount(ordersRes.count ?? 0);
 
-        // 2-batch: 7-kun grafigi va eng mashhur sahifalar
-        const [weekRes, topRes] = await runWithRetry(() =>
+        // 2-batch: 7-kun grafigi, eng mashhur sahifalar va partner nomlari
+        const [weekRes, topRes, regRes2, distRes2, wsRes2] = await runWithRetry(() =>
           Promise.all([
             supabase
               .from('page_visits')
@@ -195,9 +195,41 @@ export default function Stats() {
               .from('page_visits')
               .select('path')
               .gte('created_at', start30.toISOString()),
+            (supabase as any).from('partner_regions').select('id, name'),
+            (supabase as any).from('partner_districts').select('id, name'),
+            (supabase as any).from('partner_workshops').select('id, name'),
           ]),
         );
         if (cancelled) return;
+
+        const regNames: Record<string, string> = {};
+        (regRes2.data ?? []).forEach((r: any) => { regNames[r.id] = r.name; });
+        const distNames: Record<string, string> = {};
+        (distRes2.data ?? []).forEach((d: any) => { distNames[d.id] = d.name; });
+        const wsNames: Record<string, string> = {};
+        (wsRes2.data ?? []).forEach((w: any) => { wsNames[w.id] = w.name; });
+
+        const partnerTitle = (path: string): string | null => {
+          const seg = path.split('?')[0].split('/').filter(Boolean);
+          // /ustaxona/:workshopId
+          if (seg[0] === 'ustaxona' && seg[1]) {
+            return `Ustaxona: ${wsNames[seg[1]] || seg[1].slice(0, 8)}`;
+          }
+          // /ustaxonalar/:regionId/:districtId
+          if (seg[0] === 'ustaxonalar' && seg[2]) {
+            const reg = regNames[seg[1]] || '';
+            const dist = distNames[seg[2]] || seg[2].slice(0, 8);
+            return reg ? `${reg} — ${dist} (tumani)` : `Tuman: ${dist}`;
+          }
+          // /ustaxonalar/:regionId
+          if (seg[0] === 'ustaxonalar' && seg[1]) {
+            return `Viloyat: ${regNames[seg[1]] || seg[1].slice(0, 8)}`;
+          }
+          // /ustaxonalar
+          if (seg[0] === 'ustaxonalar') return 'Partner ustaxonalar';
+          return null;
+        };
+
 
         const buckets: Record<string, number> = {};
         for (let i = 6; i >= 0; i--) {
