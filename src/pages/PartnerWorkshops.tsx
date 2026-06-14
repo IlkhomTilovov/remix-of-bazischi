@@ -102,7 +102,7 @@ export default function PartnerWorkshops() {
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
                       <div>
-                        <p className="text-xs text-muted-foreground">Manzil</p>
+                        <p className="text-xs text-muted-foreground">{tx.address}</p>
                         <p className="text-foreground font-medium">{w.address}</p>
                       </div>
                     </div>
