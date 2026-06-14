@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Wrench, Award, MapPin, Phone } from 'lucide-react';
 import { usePartnerWorkshops, usePartnerDistrict } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
@@ -24,7 +24,6 @@ function getId(key: string, prefix: string): string {
 
 export default function PartnerWorkshops() {
   const { regionId, districtId } = useParams();
-  const navigate = useNavigate();
   const { language } = useLanguage();
   const { district } = usePartnerDistrict(districtId);
   const { workshops, loading } = usePartnerWorkshops(districtId);
@@ -81,14 +80,7 @@ export default function PartnerWorkshops() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
-              <div
-                key={w.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate(`/ustaxona/${w.id}`)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/ustaxona/${w.id}`); }}
-                className="cursor-pointer rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col"
-              >
+              <div key={w.id} className="rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
                     <Wrench className="w-6 h-6" style={{ color: BRAND }} />
@@ -138,7 +130,7 @@ export default function PartnerWorkshops() {
                 {w.phone ? (
                   <a
                     href={`tel:${w.phone.replace(/\s/g, '')}`}
-                    onClick={(e) => { e.stopPropagation(); logCall(w); }}
+                    onClick={() => logCall(w)}
                     className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
                     style={{ backgroundColor: BRAND }}
                   >
