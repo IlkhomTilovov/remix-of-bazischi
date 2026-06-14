@@ -275,6 +275,7 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
               </Select>
             </div>
             <div><Label>Nomi</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Chilonzor tumani" /></div>
+            <div><Label>Tartib raqami</Label><Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Masalan: 1" /><p className="text-xs text-muted-foreground mt-1">Kichik raqam birinchi ko'rsatiladi.</p></div>
             <div className="flex items-center gap-2"><Switch checked={isActive} onCheckedChange={setIsActive} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
