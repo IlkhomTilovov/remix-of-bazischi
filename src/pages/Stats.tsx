@@ -577,6 +577,50 @@ export default function Stats() {
             })()
           )}
         </div>
+
+        {/* Ustaxonalarga qo'ng'iroqlar */}
+        <div className="rounded-xl border border-border bg-card p-5 md:p-6 mt-6">
+          <div className="flex items-center gap-2 mb-1">
+            <Phone className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-base md:text-lg text-foreground">
+              {t('Ustaxonalarga qo\'ng\'iroqlar', 'Звонки в мастерские')}
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground mb-5 ml-7">
+            {t(
+              `Jami ${callsTotal.toLocaleString('uz-UZ')} ta qo'ng'iroq tugmasi bosilgan`,
+              `Всего нажатий на кнопку звонка: ${callsTotal.toLocaleString('ru-RU')}`,
+            )}
+          </p>
+          {loading ? (
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
+          ) : calls.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              {t("Hozircha qo'ng'iroqlar yo'q", 'Пока нет звонков')}
+            </p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {calls.map((c) => (
+                <li key={c.key} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground truncate">{c.workshop}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {c.region} · {c.district}{c.phone ? ` · ${c.phone}` : ''}
+                    </p>
+                  </div>
+                  <span className="text-sm font-semibold text-primary tabular-nums flex-shrink-0">
+                    {c.count.toLocaleString(lang === 'ru' ? 'ru-RU' : 'uz-UZ')}{' '}
+                    {t("qo'ng'iroq", 'звон.')}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
