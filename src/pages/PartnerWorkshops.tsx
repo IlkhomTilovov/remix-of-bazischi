@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Award, MapPin, Phone, Star, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Star, ShieldCheck } from 'lucide-react';
 import { usePartnerWorkshops, usePartnerDistrict } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
 import { useLanguage } from '@/hooks/useLanguage';
