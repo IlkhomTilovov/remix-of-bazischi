@@ -240,28 +240,29 @@ export default function Index() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {whyUsItems.map((item, i) => {
-              const IconComp = iconMap[item.icon] || Shield;
-              return (
+            {partnerLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-48 rounded-2xl bg-card/60 animate-pulse" />
+              ))
+            ) : partnerRegions.length === 0 ? (
+              <p className="col-span-full text-center text-muted-foreground py-10">Hozircha viloyatlar mavjud emas.</p>
+            ) : (
+              partnerRegions.map((region, i) => (
                 <motion.div
-                  key={item.key}
+                  key={region.id}
                   initial={{ opacity: 0, y: 30 }}
                   animate={sectionWhyUs.isVisible ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                   whileHover={{ y: -4 }}
                   className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-white/15 via-white/5 to-transparent hover:from-primary/40 hover:via-primary/20 hover:to-transparent transition-all duration-500"
                 >
-                  <div className="relative h-full rounded-2xl bg-gradient-to-br from-card/95 via-card/90 to-card/80 backdrop-blur-xl p-7 md:p-8 overflow-hidden">
-                    {/* sheen */}
+                  <div className="relative h-full rounded-2xl bg-gradient-to-br from-card/95 via-card/90 to-card/80 backdrop-blur-xl p-7 md:p-8 overflow-hidden flex flex-col">
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                    {/* radial glow on hover */}
                     <div
                       className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                       style={{ background: 'radial-gradient(600px circle at 50% 0%, hsl(var(--primary) / 0.12), transparent 60%)' }}
                     />
-
-                    <div className="relative z-10">
-                      {/* Icon container */}
+                    <div className="relative z-10 flex flex-col h-full">
                       <div className="relative inline-flex mb-6">
                         <div className="absolute inset-0 rounded-2xl bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <motion.div
@@ -269,21 +270,29 @@ export default function Index() {
                           transition={{ type: 'spring', stiffness: 300, damping: 18 }}
                           className="relative w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 shadow-[inset_0_1px_0_0_hsl(var(--foreground)/0.08),0_8px_24px_-8px_hsl(var(--primary)/0.4)]"
                         >
-                          <IconComp className="w-6 h-6 text-primary" strokeWidth={1.75} />
+                          <MapPin className="w-6 h-6 text-primary" strokeWidth={1.75} />
                         </motion.div>
                       </div>
 
-                      <h3 className="font-serif text-lg md:text-xl font-semibold text-foreground mb-2 tracking-tight">
-                        <EditableText contentKey={`${item.key}_title`} fallback={item.titleFallback} as="span" className="font-serif text-lg md:text-xl font-semibold" section="whyus" />
+                      <h3 className="font-serif text-lg md:text-xl font-semibold text-foreground mb-5 tracking-tight">
+                        {region.name}
                       </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        <EditableText contentKey={`${item.key}_desc`} fallback={item.descFallback} as="span" className="text-sm leading-relaxed" section="whyus" />
-                      </p>
+
+                      <div className="mt-auto">
+                        <Link
+                          to={`/ustaxonalar/${region.id}`}
+                          className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                          style={{ backgroundColor: '#24A8F2' }}
+                        >
+                          Ustaxonalar
+                          <ChevronRight className="w-4 h-4" />
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
-              );
-            })}
+              ))
+            )}
           </div>
         </div>
       </section>
