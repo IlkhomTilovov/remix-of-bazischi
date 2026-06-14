@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Wrench, Award, MapPin, Phone } from 'lucide-react';
 import { usePartnerWorkshops, usePartnerDistrict } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
+import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
 
 const BRAND = '#24A8F2';
@@ -23,12 +24,24 @@ function getId(key: string, prefix: string): string {
 
 export default function PartnerWorkshops() {
   const { regionId, districtId } = useParams();
+  const { language } = useLanguage();
   const { district } = usePartnerDistrict(districtId);
   const { workshops, loading } = usePartnerWorkshops(districtId);
+  const tx = {
+    back: language === 'uz' ? 'Orqaga' : 'Назад',
+    title: language === 'uz' ? 'Ustaxonalar' : 'Мастерские',
+    subtitle: language === 'uz' ? 'Ustaxonani tanlang' : 'Выберите мастерскую',
+    empty: language === 'uz' ? 'Hozircha ustaxonalar mavjud emas.' : 'Пока нет мастерских.',
+    years: language === 'uz' ? 'yil' : 'лет',
+    address: language === 'uz' ? 'Manzil' : 'Адрес',
+    phone: language === 'uz' ? 'Telefon' : 'Телефон',
+    experience: language === 'uz' ? 'Tajriba' : 'Опыт',
+    call: language === 'uz' ? "Qo'ng'iroq qilish" : 'Позвонить',
+  };
 
   useSEO({
-    title: district ? `${district.name} — Ustaxonalar` : 'Ustaxonalar',
-    description: 'Tumandagi partner ustaxonalar ro\'yxati.',
+    title: district ? `${district.name} — ${tx.title}` : tx.title,
+    description: language === 'uz' ? 'Tumandagi partner ustaxonalar ro\'yxati.' : 'Список партнёрских мастерских в районе.',
   });
 
   const logCall = (w: typeof workshops[number]) => {
@@ -49,11 +62,11 @@ export default function PartnerWorkshops() {
     <main className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-10 sm:py-16 max-w-6xl">
         <Link to={`/ustaxonalar/${regionId}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Orqaga
+          <ArrowLeft className="w-4 h-4" /> {tx.back}
         </Link>
         <header className="text-center mb-10 sm:mb-14">
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">{district?.name || 'Ustaxonalar'}</h1>
-          <p className="mt-3 text-muted-foreground text-sm sm:text-base">Ustaxonani tanlang</p>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">{district?.name || tx.title}</h1>
+          <p className="mt-3 text-muted-foreground text-sm sm:text-base">{tx.subtitle}</p>
         </header>
 
         {loading ? (
@@ -63,7 +76,7 @@ export default function PartnerWorkshops() {
             ))}
           </div>
         ) : workshops.length === 0 ? (
-          <p className="text-center text-muted-foreground py-20">Hozircha ustaxonalar mavjud emas.</p>
+          <p className="text-center text-muted-foreground py-20">{tx.empty}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
@@ -74,7 +87,7 @@ export default function PartnerWorkshops() {
                   </div>
                   {w.experience_years ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
-                      <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} yil
+                      <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} {tx.years}
                     </span>
                   ) : null}
                 </div>
@@ -89,7 +102,7 @@ export default function PartnerWorkshops() {
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
                       <div>
-                        <p className="text-xs text-muted-foreground">Manzil</p>
+                        <p className="text-xs text-muted-foreground">{tx.address}</p>
                         <p className="text-foreground font-medium">{w.address}</p>
                       </div>
                     </div>
@@ -98,7 +111,7 @@ export default function PartnerWorkshops() {
                     <div className="flex items-start gap-3">
                       <Phone className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
                       <div>
-                        <p className="text-xs text-muted-foreground">Telefon</p>
+                        <p className="text-xs text-muted-foreground">{tx.phone}</p>
                         <p className="text-foreground font-medium">{w.phone}</p>
                       </div>
                     </div>
@@ -107,8 +120,8 @@ export default function PartnerWorkshops() {
                     <div className="flex items-start gap-3">
                       <Award className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
                       <div>
-                        <p className="text-xs text-muted-foreground">Tajriba</p>
-                        <p className="text-foreground font-medium">{w.experience_years} yil</p>
+                        <p className="text-xs text-muted-foreground">{tx.experience}</p>
+                        <p className="text-foreground font-medium">{w.experience_years} {tx.years}</p>
                       </div>
                     </div>
                   ) : null}
@@ -121,7 +134,7 @@ export default function PartnerWorkshops() {
                     className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
                     style={{ backgroundColor: BRAND }}
                   >
-                    <Phone className="w-5 h-5" /> Qo'ng'iroq qilish
+                    <Phone className="w-5 h-5" /> {tx.call}
                   </a>
                 ) : null}
               </div>
