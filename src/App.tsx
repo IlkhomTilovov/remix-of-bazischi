@@ -45,6 +45,11 @@ import Settings from "./pages/admin/Settings";
 import SystemSettings from "./pages/admin/SystemSettings";
 import Themes from "./pages/admin/Themes";
 import CheckoutFormSettings from "./pages/admin/CheckoutFormSettings";
+import Partners from "./pages/admin/Partners";
+import PartnerRegions from "./pages/PartnerRegions";
+import PartnerDistricts from "./pages/PartnerDistricts";
+import PartnerWorkshops from "./pages/PartnerWorkshops";
+import WorkshopDetails from "./pages/WorkshopDetails";
 
 const queryClient = new QueryClient();
 
@@ -131,6 +136,11 @@ const App = () => (
                               <SystemSettings />
                             </ProtectedRoute>
                           } />
+                          <Route path="partners" element={
+                            <ProtectedRoute module="categories">
+                              <Partners />
+                            </ProtectedRoute>
+                          } />
                         </Route>
                       
                       {/* Public Routes */}
@@ -161,6 +171,10 @@ const App = () => (
                               <Route path="/checkout" element={<Checkout />} />
                               <Route path="/thank-you" element={<ThankYou />} />
                               <Route path="/stats" element={<Stats />} />
+                              <Route path="/ustaxonalar" element={<PartnerRegions />} />
+                              <Route path="/ustaxonalar/:regionId" element={<PartnerDistricts />} />
+                              <Route path="/ustaxonalar/:regionId/:districtId" element={<PartnerWorkshops />} />
+                              <Route path="/ustaxona/:workshopId" element={<WorkshopDetails />} />
                               <Route path="*" element={<NotFound />} />
                             </Routes>
                           </main>

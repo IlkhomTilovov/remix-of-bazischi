@@ -338,6 +338,121 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_districts: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          region_id: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          region_id: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          region_id?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_districts_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "partner_regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_regions: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      partner_workshops: {
+        Row: {
+          address: string | null
+          created_at: string
+          description: string | null
+          district_id: string
+          experience_years: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          district_id: string
+          experience_years?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          district_id?: string
+          experience_years?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_workshops_district_id_fkey"
+            columns: ["district_id"]
+            isOneToOne: false
+            referencedRelation: "partner_districts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           application: string[] | null
