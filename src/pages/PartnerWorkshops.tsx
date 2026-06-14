@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Wrench, Award, MapPin, Phone } from 'lucide-react';
-import { usePartnerWorkshops, usePartnerDistrict } from '@/hooks/usePartners';
+import { ArrowLeft, Wrench, Award, MapPin, Phone, ShieldCheck, Star } from 'lucide-react';
+import { usePartnerWorkshops, usePartnerDistrict, type PartnerWorkshop } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,8 +28,11 @@ export default function PartnerWorkshops() {
   const { language } = useLanguage();
   const { district } = usePartnerDistrict(districtId);
   const { workshops, loading } = usePartnerWorkshops(districtId);
+  const [selected, setSelected] = useState<PartnerWorkshop | null>(null);
+
   const tx = {
     back: language === 'uz' ? 'Orqaga' : 'Назад',
+    backAll: language === 'uz' ? 'Barcha ustaxonalar' : 'Все мастерские',
     title: language === 'uz' ? 'Ustaxonalar' : 'Мастерские',
     subtitle: language === 'uz' ? 'Ustaxonani tanlang' : 'Выберите мастерскую',
     empty: language === 'uz' ? 'Hozircha ustaxonalar mavjud emas.' : 'Пока нет мастерских.',
@@ -38,6 +42,8 @@ export default function PartnerWorkshops() {
     experience: language === 'uz' ? 'Tajriba' : 'Опыт',
     call: language === 'uz' ? "Qo'ng'iroq qilish" : 'Позвонить',
     details: language === 'uz' ? 'Batafsil' : 'Подробнее',
+    info: language === 'uz' ? "Asosiy ma'lumotlar" : 'Основная информация',
+    expBadge: (n: number) => (language === 'uz' ? `${n} yillik tajriba` : `Опыт ${n} лет`),
   };
 
   useSEO({
@@ -45,7 +51,7 @@ export default function PartnerWorkshops() {
     description: language === 'uz' ? 'Tumandagi partner ustaxonalar ro\'yxati.' : 'Список партнёрских мастерских в районе.',
   });
 
-  const logCall = (w: typeof workshops[number]) => {
+  const logCall = (w: PartnerWorkshop) => {
     db.from('workshop_calls').insert({
       workshop_id: w.id,
       district_id: districtId ?? null,
@@ -58,6 +64,72 @@ export default function PartnerWorkshops() {
       device_id: getId('mm_device_id', 'd'),
     }).then(() => {}, () => {});
   };
+
+  // Inline detail view (image 1 ko'rinishi)
+  if (selected) {
+    const w = selected;
+    const Row = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
+      <div className="flex items-center justify-between gap-4 rounded-2xl bg-muted/50 px-5 py-4">
+        <div className="flex items-center gap-3">
+          <span className="shrink-0" style={{ color: BRAND }}>{icon}</span>
+          <span className="font-bold text-foreground">{label}</span>
+        </div>
+        <span className="text-right text-muted-foreground font-medium">{value}</span>
+      </div>
+    );
+
+    return (
+      <main className="min-h-screen bg-white">
+        <div className="container mx-auto px-4 py-8 sm:py-12 max-w-2xl">
+          <button
+            onClick={() => setSelected(null)}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold mb-8"
+            style={{ color: BRAND }}
+          >
+            <ArrowLeft className="w-4 h-4" /> {tx.backAll}
+          </button>
+
+          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-foreground mb-5">{w.name}</h1>
+
+          {w.experience_years ? (
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold" style={{ backgroundColor: `${BRAND}1a`, color: BRAND }}>
+                <Star className="w-4 h-4 fill-current" /> {tx.expBadge(w.experience_years)}
+              </span>
+            </div>
+          ) : null}
+
+          {w.phone ? (
+            <a
+              href={`tel:${w.phone.replace(/\s/g, '')}`}
+              onClick={() => logCall(w)}
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl px-8 py-4 text-lg font-bold text-white transition-opacity hover:opacity-90 mb-10"
+              style={{ backgroundColor: BRAND }}
+            >
+              <Phone className="w-5 h-5" /> {tx.call}
+            </a>
+          ) : null}
+
+          {w.description ? (
+            <p className="text-muted-foreground whitespace-pre-line mb-8">{w.description}</p>
+          ) : null}
+
+          <h2 className="font-serif text-xl font-bold text-foreground mb-4">{tx.info}</h2>
+          <div className="space-y-3">
+            {w.address ? (
+              <Row icon={<MapPin className="w-5 h-5" />} label={tx.address} value={w.address} />
+            ) : null}
+            {w.phone ? (
+              <Row icon={<Phone className="w-5 h-5" />} label={tx.phone} value={w.phone} />
+            ) : null}
+            {w.experience_years ? (
+              <Row icon={<ShieldCheck className="w-5 h-5" />} label={tx.experience} value={`${w.experience_years} ${tx.years}`} />
+            ) : null}
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -81,10 +153,10 @@ export default function PartnerWorkshops() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
-              <Link
+              <button
                 key={w.id}
-                to={`/ustaxona/${w.id}`}
-                className="rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all flex flex-col group"
+                onClick={() => setSelected(w)}
+                className="text-left rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all flex flex-col group"
               >
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
@@ -112,9 +184,8 @@ export default function PartnerWorkshops() {
                 >
                   {tx.details}
                 </span>
-              </Link>
+              </button>
             ))}
-
           </div>
         )}
       </div>
