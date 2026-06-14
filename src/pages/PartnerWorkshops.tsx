@@ -62,11 +62,11 @@ export default function PartnerWorkshops() {
     <main className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-10 sm:py-16 max-w-6xl">
         <Link to={`/ustaxonalar/${regionId}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Orqaga
+          <ArrowLeft className="w-4 h-4" /> {tx.back}
         </Link>
         <header className="text-center mb-10 sm:mb-14">
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">{district?.name || 'Ustaxonalar'}</h1>
-          <p className="mt-3 text-muted-foreground text-sm sm:text-base">Ustaxonani tanlang</p>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">{district?.name || tx.title}</h1>
+          <p className="mt-3 text-muted-foreground text-sm sm:text-base">{tx.subtitle}</p>
         </header>
 
         {loading ? (
