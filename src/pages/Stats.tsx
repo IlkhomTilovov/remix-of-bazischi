@@ -270,6 +270,32 @@ export default function Stats() {
           .map(([source, set]) => ({ source, count: set.size }))
           .sort((a, b) => b.count - a.count);
         setSources(sourcesSorted);
+
+        // 4-batch: ustaxonalarga qo'ng'iroqlar
+        const callsRes = await runWithRetry(() =>
+          supabase
+            .from('workshop_calls')
+            .select('workshop_id, workshop_name, district_name, region_name, phone'),
+        );
+        if (cancelled) return;
+        const callMap: Record<string, CallItem> = {};
+        (callsRes.data ?? []).forEach((row: any) => {
+          const key = row.workshop_id || `${row.region_name}|${row.district_name}|${row.workshop_name}`;
+          if (!callMap[key]) {
+            callMap[key] = {
+              key,
+              region: row.region_name || '—',
+              district: row.district_name || '—',
+              workshop: row.workshop_name || '—',
+              phone: row.phone || '',
+              count: 0,
+            };
+          }
+          callMap[key].count++;
+        });
+        const callsSorted = Object.values(callMap).sort((a, b) => b.count - a.count);
+        setCalls(callsSorted);
+        setCallsTotal(callsSorted.reduce((s, c) => s + c.count, 0));
       } catch (err) {
         console.error('[Stats] load error:', err);
         if (!cancelled) setLoadError(true);
