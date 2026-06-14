@@ -134,7 +134,7 @@ export default function PartnerWorkshops() {
                     className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
                     style={{ backgroundColor: BRAND }}
                   >
-                    <Phone className="w-5 h-5" /> Qo'ng'iroq qilish
+                    <Phone className="w-5 h-5" /> {tx.call}
                   </a>
                 ) : null}
               </div>
