@@ -20,7 +20,7 @@ export default function PartnerRegions() {
           <ArrowLeft className="w-4 h-4" /> Orqaga
         </button>
         <header className="text-center mb-10 sm:mb-14">
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">Partner ustaxonalar</h1>
+          <h1 className="font-serif text-3xl sm:text-5xl font-bold text-foreground">Ustaxonalar</h1>
           <p className="mt-3 text-muted-foreground text-sm sm:text-base">Hududingizni tanlang</p>
         </header>
 
