@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone, Globe2, Instagram, Send, Facebook, Search, Youtube, MessageCircle, Link2 } from 'lucide-react';
+import { Activity, Eye, Users, ShoppingCart, Calendar, TrendingUp, Smartphone, Globe2, Instagram, Send, Facebook, Search, Youtube, MessageCircle, Link2, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
@@ -17,6 +17,7 @@ import {
 type DayPoint = { date: string; label: string; visits: number };
 type TopPage = { path: string; count: number; title: string };
 type SourceItem = { source: string; count: number };
+type CallItem = { key: string; region: string; district: string; workshop: string; phone: string; count: number };
 
 const SOURCE_META: Record<string, { label_uz: string; label_ru: string; icon: any; color: string }> = {
   direct: { label_uz: "To'g'ridan-to'g'ri", label_ru: 'Прямые заходы', icon: Link2, color: 'text-slate-500' },
@@ -95,6 +96,8 @@ export default function Stats() {
   const [weekData, setWeekData] = useState<DayPoint[]>([]);
   const [topPages, setTopPages] = useState<TopPage[]>([]);
   const [sources, setSources] = useState<SourceItem[]>([]);
+  const [calls, setCalls] = useState<CallItem[]>([]);
+  const [callsTotal, setCallsTotal] = useState(0);
 
   useEffect(() => {
     document.title = t('Sayt statistikasi', 'Статистика сайта');
@@ -267,6 +270,32 @@ export default function Stats() {
           .map(([source, set]) => ({ source, count: set.size }))
           .sort((a, b) => b.count - a.count);
         setSources(sourcesSorted);
+
+        // 4-batch: ustaxonalarga qo'ng'iroqlar
+        const callsRes = await runWithRetry(async () =>
+          (supabase as any)
+            .from('workshop_calls')
+            .select('workshop_id, workshop_name, district_name, region_name, phone'),
+        );
+        if (cancelled) return;
+        const callMap: Record<string, CallItem> = {};
+        (callsRes.data ?? []).forEach((row: any) => {
+          const key = row.workshop_id || `${row.region_name}|${row.district_name}|${row.workshop_name}`;
+          if (!callMap[key]) {
+            callMap[key] = {
+              key,
+              region: row.region_name || '—',
+              district: row.district_name || '—',
+              workshop: row.workshop_name || '—',
+              phone: row.phone || '',
+              count: 0,
+            };
+          }
+          callMap[key].count++;
+        });
+        const callsSorted = Object.values(callMap).sort((a, b) => b.count - a.count);
+        setCalls(callsSorted);
+        setCallsTotal(callsSorted.reduce((s, c) => s + c.count, 0));
       } catch (err) {
         console.error('[Stats] load error:', err);
         if (!cancelled) setLoadError(true);
@@ -546,6 +575,50 @@ export default function Stats() {
                 </ul>
               );
             })()
+          )}
+        </div>
+
+        {/* Ustaxonalarga qo'ng'iroqlar */}
+        <div className="rounded-xl border border-border bg-card p-5 md:p-6 mt-6">
+          <div className="flex items-center gap-2 mb-1">
+            <Phone className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-base md:text-lg text-foreground">
+              {t('Ustaxonalarga qo\'ng\'iroqlar', 'Звонки в мастерские')}
+            </h2>
+          </div>
+          <p className="text-xs text-muted-foreground mb-5 ml-7">
+            {t(
+              `Jami ${callsTotal.toLocaleString('uz-UZ')} ta qo'ng'iroq tugmasi bosilgan`,
+              `Всего нажатий на кнопку звонка: ${callsTotal.toLocaleString('ru-RU')}`,
+            )}
+          </p>
+          {loading ? (
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
+          ) : calls.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              {t("Hozircha qo'ng'iroqlar yo'q", 'Пока нет звонков')}
+            </p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {calls.map((c) => (
+                <li key={c.key} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground truncate">{c.workshop}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {c.region} · {c.district}{c.phone ? ` · ${c.phone}` : ''}
+                    </p>
+                  </div>
+                  <span className="text-sm font-semibold text-primary tabular-nums flex-shrink-0">
+                    {c.count.toLocaleString(lang === 'ru' ? 'ru-RU' : 'uz-UZ')}{' '}
+                    {t("qo'ng'iroq", 'звон.')}
+                  </span>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </div>

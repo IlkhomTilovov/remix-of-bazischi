@@ -863,6 +863,48 @@ export type Database = {
         }
         Relationships: []
       }
+      workshop_calls: {
+        Row: {
+          created_at: string
+          device_id: string | null
+          district_id: string | null
+          district_name: string | null
+          id: string
+          phone: string | null
+          region_id: string | null
+          region_name: string | null
+          session_id: string | null
+          workshop_id: string | null
+          workshop_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string | null
+          district_id?: string | null
+          district_name?: string | null
+          id?: string
+          phone?: string | null
+          region_id?: string | null
+          region_name?: string | null
+          session_id?: string | null
+          workshop_id?: string | null
+          workshop_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_id?: string | null
+          district_id?: string | null
+          district_name?: string | null
+          id?: string
+          phone?: string | null
+          region_id?: string | null
+          region_name?: string | null
+          session_id?: string | null
+          workshop_id?: string | null
+          workshop_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

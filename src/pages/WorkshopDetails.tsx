@@ -1,14 +1,73 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Phone, MapPin, Award, Wrench } from 'lucide-react';
 import { usePartnerWorkshop } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
+import { supabase } from '@/integrations/supabase/client';
 
 const BRAND = '#24A8F2';
+const db = supabase as any;
+
+function getId(key: string, prefix: string): string {
+  try {
+    const store = prefix === 's' ? sessionStorage : localStorage;
+    let id = store.getItem(key);
+    if (!id) {
+      id = `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+      store.setItem(key, id);
+    }
+    return id;
+  } catch {
+    return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
 
 export default function WorkshopDetails() {
   const { workshopId } = useParams();
   const navigate = useNavigate();
   const { workshop, loading } = usePartnerWorkshop(workshopId);
+  const [place, setPlace] = useState<{ region_id?: string; region_name?: string; district_id?: string; district_name?: string }>({});
+
+  // Tuman va viloyat nomlarini yuklab olamiz (qo'ng'iroqni hisobga olish uchun)
+  useEffect(() => {
+    if (!workshop?.district_id) return;
+    (async () => {
+      const { data: d } = await db
+        .from('partner_districts')
+        .select('id, name, region_id')
+        .eq('id', workshop.district_id)
+        .maybeSingle();
+      if (!d) return;
+      let regionName: string | undefined;
+      if (d.region_id) {
+        const { data: r } = await db
+          .from('partner_regions')
+          .select('name')
+          .eq('id', d.region_id)
+          .maybeSingle();
+        regionName = r?.name;
+      }
+      setPlace({ region_id: d.region_id, region_name: regionName, district_id: d.id, district_name: d.name });
+    })();
+  }, [workshop?.district_id]);
+
+  const loggedRef = useRef(false);
+  const logCall = () => {
+    if (loggedRef.current || !workshop) return;
+    loggedRef.current = true;
+    db.from('workshop_calls').insert({
+      workshop_id: workshop.id,
+      district_id: place.district_id ?? null,
+      region_id: place.region_id ?? null,
+      workshop_name: workshop.name,
+      district_name: place.district_name ?? null,
+      region_name: place.region_name ?? null,
+      phone: workshop.phone ?? null,
+      session_id: getId('mm_session_id', 's'),
+      device_id: getId('mm_device_id', 'd'),
+    }).then(() => {}, () => {});
+  };
+
   useSEO({
     title: workshop ? workshop.name : 'Ustaxona',
     description: workshop?.description || 'Partner ustaxona haqida batafsil.',
@@ -96,6 +155,7 @@ export default function WorkshopDetails() {
           {workshop.phone ? (
             <a
               href={`tel:${workshop.phone.replace(/\s/g, '')}`}
+              onClick={logCall}
               className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
               style={{ backgroundColor: BRAND }}
             >
