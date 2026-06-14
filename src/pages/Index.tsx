@@ -89,6 +89,15 @@ export default function Index() {
 
   const { regions: partnerRegions, loading: partnerLoading } = usePartnerRegions();
 
+  useEffect(() => {
+    if (window.location.hash === '#partner-ustaxonalar' && !partnerLoading) {
+      const el = document.getElementById('partner-ustaxonalar');
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+    }
+  }, [partnerLoading]);
+
   return (
     <div className="min-h-screen">
       {/* HERO */}
