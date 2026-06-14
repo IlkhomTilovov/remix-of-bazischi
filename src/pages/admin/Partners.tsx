@@ -205,11 +205,12 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [editing, setEditing] = useState<PartnerDistrict | null>(null);
   const [name, setName] = useState('');
   const [regionId, setRegionId] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const openNew = () => { setEditing(null); setName(''); setRegionId(selectedRegion || ''); setIsActive(true); setOpen(true); };
-  const openEdit = (d: PartnerDistrict) => { setEditing(d); setName(d.name); setRegionId(d.region_id); setIsActive(d.is_active ?? true); setOpen(true); };
+  const openNew = () => { setEditing(null); setName(''); setRegionId(selectedRegion || ''); setSortOrder(''); setIsActive(true); setOpen(true); };
+  const openEdit = (d: PartnerDistrict) => { setEditing(d); setName(d.name); setRegionId(d.region_id); setSortOrder(d.sort_order != null ? String(d.sort_order) : ''); setIsActive(d.is_active ?? true); setOpen(true); };
 
   const save = async () => {
     if (!regionId) { toast.error('Viloyatni tanlang'); return; }
