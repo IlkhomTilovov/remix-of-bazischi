@@ -16,7 +16,7 @@ export default function PartnerRegions() {
   return (
     <main className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-10 sm:py-16 max-w-6xl">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-6">
+        <button onClick={() => navigate('/#partner-ustaxonalar')} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Orqaga
         </button>
         <header className="text-center mb-10 sm:mb-14">
