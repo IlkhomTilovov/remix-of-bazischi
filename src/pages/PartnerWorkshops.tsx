@@ -1,18 +1,54 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronRight, ArrowLeft, Wrench, Award } from 'lucide-react';
+import { ChevronDown, ArrowLeft, Wrench, Award, MapPin, Phone } from 'lucide-react';
 import { usePartnerWorkshops, usePartnerDistrict } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
+import { supabase } from '@/integrations/supabase/client';
 
 const BRAND = '#24A8F2';
+const db = supabase as any;
+
+function getId(key: string, prefix: string): string {
+  try {
+    const store = prefix === 's' ? sessionStorage : localStorage;
+    let id = store.getItem(key);
+    if (!id) {
+      id = `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+      store.setItem(key, id);
+    }
+    return id;
+  } catch {
+    return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
 
 export default function PartnerWorkshops() {
   const { regionId, districtId } = useParams();
   const { district } = usePartnerDistrict(districtId);
   const { workshops, loading } = usePartnerWorkshops(districtId);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [logged, setLogged] = useState<Record<string, boolean>>({});
+
   useSEO({
     title: district ? `${district.name} — Ustaxonalar` : 'Ustaxonalar',
     description: 'Tumandagi partner ustaxonalar ro\'yxati.',
   });
+
+  const logCall = (w: typeof workshops[number]) => {
+    if (logged[w.id]) return;
+    setLogged((prev) => ({ ...prev, [w.id]: true }));
+    db.from('workshop_calls').insert({
+      workshop_id: w.id,
+      district_id: districtId ?? null,
+      region_id: regionId ?? null,
+      workshop_name: w.name,
+      district_name: district?.name ?? null,
+      region_name: null,
+      phone: w.phone ?? null,
+      session_id: getId('mm_session_id', 's'),
+      device_id: getId('mm_device_id', 'd'),
+    }).then(() => {}, () => {});
+  };
 
   return (
     <main className="min-h-screen bg-white">
@@ -34,33 +70,83 @@ export default function PartnerWorkshops() {
         ) : workshops.length === 0 ? (
           <p className="text-center text-muted-foreground py-20">Hozircha ustaxonalar mavjud emas.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {workshops.map((w) => (
-              <div key={w.id} className="group rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
-                    <Wrench className="w-6 h-6" style={{ color: BRAND }} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+            {workshops.map((w) => {
+              const open = openId === w.id;
+              return (
+                <div key={w.id} className="group rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
+                      <Wrench className="w-6 h-6" style={{ color: BRAND }} />
+                    </div>
+                    {w.experience_years ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
+                        <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} yil
+                      </span>
+                    ) : null}
                   </div>
-                  {w.experience_years ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
-                      <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} yil
-                    </span>
+                  <h2 className="font-serif text-xl font-bold text-foreground mb-1">{w.name}</h2>
+                  {!open && w.address ? <p className="text-sm text-muted-foreground line-clamp-1">{w.address}</p> : null}
+
+                  {open ? (
+                    <div className="mt-4 space-y-4 border-t border-border pt-4">
+                      {w.description ? (
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">{w.description}</p>
+                      ) : null}
+                      {w.address ? (
+                        <div className="flex items-start gap-3">
+                          <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                          <div>
+                            <p className="text-xs text-muted-foreground">Manzil</p>
+                            <p className="text-foreground font-medium">{w.address}</p>
+                          </div>
+                        </div>
+                      ) : null}
+                      {w.phone ? (
+                        <div className="flex items-start gap-3">
+                          <Phone className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                          <div>
+                            <p className="text-xs text-muted-foreground">Telefon</p>
+                            <p className="text-foreground font-medium">{w.phone}</p>
+                          </div>
+                        </div>
+                      ) : null}
+                      {w.experience_years ? (
+                        <div className="flex items-start gap-3">
+                          <Award className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                          <div>
+                            <p className="text-xs text-muted-foreground">Tajriba</p>
+                            <p className="text-foreground font-medium">{w.experience_years} yil</p>
+                          </div>
+                        </div>
+                      ) : null}
+                      {w.phone ? (
+                        <a
+                          href={`tel:${w.phone.replace(/\s/g, '')}`}
+                          onClick={() => logCall(w)}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
+                          style={{ backgroundColor: BRAND }}
+                        >
+                          <Phone className="w-5 h-5" /> Qo'ng'iroq qilish
+                        </a>
+                      ) : null}
+                    </div>
                   ) : null}
+
+                  <div className="mt-auto pt-5">
+                    <button
+                      type="button"
+                      onClick={() => setOpenId(open ? null : w.id)}
+                      className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: BRAND }}
+                    >
+                      Batafsil
+                      <ChevronDown className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+                    </button>
+                  </div>
                 </div>
-                <h2 className="font-serif text-xl font-bold text-foreground mb-1">{w.name}</h2>
-                {w.address ? <p className="text-sm text-muted-foreground line-clamp-1">{w.address}</p> : null}
-                <div className="mt-auto pt-5">
-                  <Link
-                    to={`/ustaxona/${w.id}`}
-                    className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: BRAND }}
-                  >
-                    Batafsil
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
