@@ -111,12 +111,8 @@ export default function WorkshopDetails() {
 
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <h1 className="font-serif text-2xl sm:text-4xl font-bold text-foreground">{workshop.name}</h1>
-            {workshop.experience_years ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-sm font-medium text-foreground">
-                <Award className="w-4 h-4" style={{ color: BRAND }} /> {workshop.experience_years} yil tajriba
-              </span>
-            ) : null}
           </div>
+
 
           {workshop.description ? (
             <p className="text-muted-foreground whitespace-pre-line mb-8">{workshop.description}</p>
