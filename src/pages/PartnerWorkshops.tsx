@@ -37,6 +37,8 @@ export default function PartnerWorkshops() {
     phone: language === 'uz' ? 'Telefon' : 'Телефон',
     experience: language === 'uz' ? 'Tajriba' : 'Опыт',
     call: language === 'uz' ? "Qo'ng'iroq qilish" : 'Позвонить',
+    yearsExp: language === 'uz' ? 'yillik tajriba' : 'лет опыта',
+    mainInfo: language === 'uz' ? "Asosiy ma'lumotlar" : 'Основная информация',
   };
 
   useSEO({
