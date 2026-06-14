@@ -120,8 +120,8 @@ export default function PartnerWorkshops() {
                     <div className="flex items-start gap-3">
                       <Award className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
                       <div>
-                        <p className="text-xs text-muted-foreground">Tajriba</p>
-                        <p className="text-foreground font-medium">{w.experience_years} yil</p>
+                        <p className="text-xs text-muted-foreground">{tx.experience}</p>
+                        <p className="text-foreground font-medium">{w.experience_years} {tx.years}</p>
                       </div>
                     </div>
                   ) : null}
