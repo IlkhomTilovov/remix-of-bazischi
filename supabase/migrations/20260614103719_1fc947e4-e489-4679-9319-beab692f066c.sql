@@ -1,0 +1,1 @@
+ALTER TABLE public.partner_regions ADD COLUMN IF NOT EXISTS image_url text;
