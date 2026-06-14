@@ -336,6 +336,43 @@ export default function Catalog() {
     return pages;
   };
 
+  const renderPagination = (key: string) =>
+    totalPages > 1 ? (
+      <div key={key} className="flex justify-center items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        {getPaginationNumbers().map((page, idx) =>
+          page === 'ellipsis' ? (
+            <span key={`${key}-ellipsis-${idx}`} className="px-2 text-muted-foreground">...</span>
+          ) : (
+            <Button
+              key={`${key}-${page}`}
+              variant={currentPage === page ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </Button>
+          )
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    ) : null;
+
+
   return (
     <div id="hero" className="min-h-screen py-8">
       <div className="container mx-auto px-4">
