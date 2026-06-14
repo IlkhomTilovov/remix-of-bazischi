@@ -87,7 +87,7 @@ export default function PartnerWorkshops() {
                   </div>
                   {w.experience_years ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
-                      <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} yil
+                      <Award className="w-3.5 h-3.5" style={{ color: BRAND }} /> {w.experience_years} {tx.years}
                     </span>
                   ) : null}
                 </div>
