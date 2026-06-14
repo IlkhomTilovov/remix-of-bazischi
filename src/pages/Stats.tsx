@@ -17,6 +17,7 @@ import {
 type DayPoint = { date: string; label: string; visits: number };
 type TopPage = { path: string; count: number; title: string };
 type SourceItem = { source: string; count: number };
+type CallItem = { key: string; region: string; district: string; workshop: string; phone: string; count: number };
 
 const SOURCE_META: Record<string, { label_uz: string; label_ru: string; icon: any; color: string }> = {
   direct: { label_uz: "To'g'ridan-to'g'ri", label_ru: 'Прямые заходы', icon: Link2, color: 'text-slate-500' },
