@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Phone, MapPin, Award, Wrench } from 'lucide-react';
+import { ArrowLeft, Phone, MapPin, ShieldCheck, Star } from 'lucide-react';
 import { usePartnerWorkshop } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
+import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
 
-const BRAND = '#24A8F2';
+const BRAND = '#2563EB';
 const db = supabase as any;
 
 function getId(key: string, prefix: string): string {
