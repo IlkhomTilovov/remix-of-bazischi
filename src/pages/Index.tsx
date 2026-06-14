@@ -267,7 +267,7 @@ export default function Index() {
             ) : partnerRegions.length === 0 ? (
               <p className="col-span-full text-center text-muted-foreground py-10">Hozircha viloyatlar mavjud emas.</p>
             ) : (
-              partnerRegions.map((region, i) => (
+              partnerRegions.slice(0, 3).map((region, i) => (
                 <motion.div
                   key={region.id}
                   initial={{ opacity: 0, y: 30 }}
