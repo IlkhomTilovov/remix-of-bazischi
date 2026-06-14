@@ -82,13 +82,14 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
   const [editing, setEditing] = useState<PartnerRegion | null>(null);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setIsActive(true); setOpen(true); };
-  const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setIsActive(r.is_active ?? true); setOpen(true); };
+  const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setSortOrder(''); setIsActive(true); setOpen(true); };
+  const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setSortOrder(r.sort_order != null ? String(r.sort_order) : ''); setIsActive(r.is_active ?? true); setOpen(true); };
 
   const handleUpload = async (file: File) => {
     if (!file) return;
