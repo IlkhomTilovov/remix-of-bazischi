@@ -260,7 +260,7 @@ export default function Stats() {
           .map(([path, count]) => ({
             path,
             count,
-            title: titleForPath(path, lang),
+            title: partnerTitle(path) || titleForPath(path, lang),
           }));
         setTopPages(sorted);
 
