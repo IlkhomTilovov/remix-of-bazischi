@@ -134,9 +134,10 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
       <Button onClick={openNew}><Plus className="w-4 h-4 mr-1.5" /> Viloyat qo'shish</Button>
       <div className="grid gap-3">
         {regions.length === 0 && <p className="text-muted-foreground text-sm">Viloyatlar yo'q.</p>}
-        {regions.map((r) => (
+        {regions.map((r, i) => (
           <div key={r.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
             <div className="flex items-center gap-3">
+              <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
               {r.image_url ? (
                 <img src={r.image_url} alt={r.name} className="w-12 h-12 rounded-lg object-cover" />
               ) : (
@@ -242,9 +243,10 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
       ) : (
         <div className="grid gap-3">
           {districts.length === 0 && <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>}
-          {districts.map((d) => (
+          {districts.map((d, i) => (
             <div key={d.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
               <div className="flex items-center gap-3">
+                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Wrench className="w-5 h-5 text-muted-foreground" />
                 <span className="font-medium">{d.name}</span>
                 <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
@@ -350,9 +352,10 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
       ) : (
         <div className="grid gap-3">
           {workshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
-          {workshops.map((w) => (
+          {workshops.map((w, i) => (
             <div key={w.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
               <div className="flex items-center gap-3 min-w-0">
+                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Store className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0">
                   <p className="font-medium truncate">{w.name}</p>
