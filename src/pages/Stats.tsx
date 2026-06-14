@@ -273,7 +273,7 @@ export default function Stats() {
 
         // 4-batch: ustaxonalarga qo'ng'iroqlar
         const callsRes = await runWithRetry(async () =>
-          supabase
+          (supabase as any)
             .from('workshop_calls')
             .select('workshop_id, workshop_name, district_name, region_name, phone'),
         );
