@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Loader2, Shield, Ruler, Gem, Truck, Star, Paintbrush, Users, ChevronRight, Phone, Send, Sparkles, BadgeCheck, Wrench, ThermometerSun, Layers3, ScanSearch, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Loader2, Shield, Ruler, Gem, Truck, Star, Paintbrush, Users, ChevronRight, Phone, Send, Sparkles, BadgeCheck, Wrench, ThermometerSun, Layers3, ScanSearch, ShieldCheck, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
 import { useFeaturedProducts, useCategories } from '@/hooks/useProducts';
+import { usePartnerRegions } from '@/hooks/usePartners';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSEO } from '@/hooks/useSEO';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
