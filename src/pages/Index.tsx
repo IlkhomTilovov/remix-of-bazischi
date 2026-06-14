@@ -87,6 +87,8 @@ export default function Index() {
   const sectionTestimonials = useInView();
   const sectionCta = useInView();
 
+  const { regions: partnerRegions, loading: partnerLoading } = usePartnerRegions();
+
   return (
     <div className="min-h-screen">
       {/* HERO */}
