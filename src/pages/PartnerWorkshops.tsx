@@ -138,7 +138,7 @@ export default function PartnerWorkshops() {
                 {w.phone ? (
                   <a
                     href={`tel:${w.phone.replace(/\s/g, '')}`}
-                    onClick={() => logCall(w)}
+                    onClick={(e) => { e.stopPropagation(); logCall(w); }}
                     className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
                     style={{ backgroundColor: BRAND }}
                   >
