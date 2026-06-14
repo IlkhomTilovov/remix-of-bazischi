@@ -81,15 +81,39 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PartnerRegion | null>(null);
   const [name, setName] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const openNew = () => { setEditing(null); setName(''); setIsActive(true); setOpen(true); };
-  const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setIsActive(r.is_active ?? true); setOpen(true); };
+  const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setIsActive(true); setOpen(true); };
+  const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setIsActive(r.is_active ?? true); setOpen(true); };
+
+  const handleUpload = async (file: File) => {
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) { toast.error('Faqat JPG, PNG, WebP yoki GIF'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('Rasm hajmi 5MB dan oshmasligi kerak'); return; }
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const filePath = `regions/region-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, file);
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
+      setImageUrl(publicUrl);
+      toast.success('Rasm yuklandi');
+    } catch (e: any) {
+      toast.error('Rasm yuklanmadi: ' + e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const save = async () => {
     if (!name.trim()) { toast.error('Viloyat nomini kiriting'); return; }
-    const payload = { name: name.trim(), is_active: isActive };
+    const payload = { name: name.trim(), image_url: imageUrl || null, is_active: isActive };
     const { error } = editing
       ? await partnersApi.from('partner_regions').update(payload).eq('id', editing.id)
       : await partnersApi.from('partner_regions').insert(payload);
@@ -113,7 +137,13 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
         {regions.map((r) => (
           <div key={r.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
             <div className="flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-muted-foreground" />
+              {r.image_url ? (
+                <img src={r.image_url} alt={r.name} className="w-12 h-12 rounded-lg object-cover" />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-muted-foreground" />
+                </div>
+              )}
               <span className="font-medium">{r.name}</span>
               <Badge variant={r.is_active ? 'default' : 'secondary'}>{r.is_active ? 'Faol' : 'Nofaol'}</Badge>
             </div>
@@ -130,9 +160,31 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
           <DialogHeader><DialogTitle>{editing ? 'Viloyatni tahrirlash' : "Viloyat qo'shish"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
             <div><Label>Nomi</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Toshkent viloyati" /></div>
+            <div>
+              <Label>Rasm</Label>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} />
+              {imageUrl ? (
+                <div className="relative mt-1 w-full h-40 rounded-lg overflow-hidden border">
+                  <img src={imageUrl} alt="Viloyat rasmi" className="w-full h-full object-cover" />
+                  <Button size="icon" variant="secondary" className="absolute top-2 right-2 h-8 w-8" onClick={() => setImageUrl('')}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  className="mt-1 w-full h-40 rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:bg-muted/50 transition-colors"
+                >
+                  {uploading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Upload className="w-6 h-6" />}
+                  <span className="text-sm">{uploading ? 'Yuklanmoqda...' : 'Rasm yuklash'}</span>
+                </button>
+              )}
+            </div>
             <div className="flex items-center gap-2"><Switch checked={isActive} onCheckedChange={setIsActive} /><Label>Faol</Label></div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save} disabled={uploading}>Saqlash</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
