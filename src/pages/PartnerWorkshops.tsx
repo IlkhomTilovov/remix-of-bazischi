@@ -80,7 +80,11 @@ export default function PartnerWorkshops() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {workshops.map((w) => (
-              <div key={w.id} className="rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg transition-all flex flex-col">
+              <Link
+                key={w.id}
+                to={`/ustaxona/${w.id}`}
+                className="rounded-2xl border border-border bg-white p-6 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all flex flex-col group"
+              >
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${BRAND}1a` }}>
                     <Wrench className="w-6 h-6" style={{ color: BRAND }} />
@@ -92,53 +96,24 @@ export default function PartnerWorkshops() {
                   ) : null}
                 </div>
 
-                <h2 className="font-serif text-xl font-bold text-foreground mb-4">{w.name}</h2>
+                <h2 className="font-serif text-xl font-bold text-foreground mb-3">{w.name}</h2>
 
-                <div className="space-y-4 border-t border-border pt-4">
-                  {w.description ? (
-                    <p className="text-sm text-muted-foreground whitespace-pre-line">{w.description}</p>
-                  ) : null}
-                  {w.address ? (
-                    <div className="flex items-start gap-3">
-                      <MapPin className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
-                      <div>
-                        <p className="text-xs text-muted-foreground">{tx.address}</p>
-                        <p className="text-foreground font-medium">{w.address}</p>
-                      </div>
-                    </div>
-                  ) : null}
-                  {w.phone ? (
-                    <div className="flex items-start gap-3">
-                      <Phone className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
-                      <div>
-                        <p className="text-xs text-muted-foreground">{tx.phone}</p>
-                        <p className="text-foreground font-medium">{w.phone}</p>
-                      </div>
-                    </div>
-                  ) : null}
-                  {w.experience_years ? (
-                    <div className="flex items-start gap-3">
-                      <Award className="w-5 h-5 mt-0.5 shrink-0" style={{ color: BRAND }} />
-                      <div>
-                        <p className="text-xs text-muted-foreground">{tx.experience}</p>
-                        <p className="text-foreground font-medium">{w.experience_years} {tx.years}</p>
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-
-                {w.phone ? (
-                  <a
-                    href={`tel:${w.phone.replace(/\s/g, '')}`}
-                    onClick={() => logCall(w)}
-                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: BRAND }}
-                  >
-                    <Phone className="w-5 h-5" /> {tx.call}
-                  </a>
+                {w.address ? (
+                  <div className="flex items-start gap-2 text-sm text-muted-foreground mb-4">
+                    <MapPin className="w-4 h-4 mt-0.5 shrink-0" style={{ color: BRAND }} />
+                    <span className="line-clamp-2">{w.address}</span>
+                  </div>
                 ) : null}
-              </div>
+
+                <span
+                  className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold text-white transition-opacity group-hover:opacity-90"
+                  style={{ backgroundColor: BRAND }}
+                >
+                  {tx.details}
+                </span>
+              </Link>
             ))}
+
           </div>
         )}
       </div>
