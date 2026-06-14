@@ -215,7 +215,7 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const save = async () => {
     if (!regionId) { toast.error('Viloyatni tanlang'); return; }
     if (!name.trim()) { toast.error('Tuman nomini kiriting'); return; }
-    const payload = { name: name.trim(), region_id: regionId, is_active: isActive };
+    const payload = { name: name.trim(), region_id: regionId, sort_order: sortOrder ? parseInt(sortOrder, 10) : null, is_active: isActive };
     const { error } = editing
       ? await partnersApi.from('partner_districts').update(payload).eq('id', editing.id)
       : await partnersApi.from('partner_districts').insert(payload);
