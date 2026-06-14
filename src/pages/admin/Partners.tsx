@@ -322,6 +322,7 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
       address: form.address.trim() || null,
       experience_years: form.experience_years ? parseInt(form.experience_years, 10) : null,
       description: form.description.trim() || null,
+      sort_order: form.sort_order ? parseInt(form.sort_order, 10) : null,
       is_active: form.is_active,
     };
     const { error } = editing
