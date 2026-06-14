@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Wrench, Award, MapPin, Phone } from 'lucide-react';
 import { usePartnerWorkshops, usePartnerDistrict } from '@/hooks/usePartners';
 import { useSEO } from '@/hooks/useSEO';
+import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
 
 const BRAND = '#24A8F2';
