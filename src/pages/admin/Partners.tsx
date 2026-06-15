@@ -34,7 +34,7 @@ export default function Partners() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Partner ustaxonalar</h1>
+        <h1 className="text-2xl font-bold text-foreground">Ustaxonalar</h1>
         <p className="text-muted-foreground text-sm">Viloyat, tuman va ustaxonalarni boshqaring</p>
       </div>
 
