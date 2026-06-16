@@ -226,7 +226,7 @@ export default function Stats() {
             return `Viloyat: ${regNames[seg[1]] || seg[1].slice(0, 8)}`;
           }
           // /ustaxonalar
-          if (seg[0] === 'ustaxonalar') return 'Partner ustaxonalar';
+          if (seg[0] === 'ustaxonalar') return 'Ustaxonalar';
           return null;
         };
 
