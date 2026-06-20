@@ -61,7 +61,7 @@ export default function PartnerRegions() {
                 )}
                 <div className="flex flex-col flex-1 p-6">
                   <h2 className="font-serif text-xl font-bold text-foreground mb-1">{r.name}</h2>
-                  <p className="text-sm text-muted-foreground">{r.district_count ?? 0} {tx.districts}</p>
+                  <p className="text-sm text-muted-foreground">{r.workshop_count ?? 0} {tx.districts}</p>
                   <div className="mt-auto pt-5">
                     <Link
                       to={`/ustaxonalar/${r.id}`}
