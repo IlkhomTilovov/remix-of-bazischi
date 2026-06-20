@@ -247,6 +247,13 @@ export default function Index() {
               <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4">
                 <EditableText contentKey="whyus_title" fallback="Nega aynan biz" as="span" className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold" section="whyus" />
               </h2>
+              {!partnerLoading && partnerRegions.length > 0 && (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {language === 'uz'
+                    ? `Jami ${partnerRegions.length} ta viloyat`
+                    : `Всего ${partnerRegions.length} регионов`}
+                </p>
+              )}
             </div>
             <Link
               to="/ustaxonalar"
