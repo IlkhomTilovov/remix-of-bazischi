@@ -10,6 +10,7 @@ export interface PartnerRegion {
   created_at?: string;
   updated_at?: string;
   district_count?: number;
+  workshop_count?: number;
 }
 
 export interface PartnerDistrict {
