@@ -298,9 +298,10 @@ export default function Index() {
                         </div>
                       )}
 
-                      <h3 className="font-serif text-lg md:text-xl font-semibold text-foreground mb-5 tracking-tight">
+                      <h3 className="font-serif text-lg md:text-xl font-semibold text-foreground mb-1 tracking-tight">
                         {region.name}
                       </h3>
+                      <p className="text-sm text-muted-foreground mb-5">{region.district_count ?? 0} ta tuman</p>
 
                       <div className="mt-auto">
                         <Link
