@@ -17,6 +17,7 @@ export default function PartnerDistricts() {
     subtitle: language === 'uz' ? 'Tumanni tanlang' : 'Выберите район',
     empty: language === 'uz' ? 'Hozircha tumanlar mavjud emas.' : 'Пока нет районов.',
     workshops: language === 'uz' ? 'Ustaxonalar' : 'Мастерские',
+    workshopsCount: language === 'uz' ? 'ta ustaxona' : 'мастерских',
   };
   useSEO({
     title: region ? `${region.name} — ${tx.title}` : tx.title,
@@ -50,6 +51,7 @@ export default function PartnerDistricts() {
                   <Wrench className="w-6 h-6" style={{ color: BRAND }} />
                 </div>
                 <h2 className="font-serif text-xl font-bold text-foreground mb-1">{d.name}</h2>
+                <p className="text-sm text-muted-foreground">{d.workshop_count ?? 0} {tx.workshopsCount}</p>
                 <div className="mt-auto pt-5">
                   <Link
                     to={`/ustaxonalar/${regionId}/${d.id}`}
