@@ -10,6 +10,7 @@ export interface PartnerRegion {
   created_at?: string;
   updated_at?: string;
   district_count?: number;
+  workshop_count?: number;
 }
 
 export interface PartnerDistrict {
@@ -53,14 +54,28 @@ export function usePartnerRegions(activeOnly = true) {
       if (error) throw error;
       const regionsData = (data || []) as PartnerRegion[];
       // fetch district counts per region
-      let dq = db.from('partner_districts').select('region_id');
+      let dq = db.from('partner_districts').select('id, region_id');
       if (activeOnly) dq = dq.eq('is_active', true);
       const { data: districtsData } = await dq;
       const counts: Record<string, number> = {};
+      const districtToRegion: Record<string, string> = {};
       (districtsData || []).forEach((d: any) => {
         counts[d.region_id] = (counts[d.region_id] || 0) + 1;
+        districtToRegion[d.id] = d.region_id;
       });
-      setRegions(regionsData.map((r) => ({ ...r, district_count: counts[r.id] || 0 })));
+      // fetch workshop counts per region (via districts)
+      const districtIds = Object.keys(districtToRegion);
+      const workshopCounts: Record<string, number> = {};
+      if (districtIds.length) {
+        let wq = db.from('partner_workshops').select('district_id').in('district_id', districtIds);
+        if (activeOnly) wq = wq.eq('is_active', true);
+        const { data: workshopsData } = await wq;
+        (workshopsData || []).forEach((w: any) => {
+          const regionId = districtToRegion[w.district_id];
+          if (regionId) workshopCounts[regionId] = (workshopCounts[regionId] || 0) + 1;
+        });
+      }
+      setRegions(regionsData.map((r) => ({ ...r, district_count: counts[r.id] || 0, workshop_count: workshopCounts[r.id] || 0 })));
     } catch (e) {
       console.error('Error fetching regions:', e);
     } finally {
