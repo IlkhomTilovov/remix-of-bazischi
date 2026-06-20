@@ -51,7 +51,16 @@ export function usePartnerRegions(activeOnly = true) {
       if (activeOnly) q = q.eq('is_active', true);
       const { data, error } = await q;
       if (error) throw error;
-      setRegions((data || []) as PartnerRegion[]);
+      const regionsData = (data || []) as PartnerRegion[];
+      // fetch district counts per region
+      let dq = db.from('partner_districts').select('region_id');
+      if (activeOnly) dq = dq.eq('is_active', true);
+      const { data: districtsData } = await dq;
+      const counts: Record<string, number> = {};
+      (districtsData || []).forEach((d: any) => {
+        counts[d.region_id] = (counts[d.region_id] || 0) + 1;
+      });
+      setRegions(regionsData.map((r) => ({ ...r, district_count: counts[r.id] || 0 })));
     } catch (e) {
       console.error('Error fetching regions:', e);
     } finally {
@@ -93,7 +102,19 @@ export function usePartnerDistricts(regionId: string | undefined, activeOnly = t
       if (activeOnly) q = q.eq('is_active', true);
       const { data, error } = await q;
       if (error) throw error;
-      setDistricts((data || []) as PartnerDistrict[]);
+      const districtsData = (data || []) as PartnerDistrict[];
+      // fetch workshop counts per district
+      const ids = districtsData.map((d) => d.id);
+      let counts: Record<string, number> = {};
+      if (ids.length) {
+        let wq = db.from('partner_workshops').select('district_id').in('district_id', ids);
+        if (activeOnly) wq = wq.eq('is_active', true);
+        const { data: workshopsData } = await wq;
+        (workshopsData || []).forEach((w: any) => {
+          counts[w.district_id] = (counts[w.district_id] || 0) + 1;
+        });
+      }
+      setDistricts(districtsData.map((d) => ({ ...d, workshop_count: counts[d.id] || 0 })));
     } catch (e) {
       console.error('Error fetching districts:', e);
     } finally {
