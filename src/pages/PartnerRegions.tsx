@@ -16,7 +16,7 @@ export default function PartnerRegions() {
     subtitle: language === 'uz' ? 'Hududingizni tanlang' : 'Выберите свой регион',
     empty: language === 'uz' ? 'Hozircha viloyatlar mavjud emas.' : 'Пока нет регионов.',
     workshops: language === 'uz' ? 'Ustaxonalar' : 'Мастерские',
-    districts: language === 'uz' ? 'ta tuman' : 'районов',
+    districts: language === 'uz' ? 'ta ustaxona' : 'мастерских',
   };
   useSEO({
     title: language === 'uz' ? 'Ustaxonalar — Viloyatlar' : 'Мастерские — Регионы',
