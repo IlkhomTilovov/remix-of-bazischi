@@ -46,6 +46,7 @@ import SystemSettings from "./pages/admin/SystemSettings";
 import Themes from "./pages/admin/Themes";
 import CheckoutFormSettings from "./pages/admin/CheckoutFormSettings";
 import Partners from "./pages/admin/Partners";
+import Brands from "./pages/admin/Brands";
 import PartnerRegions from "./pages/PartnerRegions";
 import PartnerDistricts from "./pages/PartnerDistricts";
 import PartnerWorkshops from "./pages/PartnerWorkshops";
@@ -139,6 +140,11 @@ const App = () => (
                           <Route path="partners" element={
                             <ProtectedRoute module="categories">
                               <Partners />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="brands" element={
+                            <ProtectedRoute module="categories">
+                              <Brands />
                             </ProtectedRoute>
                           } />
                         </Route>
