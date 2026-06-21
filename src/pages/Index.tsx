@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
 import { useFeaturedProducts, useCategories } from '@/hooks/useProducts';
-import { usePartnerRegions } from '@/hooks/usePartners';
+import { usePartnerRegions, usePartnerBrands } from '@/hooks/usePartners';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSEO } from '@/hooks/useSEO';
 import { useSystemSettings } from '@/hooks/useSystemSettings';
@@ -88,6 +88,8 @@ export default function Index() {
   const sectionCta = useInView();
 
   const { regions: partnerRegions, loading: partnerLoading } = usePartnerRegions();
+  const { brands: partnerBrands, loading: brandsLoading } = usePartnerBrands();
+  const sectionBrands = useInView();
 
   useEffect(() => {
     if (window.location.hash === '#partner-ustaxonalar' && !partnerLoading) {
