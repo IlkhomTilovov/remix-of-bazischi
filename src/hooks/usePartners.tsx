@@ -201,4 +201,38 @@ export function usePartnerWorkshop(id: string | undefined) {
   return { workshop, loading };
 }
 
+export interface PartnerBrand {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  sort_order: number | null;
+  is_active: boolean | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export function usePartnerBrands(activeOnly = true) {
+  const [brands, setBrands] = useState<PartnerBrand[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchBrands = useCallback(async () => {
+    setLoading(true);
+    try {
+      let q = db.from('partner_brands').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+      if (activeOnly) q = q.eq('is_active', true);
+      const { data, error } = await q;
+      if (error) throw error;
+      setBrands((data || []) as PartnerBrand[]);
+    } catch (e) {
+      console.error('Error fetching brands:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeOnly]);
+
+  useEffect(() => { fetchBrands(); }, [fetchBrands]);
+
+  return { brands, loading, refetch: fetchBrands };
+}
+
 export const partnersApi = db;
