@@ -19,6 +19,7 @@ import {
   Settings2,
   MessageSquare,
   Store,
+  Tag,
   LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
