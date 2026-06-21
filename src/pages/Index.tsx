@@ -372,7 +372,7 @@ export default function Index() {
         </section>
       )}
 
-
+      {/* PROCESS - premium automotive timeline */}
       <section ref={sectionProcess.ref} className="relative py-24 md:py-32 overflow-hidden bg-[#05070d]">
         {/* Ambient backdrop */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.18),transparent_60%)]" />
