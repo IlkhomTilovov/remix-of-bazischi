@@ -360,7 +360,7 @@ export default function Index() {
                         className="max-h-14 max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
                       />
                     ) : (
-                      <span className="font-serif text-lg md:text-xl font-semibold text-foreground text-center">
+                      <span className="font-serif text-lg md:text-xl font-semibold text-foreground text-center tabular-nums [font-feature-settings:'lnum'_1]">
                         {brand.name}
                       </span>
                     )}
