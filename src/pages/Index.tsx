@@ -187,6 +187,54 @@ export default function Index() {
         </div>
       </section>
 
+      {/* PARTNER BRANDS */}
+      {(brandsLoading || partnerBrands.length > 0) && (
+        <section ref={sectionBrands.ref} className="py-20 md:py-28 bg-background">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className={`text-center max-w-3xl mx-auto mb-12 md:mb-16 transition-all duration-700 ${sectionBrands.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <span className="text-primary text-xs tracking-[0.3em] uppercase font-medium">Hamkorlar</span>
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4">
+                Biz bilan ishlaydigan brendlar
+              </h2>
+              <p className="text-muted-foreground text-base md:text-lg mt-5">
+                Dunyoning yetakchi avtomobil plyonkalari va professional uskunalar ishlab chiqaruvchilari bilan hamkorlik qilamiz.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {brandsLoading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="h-28 rounded-2xl bg-card/60 animate-pulse" />
+                ))
+              ) : (
+                partnerBrands.map((brand, i) => (
+                  <motion.div
+                    key={brand.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={sectionBrands.isVisible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                    className="group flex items-center justify-center h-28 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/40"
+                  >
+                    {brand.logo_url ? (
+                      <img
+                        src={brand.logo_url}
+                        alt={brand.name}
+                        loading="lazy"
+                        className="max-h-14 max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <span className="font-serif text-lg md:text-xl font-semibold text-foreground text-center tabular-nums [font-feature-settings:'lnum'_1]">
+                        {brand.name}
+                      </span>
+                    )}
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* SERVICES - editable */}
       <section ref={sectionServices.ref} className="py-20 md:py-28 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
