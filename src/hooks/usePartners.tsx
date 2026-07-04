@@ -149,7 +149,17 @@ export function usePartnerAllDistricts(activeOnly = false) {
       if (activeOnly) q = q.eq('is_active', true);
       const { data, error } = await q;
       if (error) throw error;
-      setDistricts((data || []) as PartnerDistrict[]);
+      const districtsData = (data || []) as PartnerDistrict[];
+      // fetch workshop counts per district
+      const ids = districtsData.map((d) => d.id);
+      let counts: Record<string, number> = {};
+      if (ids.length) {
+        const { data: workshopsData } = await db.rpc('get_active_workshop_district_ids');
+        (workshopsData || []).forEach((w: any) => {
+          if (ids.includes(w.district_id)) counts[w.district_id] = (counts[w.district_id] || 0) + 1;
+        });
+      }
+      setDistricts(districtsData.map((d) => ({ ...d, workshop_count: counts[d.id] || 0 })));
     } catch (e) {
       console.error('Error fetching all districts:', e);
     } finally {
