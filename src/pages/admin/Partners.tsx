@@ -68,7 +68,7 @@ export default function Partners() {
             regions={regions}
             selectedRegion={selectedRegion}
             setSelectedRegion={setSelectedRegion}
-            districts={selectedRegion ? districts : allDistricts}
+            districts={selectedRegion && selectedRegion !== 'all' ? districts : allDistricts}
             refetch={() => { refetchDistricts(); refetchAllDistricts(); }}
             onViewWorkshops={viewDistrictWorkshops}
           />
