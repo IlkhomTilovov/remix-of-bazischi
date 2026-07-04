@@ -67,9 +67,7 @@ export function usePartnerRegions(activeOnly = true) {
       const districtIds = Object.keys(districtToRegion);
       const workshopCounts: Record<string, number> = {};
       if (districtIds.length) {
-        let wq = db.from('partner_workshops').select('district_id').in('district_id', districtIds);
-        if (activeOnly) wq = wq.eq('is_active', true);
-        const { data: workshopsData } = await wq;
+        const { data: workshopsData } = await db.rpc('get_active_workshop_district_ids');
         (workshopsData || []).forEach((w: any) => {
           const regionId = districtToRegion[w.district_id];
           if (regionId) workshopCounts[regionId] = (workshopCounts[regionId] || 0) + 1;
@@ -122,11 +120,9 @@ export function usePartnerDistricts(regionId: string | undefined, activeOnly = t
       const ids = districtsData.map((d) => d.id);
       let counts: Record<string, number> = {};
       if (ids.length) {
-        let wq = db.from('partner_workshops').select('district_id').in('district_id', ids);
-        if (activeOnly) wq = wq.eq('is_active', true);
-        const { data: workshopsData } = await wq;
+        const { data: workshopsData } = await db.rpc('get_active_workshop_district_ids');
         (workshopsData || []).forEach((w: any) => {
-          counts[w.district_id] = (counts[w.district_id] || 0) + 1;
+          if (ids.includes(w.district_id)) counts[w.district_id] = (counts[w.district_id] || 0) + 1;
         });
       }
       setDistricts(districtsData.map((d) => ({ ...d, workshop_count: counts[d.id] || 0 })));
@@ -167,11 +163,18 @@ export function usePartnerWorkshops(districtId: string | undefined, activeOnly =
     if (!districtId) { setWorkshops([]); setLoading(false); return; }
     setLoading(true);
     try {
-      let q = db.from('partner_workshops').select('*').eq('district_id', districtId).order('sort_order', { ascending: true }).order('name', { ascending: true });
-      if (activeOnly) q = q.eq('is_active', true);
-      const { data, error } = await q;
-      if (error) throw error;
-      setWorkshops((data || []) as PartnerWorkshop[]);
+      if (activeOnly) {
+        // Public path: phone is served through a SECURITY DEFINER function
+        // since the table is no longer publicly readable.
+        const { data, error } = await db.rpc('get_public_workshops', { _district_id: districtId });
+        if (error) throw error;
+        setWorkshops((data || []) as PartnerWorkshop[]);
+      } else {
+        // Staff path: direct table access (admins/editors only).
+        const { data, error } = await db.from('partner_workshops').select('*').eq('district_id', districtId).order('sort_order', { ascending: true }).order('name', { ascending: true });
+        if (error) throw error;
+        setWorkshops((data || []) as PartnerWorkshop[]);
+      }
     } catch (e) {
       console.error('Error fetching workshops:', e);
     } finally {
@@ -192,8 +195,8 @@ export function usePartnerWorkshop(id: string | undefined) {
     if (!id) { setLoading(false); return; }
     (async () => {
       setLoading(true);
-      const { data } = await db.from('partner_workshops').select('*').eq('id', id).maybeSingle();
-      setWorkshop(data as PartnerWorkshop | null);
+      const { data } = await db.rpc('get_public_workshop', { _id: id });
+      setWorkshop(((data && data[0]) || null) as PartnerWorkshop | null);
       setLoading(false);
     })();
   }, [id]);
