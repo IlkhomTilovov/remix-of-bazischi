@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -26,8 +26,8 @@ import {
 
 export default function Partners() {
   const { regions, refetch: refetchRegions } = usePartnerRegions(false);
-  const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('');
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('all');
   const { districts, refetch: refetchDistricts } = usePartnerDistricts(selectedRegion || undefined, false);
   const { districts: allDistricts, refetch: refetchAllDistricts } = usePartnerAllDistricts(false);
   const { workshops, refetch: refetchWorkshops } = usePartnerWorkshops(selectedDistrict || undefined, false);
@@ -68,7 +68,7 @@ export default function Partners() {
             regions={regions}
             selectedRegion={selectedRegion}
             setSelectedRegion={setSelectedRegion}
-            districts={selectedRegion ? districts : allDistricts}
+            districts={selectedRegion && selectedRegion !== 'all' ? districts : allDistricts}
             refetch={() => { refetchDistricts(); refetchAllDistricts(); }}
             onViewWorkshops={viewDistrictWorkshops}
           />
@@ -364,6 +364,10 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   const districtName = (id?: string) => allDistricts.find((d) => d.id === id)?.name || '—';
   const districtRegion = (districtId?: string) => allDistricts.find((d) => d.id === districtId)?.region_id;
 
+  const displayWorkshops = selectedDistrict === 'all' && selectedRegion !== 'all'
+    ? workshops.filter((w) => allDistricts.find((d) => d.id === w.district_id)?.region_id === selectedRegion)
+    : workshops;
+
   // Bir xil telefon raqamli ustaxonalarni izlash (barcha tuman/viloyatlar bo'yicha)
   useEffect(() => {
     const digits = form.phone.replace(/\D/g, '');
@@ -400,7 +404,7 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   };
 
   const save = async () => {
-    if (!selectedDistrict) { toast.error('Tumanni tanlang'); return; }
+    if (!selectedDistrict || selectedDistrict === 'all') { toast.error('Tumanni tanlang'); return; }
     if (!form.name.trim()) { toast.error('Ustaxona nomini kiriting'); return; }
     const payload = {
       district_id: selectedDistrict,
@@ -430,23 +434,26 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center flex-wrap">
-        <Select value={selectedRegion} onValueChange={(v) => { setSelectedRegion(v); setSelectedDistrict(''); }}>
+        <Select value={selectedRegion} onValueChange={(v) => { setSelectedRegion(v); setSelectedDistrict('all'); }}>
           <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Viloyat" /></SelectTrigger>
-          <SelectContent>{regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
+          <SelectContent>
+            <SelectItem value="all">Barchasi</SelectItem>
+            {regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
+          </SelectContent>
         </Select>
-        <Select value={selectedDistrict} onValueChange={setSelectedDistrict} disabled={!selectedRegion}>
+        <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
           <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Tuman" /></SelectTrigger>
-          <SelectContent>{districts.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}</SelectContent>
+          <SelectContent>
+            <SelectItem value="all">Barchasi</SelectItem>
+            {(selectedRegion === 'all' ? allDistricts : districts).map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+          </SelectContent>
         </Select>
-        <Button onClick={openNew} disabled={!selectedDistrict}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
+        <Button onClick={openNew} disabled={!selectedDistrict || selectedDistrict === 'all'}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
       </div>
 
-      {!selectedDistrict ? (
-        <p className="text-muted-foreground text-sm">Ustaxonalarni ko'rish uchun viloyat va tumanni tanlang.</p>
-      ) : (
         <div className="grid gap-3">
-          {workshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
-          {workshops.map((w, i) => (
+          {displayWorkshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
+          {displayWorkshops.map((w, i) => (
             <div key={w.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
               <div className="flex items-center gap-3 min-w-0">
                 <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
@@ -464,7 +471,6 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
             </div>
           ))}
         </div>
-      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg">
