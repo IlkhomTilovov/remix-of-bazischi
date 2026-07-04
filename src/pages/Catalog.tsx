@@ -441,7 +441,7 @@ export default function Catalog() {
                 </span>
               ) : (
                 <>
-                  {t.catalog.showing} {products.length} {t.catalog.of} {totalCount} {t.catalog.products}
+                  {t.catalog.showing} {totalCount === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}–{(currentPage - 1) * PAGE_SIZE + products.length} {t.catalog.of} {totalCount} {t.catalog.products}
                 </>
               )}
             </p>
