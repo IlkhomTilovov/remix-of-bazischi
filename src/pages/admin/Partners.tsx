@@ -430,15 +430,21 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center flex-wrap">
-        <Select value={selectedRegion} onValueChange={(v) => { setSelectedRegion(v); setSelectedDistrict(''); }}>
+        <Select value={selectedRegion} onValueChange={(v) => { setSelectedRegion(v); setSelectedDistrict('all'); }}>
           <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Viloyat" /></SelectTrigger>
-          <SelectContent>{regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
+          <SelectContent>
+            <SelectItem value="all">Barchasi</SelectItem>
+            {regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
+          </SelectContent>
         </Select>
-        <Select value={selectedDistrict} onValueChange={setSelectedDistrict} disabled={!selectedRegion}>
+        <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
           <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Tuman" /></SelectTrigger>
-          <SelectContent>{districts.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}</SelectContent>
+          <SelectContent>
+            <SelectItem value="all">Barchasi</SelectItem>
+            {(selectedRegion === 'all' ? allDistricts : districts).map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+          </SelectContent>
         </Select>
-        <Button onClick={openNew} disabled={!selectedDistrict}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
+        <Button onClick={openNew} disabled={!selectedDistrict || selectedDistrict === 'all'}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
       </div>
 
       {!selectedDistrict ? (
