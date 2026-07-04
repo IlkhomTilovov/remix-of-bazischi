@@ -67,9 +67,7 @@ export function usePartnerRegions(activeOnly = true) {
       const districtIds = Object.keys(districtToRegion);
       const workshopCounts: Record<string, number> = {};
       if (districtIds.length) {
-        let wq = db.from('partner_workshops').select('district_id').in('district_id', districtIds);
-        if (activeOnly) wq = wq.eq('is_active', true);
-        const { data: workshopsData } = await wq;
+        const { data: workshopsData } = await db.rpc('get_active_workshop_district_ids');
         (workshopsData || []).forEach((w: any) => {
           const regionId = districtToRegion[w.district_id];
           if (regionId) workshopCounts[regionId] = (workshopCounts[regionId] || 0) + 1;
