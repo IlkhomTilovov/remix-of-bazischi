@@ -227,9 +227,9 @@ function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerReg
 }
 
 /* ---------------- Districts ---------------- */
-function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, refetch }: {
+function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, refetch, onViewWorkshops }: {
   regions: PartnerRegion[]; selectedRegion: string; setSelectedRegion: (v: string) => void;
-  districts: PartnerDistrict[]; refetch: () => void;
+  districts: PartnerDistrict[]; refetch: () => void; onViewWorkshops: (district: PartnerDistrict) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PartnerDistrict | null>(null);
