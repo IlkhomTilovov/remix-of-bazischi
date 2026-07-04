@@ -451,12 +451,9 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
         <Button onClick={openNew} disabled={!selectedDistrict || selectedDistrict === 'all'}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
       </div>
 
-      {!selectedDistrict ? (
-        <p className="text-muted-foreground text-sm">Ustaxonalarni ko'rish uchun viloyat va tumanni tanlang.</p>
-      ) : (
         <div className="grid gap-3">
-          {workshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
-          {workshops.map((w, i) => (
+          {displayWorkshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
+          {displayWorkshops.map((w, i) => (
             <div key={w.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
               <div className="flex items-center gap-3 min-w-0">
                 <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
