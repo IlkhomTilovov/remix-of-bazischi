@@ -212,41 +212,6 @@ function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerReg
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!viewingRegionId} onOpenChange={(v) => !v && setViewingRegionId(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{viewingRegion?.name || 'Viloyat'} — Tumanlar</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto py-2">
-            {regionDistricts.length === 0 && (
-              <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>
-            )}
-            {regionDistricts.map((d, i) => (
-              <div key={d.id} className="flex items-center gap-3 rounded-lg border p-3">
-                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
-                <Wrench className="w-5 h-5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{d.name}</p>
-                </div>
-                <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
-                {(d.workshop_count ?? 0) > 0 ? (
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
-                    {(d.workshop_count ?? 0)} ta ustaxona
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-muted-foreground">
-                    0 ta ustaxona
-                  </Badge>
-                )}
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setViewingRegionId(null)}>Yopish</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <DeleteConfirm open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={remove} />
     </div>
   );
