@@ -239,10 +239,8 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [viewingDistrictId, setViewingDistrictId] = useState<string | null>(null);
 
-  const { workshops: districtWorkshops, loading: workshopsLoading } = usePartnerWorkshops(viewingDistrictId || undefined, false);
-  const viewingDistrict = districts.find((d) => d.id === viewingDistrictId);
+
 
   const filteredDistricts = districts.filter((d) =>
     d.name.toLowerCase().includes(search.trim().toLowerCase())
