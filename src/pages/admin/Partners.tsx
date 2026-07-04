@@ -87,7 +87,11 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
   const [uploading, setUploading] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [viewingRegionId, setViewingRegionId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const { districts: regionDistricts } = usePartnerDistricts(viewingRegionId || undefined, false);
+  const viewingRegion = regions.find((r) => r.id === viewingRegionId);
 
   const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setSortOrder(''); setIsActive(true); setOpen(true); };
   const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setSortOrder(r.sort_order != null ? String(r.sort_order) : ''); setIsActive(r.is_active ?? true); setOpen(true); };
@@ -137,8 +141,12 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
       <div className="grid gap-3">
         {regions.length === 0 && <p className="text-muted-foreground text-sm">Viloyatlar yo'q.</p>}
         {regions.map((r, i) => (
-          <div key={r.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
-            <div className="flex items-center gap-3">
+          <div
+            key={r.id}
+            onClick={() => setViewingRegionId(r.id)}
+            className="flex items-center justify-between rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+          >
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
               {r.image_url ? (
                 <img src={r.image_url} alt={r.name} className="w-12 h-12 rounded-lg object-cover" />
@@ -149,8 +157,17 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
               )}
               <span className="font-medium">{r.name}</span>
               <Badge variant={r.is_active ? 'default' : 'secondary'}>{r.is_active ? 'Faol' : 'Nofaol'}</Badge>
+              {(r.district_count ?? 0) > 0 ? (
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
+                  {(r.district_count ?? 0)} ta tuman
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-muted-foreground">
+                  0 ta tuman
+                </Badge>
+              )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
               <Button size="icon" variant="ghost" onClick={() => openEdit(r)}><Pencil className="w-4 h-4" /></Button>
               <Button size="icon" variant="ghost" onClick={() => setDeleteId(r.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
             </div>
@@ -189,6 +206,41 @@ function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: (
             <div className="flex items-center gap-2"><Switch checked={isActive} onCheckedChange={setIsActive} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save} disabled={uploading}>Saqlash</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!viewingRegionId} onOpenChange={(v) => !v && setViewingRegionId(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{viewingRegion?.name || 'Viloyat'} — Tumanlar</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto py-2">
+            {regionDistricts.length === 0 && (
+              <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>
+            )}
+            {regionDistricts.map((d, i) => (
+              <div key={d.id} className="flex items-center gap-3 rounded-lg border p-3">
+                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
+                <Wrench className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium truncate">{d.name}</p>
+                </div>
+                <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
+                {(d.workshop_count ?? 0) > 0 ? (
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
+                    {(d.workshop_count ?? 0)} ta ustaxona
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-muted-foreground">
+                    0 ta ustaxona
+                  </Badge>
+                )}
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewingRegionId(null)}>Yopish</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
