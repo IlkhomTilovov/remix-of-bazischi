@@ -138,6 +138,30 @@ export function usePartnerDistricts(regionId: string | undefined, activeOnly = t
   return { districts, loading, refetch: fetchDistricts };
 }
 
+export function usePartnerAllDistricts(activeOnly = false) {
+  const [districts, setDistricts] = useState<PartnerDistrict[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDistricts = useCallback(async () => {
+    setLoading(true);
+    try {
+      let q = db.from('partner_districts').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+      if (activeOnly) q = q.eq('is_active', true);
+      const { data, error } = await q;
+      if (error) throw error;
+      setDistricts((data || []) as PartnerDistrict[]);
+    } catch (e) {
+      console.error('Error fetching all districts:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeOnly]);
+
+  useEffect(() => { fetchDistricts(); }, [fetchDistricts]);
+
+  return { districts, loading, refetch: fetchDistricts };
+}
+
 export function usePartnerDistrict(id: string | undefined) {
   const [district, setDistrict] = useState<PartnerDistrict | null>(null);
   const [loading, setLoading] = useState(true);

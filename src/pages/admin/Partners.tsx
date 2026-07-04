@@ -20,7 +20,7 @@ import {
 import { Plus, Pencil, Trash2, MapPin, Wrench, Store, Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
-  usePartnerRegions, usePartnerDistricts, usePartnerWorkshops, partnersApi,
+  usePartnerRegions, usePartnerDistricts, usePartnerAllDistricts, usePartnerWorkshops, partnersApi,
   PartnerRegion, PartnerDistrict, PartnerWorkshop,
 } from '@/hooks/usePartners';
 
@@ -29,6 +29,7 @@ export default function Partners() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('');
   const { districts, refetch: refetchDistricts } = usePartnerDistricts(selectedRegion || undefined, false);
+  const { districts: allDistricts, refetch: refetchAllDistricts } = usePartnerAllDistricts(false);
   const { workshops, refetch: refetchWorkshops } = usePartnerWorkshops(selectedDistrict || undefined, false);
 
   return (
@@ -54,8 +55,8 @@ export default function Partners() {
             regions={regions}
             selectedRegion={selectedRegion}
             setSelectedRegion={setSelectedRegion}
-            districts={districts}
-            refetch={refetchDistricts}
+            districts={selectedRegion ? districts : allDistricts}
+            refetch={() => { refetchDistricts(); refetchAllDistricts(); }}
           />
         </TabsContent>
 
@@ -234,24 +235,27 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-        <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-          <SelectTrigger className="w-full sm:w-64"><SelectValue placeholder="Viloyatni tanlang" /></SelectTrigger>
-          <SelectContent>{regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}</SelectContent>
+        <Select value={selectedRegion || 'all'} onValueChange={(v) => setSelectedRegion(v === 'all' ? '' : v)}>
+          <SelectTrigger className="w-full sm:w-64"><SelectValue placeholder="Barcha viloyatlar" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Barcha viloyatlar</SelectItem>
+            {regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
+          </SelectContent>
         </Select>
-        <Button onClick={openNew} disabled={!selectedRegion}><Plus className="w-4 h-4 mr-1.5" /> Tuman qo'shish</Button>
+        <Button onClick={openNew}><Plus className="w-4 h-4 mr-1.5" /> Tuman qo'shish</Button>
       </div>
 
-      {!selectedRegion ? (
-        <p className="text-muted-foreground text-sm">Tumanlarni ko'rish uchun viloyatni tanlang.</p>
-      ) : (
-        <div className="grid gap-3">
-          {districts.length === 0 && <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>}
-          {districts.map((d, i) => (
+      <div className="grid gap-3">
+        {districts.length === 0 && <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>}
+        {districts.map((d, i) => {
+          const regionName = regions.find((r) => r.id === d.region_id)?.name;
+          return (
             <div key={d.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
               <div className="flex items-center gap-3">
                 <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Wrench className="w-5 h-5 text-muted-foreground" />
                 <span className="font-medium">{d.name}</span>
+                {regionName && <Badge variant="outline">{regionName}</Badge>}
                 <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
               </div>
               <div className="flex gap-2">
@@ -259,9 +263,9 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
                 <Button size="icon" variant="ghost" onClick={() => setDeleteId(d.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
