@@ -294,7 +294,7 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
           return (
             <div
               key={d.id}
-              onClick={() => setViewingDistrictId(d.id)}
+              onClick={() => onViewWorkshops(d)}
               className="flex items-center justify-between rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center gap-3 flex-wrap">
