@@ -31,6 +31,12 @@ export default function Partners() {
   const { districts, refetch: refetchDistricts } = usePartnerDistricts(selectedRegion || undefined, false);
   const { districts: allDistricts, refetch: refetchAllDistricts } = usePartnerAllDistricts(false);
   const { workshops, refetch: refetchWorkshops } = usePartnerWorkshops(selectedDistrict || undefined, false);
+  const [activeTab, setActiveTab] = useState('regions');
+
+  const viewRegionDistricts = (regionId: string) => {
+    setSelectedRegion(regionId);
+    setActiveTab('districts');
+  };
 
   return (
     <div className="space-y-6">
