@@ -940,6 +940,40 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_active_workshop_district_ids: {
+        Args: never
+        Returns: {
+          district_id: string
+        }[]
+      }
+      get_public_workshop: {
+        Args: { _id: string }
+        Returns: {
+          address: string
+          description: string
+          district_id: string
+          experience_years: number
+          id: string
+          is_active: boolean
+          name: string
+          phone: string
+          sort_order: number
+        }[]
+      }
+      get_public_workshops: {
+        Args: { _district_id: string }
+        Returns: {
+          address: string
+          description: string
+          district_id: string
+          experience_years: number
+          id: string
+          is_active: boolean
+          name: string
+          phone: string
+          sort_order: number
+        }[]
+      }
       get_workshop_call_counts: {
         Args: never
         Returns: {
