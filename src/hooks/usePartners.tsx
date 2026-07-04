@@ -120,11 +120,9 @@ export function usePartnerDistricts(regionId: string | undefined, activeOnly = t
       const ids = districtsData.map((d) => d.id);
       let counts: Record<string, number> = {};
       if (ids.length) {
-        let wq = db.from('partner_workshops').select('district_id').in('district_id', ids);
-        if (activeOnly) wq = wq.eq('is_active', true);
-        const { data: workshopsData } = await wq;
+        const { data: workshopsData } = await db.rpc('get_active_workshop_district_ids');
         (workshopsData || []).forEach((w: any) => {
-          counts[w.district_id] = (counts[w.district_id] || 0) + 1;
+          if (ids.includes(w.district_id)) counts[w.district_id] = (counts[w.district_id] || 0) + 1;
         });
       }
       setDistricts(districtsData.map((d) => ({ ...d, workshop_count: counts[d.id] || 0 })));
