@@ -348,8 +348,8 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
 }
 
 /* ---------------- Workshops ---------------- */
-function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, selectedDistrict, setSelectedDistrict, workshops, refetch }: {
-  regions: PartnerRegion[]; selectedRegion: string; setSelectedRegion: (v: string) => void;
+function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion, districts, selectedDistrict, setSelectedDistrict, workshops, refetch }: {
+  regions: PartnerRegion[]; allDistricts: PartnerDistrict[]; selectedRegion: string; setSelectedRegion: (v: string) => void;
   districts: PartnerDistrict[]; selectedDistrict: string; setSelectedDistrict: (v: string) => void;
   workshops: PartnerWorkshop[]; refetch: () => void;
 }) {
@@ -357,11 +357,38 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
   const [editing, setEditing] = useState<PartnerWorkshop | null>(null);
   const [form, setForm] = useState({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [phoneMatches, setPhoneMatches] = useState<PartnerWorkshop[]>([]);
+  const [phoneLookupOpen, setPhoneLookupOpen] = useState(false);
 
-  const reset = () => setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
+  const regionName = (id?: string) => regions.find((r) => r.id === id)?.name || '—';
+  const districtName = (id?: string) => allDistricts.find((d) => d.id === id)?.name || '—';
+  const districtRegion = (districtId?: string) => allDistricts.find((d) => d.id === districtId)?.region_id;
+
+  // Bir xil telefon raqamli ustaxonalarni izlash (barcha tuman/viloyatlar bo'yicha)
+  useEffect(() => {
+    const digits = form.phone.replace(/\D/g, '');
+    if (digits.length < 7) { setPhoneMatches([]); return; }
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const { data } = await partnersApi
+        .from('partner_workshops')
+        .select('*')
+        .ilike('phone', `%${form.phone.trim()}%`);
+      if (cancelled) return;
+      const matches = (data || []).filter((w: PartnerWorkshop) => {
+        if (editing && w.id === editing.id) return false;
+        return w.phone && w.phone.replace(/\D/g, '') === digits;
+      });
+      setPhoneMatches(matches);
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [form.phone, editing]);
+
+  const reset = () => { setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true }); setPhoneMatches([]); setPhoneLookupOpen(false); };
   const openNew = () => { setEditing(null); reset(); setOpen(true); };
   const openEdit = (w: PartnerWorkshop) => {
     setEditing(w);
+    setPhoneMatches([]); setPhoneLookupOpen(false);
     setForm({
       name: w.name, phone: w.phone || '', address: w.address || '',
       experience_years: w.experience_years != null ? String(w.experience_years) : '',
