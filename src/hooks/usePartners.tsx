@@ -163,11 +163,18 @@ export function usePartnerWorkshops(districtId: string | undefined, activeOnly =
     if (!districtId) { setWorkshops([]); setLoading(false); return; }
     setLoading(true);
     try {
-      let q = db.from('partner_workshops').select('*').eq('district_id', districtId).order('sort_order', { ascending: true }).order('name', { ascending: true });
-      if (activeOnly) q = q.eq('is_active', true);
-      const { data, error } = await q;
-      if (error) throw error;
-      setWorkshops((data || []) as PartnerWorkshop[]);
+      if (activeOnly) {
+        // Public path: phone is served through a SECURITY DEFINER function
+        // since the table is no longer publicly readable.
+        const { data, error } = await db.rpc('get_public_workshops', { _district_id: districtId });
+        if (error) throw error;
+        setWorkshops((data || []) as PartnerWorkshop[]);
+      } else {
+        // Staff path: direct table access (admins/editors only).
+        const { data, error } = await db.from('partner_workshops').select('*').eq('district_id', districtId).order('sort_order', { ascending: true }).order('name', { ascending: true });
+        if (error) throw error;
+        setWorkshops((data || []) as PartnerWorkshop[]);
+      }
     } catch (e) {
       console.error('Error fetching workshops:', e);
     } finally {
