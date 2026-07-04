@@ -70,8 +70,10 @@ export default function Partners() {
             setSelectedRegion={setSelectedRegion}
             districts={selectedRegion ? districts : allDistricts}
             refetch={() => { refetchDistricts(); refetchAllDistricts(); }}
+            onViewWorkshops={viewDistrictWorkshops}
           />
         </TabsContent>
+
 
         <TabsContent value="workshops" className="mt-6">
           <WorkshopsTab
