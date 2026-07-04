@@ -45,7 +45,7 @@ export default function Partners() {
         <p className="text-muted-foreground text-sm">Viloyat, tuman va ustaxonalarni boshqaring</p>
       </div>
 
-      <Tabs defaultValue="regions">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="regions"><MapPin className="w-4 h-4 mr-1.5" /> Viloyatlar</TabsTrigger>
           <TabsTrigger value="districts"><Wrench className="w-4 h-4 mr-1.5" /> Tumanlar</TabsTrigger>
@@ -53,7 +53,7 @@ export default function Partners() {
         </TabsList>
 
         <TabsContent value="regions" className="mt-6">
-          <RegionsTab regions={regions} refetch={refetchRegions} />
+          <RegionsTab regions={regions} refetch={refetchRegions} onViewDistricts={viewRegionDistricts} />
         </TabsContent>
 
         <TabsContent value="districts" className="mt-6">
