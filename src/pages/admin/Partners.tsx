@@ -262,12 +262,17 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
           const regionName = regions.find((r) => r.id === d.region_id)?.name;
           return (
             <div key={d.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Wrench className="w-5 h-5 text-muted-foreground" />
                 <span className="font-medium">{d.name}</span>
                 {regionName && <Badge variant="outline">{regionName}</Badge>}
                 <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
+                {(d.workshop_count ?? 0) > 0 && (
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
+                    {(d.workshop_count ?? 0)} ta ustaxona
+                  </Badge>
+                )}
               </div>
               <div className="flex gap-2">
                 <Button size="icon" variant="ghost" onClick={() => openEdit(d)}><Pencil className="w-4 h-4" /></Button>
