@@ -78,6 +78,7 @@ export default function Partners() {
         <TabsContent value="workshops" className="mt-6">
           <WorkshopsTab
             regions={regions}
+            allDistricts={allDistricts}
             selectedRegion={selectedRegion}
             setSelectedRegion={setSelectedRegion}
             districts={districts}
