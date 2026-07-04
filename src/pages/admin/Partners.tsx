@@ -364,6 +364,10 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   const districtName = (id?: string) => allDistricts.find((d) => d.id === id)?.name || '—';
   const districtRegion = (districtId?: string) => allDistricts.find((d) => d.id === districtId)?.region_id;
 
+  const displayWorkshops = selectedDistrict === 'all' && selectedRegion !== 'all'
+    ? workshops.filter((w) => allDistricts.find((d) => d.id === w.district_id)?.region_id === selectedRegion)
+    : workshops;
+
   // Bir xil telefon raqamli ustaxonalarni izlash (barcha tuman/viloyatlar bo'yicha)
   useEffect(() => {
     const digits = form.phone.replace(/\D/g, '');
