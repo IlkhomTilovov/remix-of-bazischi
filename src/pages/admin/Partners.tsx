@@ -55,8 +55,8 @@ export default function Partners() {
             regions={regions}
             selectedRegion={selectedRegion}
             setSelectedRegion={setSelectedRegion}
-            districts={districts}
-            refetch={refetchDistricts}
+            districts={selectedRegion ? districts : allDistricts}
+            refetch={() => { refetchDistricts(); refetchAllDistricts(); }}
           />
         </TabsContent>
 
