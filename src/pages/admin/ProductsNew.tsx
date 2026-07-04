@@ -736,6 +736,7 @@ export default function ProductsNew() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12 text-center">№</TableHead>
                 <TableHead className="w-16">Rasm</TableHead>
                 <TableHead>Nomi</TableHead>
                 <TableHead>Toifa</TableHead>
