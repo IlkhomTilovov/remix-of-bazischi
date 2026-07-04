@@ -205,7 +205,13 @@ export function usePartnerWorkshops(districtId: string | undefined, activeOnly =
         setWorkshops((data || []) as PartnerWorkshop[]);
       } else {
         // Staff path: direct table access (admins/editors only).
-        const { data, error } = await db.from('partner_workshops').select('*').eq('district_id', districtId).order('sort_order', { ascending: true }).order('name', { ascending: true });
+        let q;
+        if (districtId === 'all') {
+          q = db.from('partner_workshops').select('*').order('sort_order', { ascending: true }).order('name', { ascending: true });
+        } else {
+          q = db.from('partner_workshops').select('*').eq('district_id', districtId).order('sort_order', { ascending: true }).order('name', { ascending: true });
+        }
+        const { data, error } = await q;
         if (error) throw error;
         setWorkshops((data || []) as PartnerWorkshop[]);
       }
