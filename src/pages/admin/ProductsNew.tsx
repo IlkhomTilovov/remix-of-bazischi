@@ -736,6 +736,7 @@ export default function ProductsNew() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12 text-center">№</TableHead>
                 <TableHead className="w-16">Rasm</TableHead>
                 <TableHead>Nomi</TableHead>
                 <TableHead>Toifa</TableHead>
@@ -746,10 +747,14 @@ export default function ProductsNew() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => {
+              {products.map((product, index) => {
                 const seoStatus = getSeoStatus(product);
+                const serialNumber = (currentPage - 1) * ADMIN_PAGE_SIZE + index + 1;
                 return (
                   <TableRow key={product.id}>
+                    <TableCell className="text-center text-muted-foreground text-sm">
+                      {serialNumber}
+                    </TableCell>
                     <TableCell>
                       {product.images?.[0] ? (
                         <img src={product.images[0]} alt={product.name_uz} className="h-12 w-12 object-cover rounded-lg border" />
