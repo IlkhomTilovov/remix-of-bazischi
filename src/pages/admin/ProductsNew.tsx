@@ -749,7 +749,7 @@ export default function ProductsNew() {
             <TableBody>
               {products.map((product, index) => {
                 const seoStatus = getSeoStatus(product);
-                const serialNumber = (currentPage - 1) * ADMIN_PAGE_SIZE + index + 1;
+                const serialNumber = product.sort_order ?? (currentPage - 1) * ADMIN_PAGE_SIZE + index + 1;
                 return (
                   <TableRow key={product.id}>
                     <TableCell className="text-center text-muted-foreground text-sm">
