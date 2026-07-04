@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -78,6 +78,7 @@ export default function Partners() {
         <TabsContent value="workshops" className="mt-6">
           <WorkshopsTab
             regions={regions}
+            allDistricts={allDistricts}
             selectedRegion={selectedRegion}
             setSelectedRegion={setSelectedRegion}
             districts={districts}
@@ -347,8 +348,8 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
 }
 
 /* ---------------- Workshops ---------------- */
-function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, selectedDistrict, setSelectedDistrict, workshops, refetch }: {
-  regions: PartnerRegion[]; selectedRegion: string; setSelectedRegion: (v: string) => void;
+function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion, districts, selectedDistrict, setSelectedDistrict, workshops, refetch }: {
+  regions: PartnerRegion[]; allDistricts: PartnerDistrict[]; selectedRegion: string; setSelectedRegion: (v: string) => void;
   districts: PartnerDistrict[]; selectedDistrict: string; setSelectedDistrict: (v: string) => void;
   workshops: PartnerWorkshop[]; refetch: () => void;
 }) {
@@ -356,11 +357,38 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
   const [editing, setEditing] = useState<PartnerWorkshop | null>(null);
   const [form, setForm] = useState({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [phoneMatches, setPhoneMatches] = useState<PartnerWorkshop[]>([]);
+  const [phoneLookupOpen, setPhoneLookupOpen] = useState(false);
 
-  const reset = () => setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true });
+  const regionName = (id?: string) => regions.find((r) => r.id === id)?.name || '—';
+  const districtName = (id?: string) => allDistricts.find((d) => d.id === id)?.name || '—';
+  const districtRegion = (districtId?: string) => allDistricts.find((d) => d.id === districtId)?.region_id;
+
+  // Bir xil telefon raqamli ustaxonalarni izlash (barcha tuman/viloyatlar bo'yicha)
+  useEffect(() => {
+    const digits = form.phone.replace(/\D/g, '');
+    if (digits.length < 7) { setPhoneMatches([]); return; }
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const { data } = await partnersApi
+        .from('partner_workshops')
+        .select('*')
+        .ilike('phone', `%${form.phone.trim()}%`);
+      if (cancelled) return;
+      const matches = (data || []).filter((w: PartnerWorkshop) => {
+        if (editing && w.id === editing.id) return false;
+        return w.phone && w.phone.replace(/\D/g, '') === digits;
+      });
+      setPhoneMatches(matches);
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [form.phone, editing]);
+
+  const reset = () => { setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true }); setPhoneMatches([]); setPhoneLookupOpen(false); };
   const openNew = () => { setEditing(null); reset(); setOpen(true); };
   const openEdit = (w: PartnerWorkshop) => {
     setEditing(w);
+    setPhoneMatches([]); setPhoneLookupOpen(false);
     setForm({
       name: w.name, phone: w.phone || '', address: w.address || '',
       experience_years: w.experience_years != null ? String(w.experience_years) : '',
@@ -443,7 +471,40 @@ function WorkshopsTab({ regions, selectedRegion, setSelectedRegion, districts, s
           <DialogHeader><DialogTitle>{editing ? 'Ustaxonani tahrirlash' : "Ustaxona qo'shish"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto">
             <div><Label>Nomi</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-            <div><Label>Telefon raqami</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+998 90 123 45 67" /></div>
+            <div className="relative">
+              <Label>Telefon raqami</Label>
+              <Input
+                value={form.phone}
+                onChange={(e) => { setForm({ ...form, phone: e.target.value }); setPhoneLookupOpen(true); }}
+                onFocus={() => setPhoneLookupOpen(true)}
+                placeholder="+998 90 123 45 67"
+              />
+              {phoneMatches.length > 0 && (
+                <div className="mt-2 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-800 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setPhoneLookupOpen((v) => !v)}
+                    className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-amber-800 dark:text-amber-300"
+                  >
+                    <span>Bu raqam allaqachon {phoneMatches.length} ta ustaxonada mavjud</span>
+                    <span className="text-xs">{phoneLookupOpen ? '▲' : '▼'}</span>
+                  </button>
+                  {phoneLookupOpen && (
+                    <ul className="divide-y divide-amber-200 dark:divide-amber-800 border-t border-amber-200 dark:border-amber-800">
+                      {phoneMatches.map((m) => (
+                        <li key={m.id} className="px-3 py-2 bg-white dark:bg-background">
+                          <p className="text-sm font-medium text-foreground">{m.name}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {regionName(districtRegion(m.district_id))} · {districtName(m.district_id)}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
             <div><Label>Manzil</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
             <div><Label>Tajriba (yil)</Label><Input type="number" value={form.experience_years} onChange={(e) => setForm({ ...form, experience_years: e.target.value })} /></div>
             <div><Label>Tavsif</Label><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
