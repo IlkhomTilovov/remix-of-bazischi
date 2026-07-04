@@ -471,7 +471,40 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
           <DialogHeader><DialogTitle>{editing ? 'Ustaxonani tahrirlash' : "Ustaxona qo'shish"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto">
             <div><Label>Nomi</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-            <div><Label>Telefon raqami</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+998 90 123 45 67" /></div>
+            <div className="relative">
+              <Label>Telefon raqami</Label>
+              <Input
+                value={form.phone}
+                onChange={(e) => { setForm({ ...form, phone: e.target.value }); setPhoneLookupOpen(true); }}
+                onFocus={() => setPhoneLookupOpen(true)}
+                placeholder="+998 90 123 45 67"
+              />
+              {phoneMatches.length > 0 && (
+                <div className="mt-2 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-800 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setPhoneLookupOpen((v) => !v)}
+                    className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-amber-800 dark:text-amber-300"
+                  >
+                    <span>Bu raqam allaqachon {phoneMatches.length} ta ustaxonada mavjud</span>
+                    <span className="text-xs">{phoneLookupOpen ? '▲' : '▼'}</span>
+                  </button>
+                  {phoneLookupOpen && (
+                    <ul className="divide-y divide-amber-200 dark:divide-amber-800 border-t border-amber-200 dark:border-amber-800">
+                      {phoneMatches.map((m) => (
+                        <li key={m.id} className="px-3 py-2 bg-white dark:bg-background">
+                          <p className="text-sm font-medium text-foreground">{m.name}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {regionName(districtRegion(m.district_id))} · {districtName(m.district_id)}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
             <div><Label>Manzil</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
             <div><Label>Tajriba (yil)</Label><Input type="number" value={form.experience_years} onChange={(e) => setForm({ ...form, experience_years: e.target.value })} /></div>
             <div><Label>Tavsif</Label><Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
