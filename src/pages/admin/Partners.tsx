@@ -20,7 +20,7 @@ import {
 import { Plus, Pencil, Trash2, MapPin, Wrench, Store, Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
-  usePartnerRegions, usePartnerDistricts, usePartnerWorkshops, partnersApi,
+  usePartnerRegions, usePartnerDistricts, usePartnerAllDistricts, usePartnerWorkshops, partnersApi,
   PartnerRegion, PartnerDistrict, PartnerWorkshop,
 } from '@/hooks/usePartners';
 
