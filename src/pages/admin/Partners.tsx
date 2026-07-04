@@ -38,6 +38,13 @@ export default function Partners() {
     setActiveTab('districts');
   };
 
+  const viewDistrictWorkshops = (district: PartnerDistrict) => {
+    setSelectedRegion(district.region_id);
+    setSelectedDistrict(district.id);
+    setActiveTab('workshops');
+  };
+
+
   return (
     <div className="space-y-6">
       <div>
