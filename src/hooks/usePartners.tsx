@@ -195,8 +195,8 @@ export function usePartnerWorkshop(id: string | undefined) {
     if (!id) { setLoading(false); return; }
     (async () => {
       setLoading(true);
-      const { data } = await db.from('partner_workshops').select('*').eq('id', id).maybeSingle();
-      setWorkshop(data as PartnerWorkshop | null);
+      const { data } = await db.rpc('get_public_workshop', { _id: id });
+      setWorkshop(((data && data[0]) || null) as PartnerWorkshop | null);
       setLoading(false);
     })();
   }, [id]);
