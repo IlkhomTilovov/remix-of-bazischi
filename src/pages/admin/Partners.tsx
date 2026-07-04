@@ -29,6 +29,7 @@ export default function Partners() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('');
   const { districts, refetch: refetchDistricts } = usePartnerDistricts(selectedRegion || undefined, false);
+  const { districts: allDistricts, refetch: refetchAllDistricts } = usePartnerAllDistricts(false);
   const { workshops, refetch: refetchWorkshops } = usePartnerWorkshops(selectedDistrict || undefined, false);
 
   return (
