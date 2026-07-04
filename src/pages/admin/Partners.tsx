@@ -84,7 +84,7 @@ export default function Partners() {
 }
 
 /* ---------------- Regions ---------------- */
-function RegionsTab({ regions, refetch }: { regions: PartnerRegion[]; refetch: () => void }) {
+function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerRegion[]; refetch: () => void; onViewDistricts: (regionId: string) => void }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PartnerRegion | null>(null);
   const [name, setName] = useState('');
