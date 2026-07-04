@@ -400,7 +400,7 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   };
 
   const save = async () => {
-    if (!selectedDistrict) { toast.error('Tumanni tanlang'); return; }
+    if (!selectedDistrict || selectedDistrict === 'all') { toast.error('Tumanni tanlang'); return; }
     if (!form.name.trim()) { toast.error('Ustaxona nomini kiriting'); return; }
     const payload = {
       district_id: selectedDistrict,
