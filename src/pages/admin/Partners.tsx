@@ -210,6 +210,10 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [viewingDistrictId, setViewingDistrictId] = useState<string | null>(null);
+
+  const { workshops: districtWorkshops, loading: workshopsLoading } = usePartnerWorkshops(viewingDistrictId || undefined, false);
+  const viewingDistrict = districts.find((d) => d.id === viewingDistrictId);
 
   const filteredDistricts = districts.filter((d) =>
     d.name.toLowerCase().includes(search.trim().toLowerCase())
@@ -261,20 +265,28 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
         {filteredDistricts.map((d, i) => {
           const regionName = regions.find((r) => r.id === d.region_id)?.name;
           return (
-            <div key={d.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
+            <div
+              key={d.id}
+              onClick={() => setViewingDistrictId(d.id)}
+              className="flex items-center justify-between rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+            >
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Wrench className="w-5 h-5 text-muted-foreground" />
                 <span className="font-medium">{d.name}</span>
                 {regionName && <Badge variant="outline">{regionName}</Badge>}
                 <Badge variant={d.is_active ? 'default' : 'secondary'}>{d.is_active ? 'Faol' : 'Nofaol'}</Badge>
-                {(d.workshop_count ?? 0) > 0 && (
+                {(d.workshop_count ?? 0) > 0 ? (
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
                     {(d.workshop_count ?? 0)} ta ustaxona
                   </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-muted-foreground">
+                    0 ta ustaxona
+                  </Badge>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                 <Button size="icon" variant="ghost" onClick={() => openEdit(d)}><Pencil className="w-4 h-4" /></Button>
                 <Button size="icon" variant="ghost" onClick={() => setDeleteId(d.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
@@ -299,6 +311,36 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
             <div className="flex items-center gap-2"><Switch checked={isActive} onCheckedChange={setIsActive} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!viewingDistrictId} onOpenChange={(v) => !v && setViewingDistrictId(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{viewingDistrict?.name || 'Tuman'} — Ustaxonalar</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto py-2">
+            {workshopsLoading && <p className="text-sm text-muted-foreground">Yuklanmoqda...</p>}
+            {!workshopsLoading && districtWorkshops.length === 0 && (
+              <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>
+            )}
+            {!workshopsLoading && districtWorkshops.map((w, i) => (
+              <div key={w.id} className="flex items-center gap-3 rounded-lg border p-3">
+                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
+                <Store className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium truncate">{w.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {w.phone} {w.experience_years ? `· ${w.experience_years} yil` : ''}
+                  </p>
+                </div>
+                <Badge variant={w.is_active ? 'default' : 'secondary'}>{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewingDistrictId(null)}>Yopish</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
