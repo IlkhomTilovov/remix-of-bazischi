@@ -461,6 +461,7 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
                 <div className="min-w-0">
                   <p className="font-medium truncate">{w.name}</p>
                   <p className="text-xs text-muted-foreground truncate">{w.phone} {w.experience_years ? `· ${w.experience_years} yil` : ''}</p>
+                  <p className="text-xs text-muted-foreground truncate">{regionName(districtRegion(w.district_id))} · {districtName(w.district_id)}</p>
                 </div>
                 <Badge variant={w.is_active ? 'default' : 'secondary'}>{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
               </div>
