@@ -38,6 +38,13 @@ export default function Partners() {
     setActiveTab('districts');
   };
 
+  const viewDistrictWorkshops = (district: PartnerDistrict) => {
+    setSelectedRegion(district.region_id);
+    setSelectedDistrict(district.id);
+    setActiveTab('workshops');
+  };
+
+
   return (
     <div className="space-y-6">
       <div>
@@ -63,8 +70,10 @@ export default function Partners() {
             setSelectedRegion={setSelectedRegion}
             districts={selectedRegion ? districts : allDistricts}
             refetch={() => { refetchDistricts(); refetchAllDistricts(); }}
+            onViewWorkshops={viewDistrictWorkshops}
           />
         </TabsContent>
+
 
         <TabsContent value="workshops" className="mt-6">
           <WorkshopsTab
@@ -218,9 +227,9 @@ function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerReg
 }
 
 /* ---------------- Districts ---------------- */
-function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, refetch }: {
+function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, refetch, onViewWorkshops }: {
   regions: PartnerRegion[]; selectedRegion: string; setSelectedRegion: (v: string) => void;
-  districts: PartnerDistrict[]; refetch: () => void;
+  districts: PartnerDistrict[]; refetch: () => void; onViewWorkshops: (district: PartnerDistrict) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PartnerDistrict | null>(null);
@@ -230,10 +239,8 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [viewingDistrictId, setViewingDistrictId] = useState<string | null>(null);
 
-  const { workshops: districtWorkshops, loading: workshopsLoading } = usePartnerWorkshops(viewingDistrictId || undefined, false);
-  const viewingDistrict = districts.find((d) => d.id === viewingDistrictId);
+
 
   const filteredDistricts = districts.filter((d) =>
     d.name.toLowerCase().includes(search.trim().toLowerCase())
@@ -287,7 +294,7 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
           return (
             <div
               key={d.id}
-              onClick={() => setViewingDistrictId(d.id)}
+              onClick={() => onViewWorkshops(d)}
               className="flex items-center justify-between rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center gap-3 flex-wrap">
@@ -331,36 +338,6 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
             <div className="flex items-center gap-2"><Switch checked={isActive} onCheckedChange={setIsActive} /><Label>Faol</Label></div>
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setOpen(false)}>Bekor</Button><Button onClick={save}>Saqlash</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!viewingDistrictId} onOpenChange={(v) => !v && setViewingDistrictId(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{viewingDistrict?.name || 'Tuman'} — Ustaxonalar</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto py-2">
-            {workshopsLoading && <p className="text-sm text-muted-foreground">Yuklanmoqda...</p>}
-            {!workshopsLoading && districtWorkshops.length === 0 && (
-              <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>
-            )}
-            {!workshopsLoading && districtWorkshops.map((w, i) => (
-              <div key={w.id} className="flex items-center gap-3 rounded-lg border p-3">
-                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
-                <Store className="w-5 h-5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{w.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {w.phone} {w.experience_years ? `· ${w.experience_years} yil` : ''}
-                  </p>
-                </div>
-                <Badge variant={w.is_active ? 'default' : 'secondary'}>{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setViewingDistrictId(null)}>Yopish</Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 
