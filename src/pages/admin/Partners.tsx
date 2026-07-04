@@ -341,36 +341,6 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!viewingDistrictId} onOpenChange={(v) => !v && setViewingDistrictId(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{viewingDistrict?.name || 'Tuman'} — Ustaxonalar</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto py-2">
-            {workshopsLoading && <p className="text-sm text-muted-foreground">Yuklanmoqda...</p>}
-            {!workshopsLoading && districtWorkshops.length === 0 && (
-              <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>
-            )}
-            {!workshopsLoading && districtWorkshops.map((w, i) => (
-              <div key={w.id} className="flex items-center gap-3 rounded-lg border p-3">
-                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
-                <Store className="w-5 h-5 text-muted-foreground shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{w.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {w.phone} {w.experience_years ? `· ${w.experience_years} yil` : ''}
-                  </p>
-                </div>
-                <Badge variant={w.is_active ? 'default' : 'secondary'}>{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setViewingDistrictId(null)}>Yopish</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <DeleteConfirm open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)} onConfirm={remove} />
     </div>
   );
