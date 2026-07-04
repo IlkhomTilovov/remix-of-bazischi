@@ -209,6 +209,11 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [sortOrder, setSortOrder] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+
+  const filteredDistricts = districts.filter((d) =>
+    d.name.toLowerCase().includes(search.trim().toLowerCase())
+  );
 
   const openNew = () => { setEditing(null); setName(''); setRegionId(selectedRegion || ''); setSortOrder(''); setIsActive(true); setOpen(true); };
   const openEdit = (d: PartnerDistrict) => { setEditing(d); setName(d.name); setRegionId(d.region_id); setSortOrder(d.sort_order != null ? String(d.sort_order) : ''); setIsActive(d.is_active ?? true); setOpen(true); };
@@ -242,12 +247,18 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
             {regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
           </SelectContent>
         </Select>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Tuman nomi bo'yicha qidirish..."
+          className="w-full sm:w-64"
+        />
         <Button onClick={openNew}><Plus className="w-4 h-4 mr-1.5" /> Tuman qo'shish</Button>
       </div>
 
       <div className="grid gap-3">
-        {districts.length === 0 && <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>}
-        {districts.map((d, i) => {
+        {filteredDistricts.length === 0 && <p className="text-muted-foreground text-sm">Tumanlar yo'q.</p>}
+        {filteredDistricts.map((d, i) => {
           const regionName = regions.find((r) => r.id === d.region_id)?.name;
           return (
             <div key={d.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
