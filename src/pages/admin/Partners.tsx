@@ -146,7 +146,7 @@ function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerReg
         {regions.map((r, i) => (
           <div
             key={r.id}
-            onClick={() => setViewingRegionId(r.id)}
+            onClick={() => onViewDistricts(r.id)}
             className="flex items-center justify-between rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
           >
             <div className="flex items-center gap-3 flex-wrap">
