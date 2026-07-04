@@ -209,6 +209,11 @@ function DistrictsTab({ regions, selectedRegion, setSelectedRegion, districts, r
   const [sortOrder, setSortOrder] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+
+  const filteredDistricts = districts.filter((d) =>
+    d.name.toLowerCase().includes(search.trim().toLowerCase())
+  );
 
   const openNew = () => { setEditing(null); setName(''); setRegionId(selectedRegion || ''); setSortOrder(''); setIsActive(true); setOpen(true); };
   const openEdit = (d: PartnerDistrict) => { setEditing(d); setName(d.name); setRegionId(d.region_id); setSortOrder(d.sort_order != null ? String(d.sort_order) : ''); setIsActive(d.is_active ?? true); setOpen(true); };
