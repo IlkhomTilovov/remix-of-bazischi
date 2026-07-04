@@ -93,11 +93,8 @@ function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerReg
   const [uploading, setUploading] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [viewingRegionId, setViewingRegionId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const { districts: regionDistricts } = usePartnerDistricts(viewingRegionId || undefined, false);
-  const viewingRegion = regions.find((r) => r.id === viewingRegionId);
 
   const openNew = () => { setEditing(null); setName(''); setImageUrl(''); setSortOrder(''); setIsActive(true); setOpen(true); };
   const openEdit = (r: PartnerRegion) => { setEditing(r); setName(r.name); setImageUrl(r.image_url || ''); setSortOrder(r.sort_order != null ? String(r.sort_order) : ''); setIsActive(r.is_active ?? true); setOpen(true); };
