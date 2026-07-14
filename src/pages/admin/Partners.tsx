@@ -406,6 +406,11 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   const save = async () => {
     if (!selectedDistrict || selectedDistrict === 'all') { toast.error('Tumanni tanlang'); return; }
     if (!form.name.trim()) { toast.error('Ustaxona nomini kiriting'); return; }
+    const digits = form.phone.replace(/\D/g, '');
+    if (digits) {
+      const exactMatches = phoneMatches.filter((m) => !editing || m.id !== editing.id);
+      if (exactMatches.length > 0) { toast.error('Sizda bunday usta mavjud'); return; }
+    }
     const payload = {
       district_id: selectedDistrict,
       name: form.name.trim(),
