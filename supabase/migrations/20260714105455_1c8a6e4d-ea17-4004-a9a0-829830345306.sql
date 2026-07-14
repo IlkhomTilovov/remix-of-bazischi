@@ -1,0 +1,1 @@
+UPDATE public.system_settings SET facebook_domain_verification = '7dliude1o5jtdah2cqg1wi6h3ki4rs';
