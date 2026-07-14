@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public can create order_items" ON public.order_items;
