@@ -1,0 +1,1 @@
+UPDATE public.system_settings SET facebook_pixel_id = '1315741933949939';
