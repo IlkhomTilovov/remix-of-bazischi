@@ -407,9 +407,12 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
     if (!selectedDistrict || selectedDistrict === 'all') { toast.error('Tumanni tanlang'); return; }
     if (!form.name.trim()) { toast.error('Ustaxona nomini kiriting'); return; }
     const digits = form.phone.replace(/\D/g, '');
-    if (digits) {
-      const exactMatches = phoneMatches.filter((m) => !editing || m.id !== editing.id);
-      if (exactMatches.length > 0) { toast.error('Sizda bunday usta mavjud'); return; }
+    if (digits && !editing) {
+      const exactMatches = phoneMatches.filter((m) => m.phone && m.phone.replace(/\D/g, '') === digits);
+      if (exactMatches.length > 0) {
+        const confirmed = window.confirm(`Sizda bunday usta mavjud (${exactMatches.length} ta manzilda). Yana manzil qo'shishni xohlaysizmi?`);
+        if (!confirmed) return;
+      }
     }
     const payload = {
       district_id: selectedDistrict,
