@@ -17,7 +17,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, Pencil, Trash2, MapPin, Wrench, Store, Upload, X, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, MapPin, Wrench, Store, Upload, X, Loader2, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   usePartnerRegions, usePartnerDistricts, usePartnerAllDistricts, usePartnerWorkshops, partnersApi,
@@ -359,14 +359,22 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [phoneMatches, setPhoneMatches] = useState<PartnerWorkshop[]>([]);
   const [phoneLookupOpen, setPhoneLookupOpen] = useState(false);
+  const [modalRegion, setModalRegion] = useState('');
+  const [modalDistrict, setModalDistrict] = useState('');
+  const [search, setSearch] = useState('');
 
   const regionName = (id?: string) => regions.find((r) => r.id === id)?.name || '—';
   const districtName = (id?: string) => allDistricts.find((d) => d.id === id)?.name || '—';
   const districtRegion = (districtId?: string) => allDistricts.find((d) => d.id === districtId)?.region_id;
 
-  const displayWorkshops = selectedDistrict === 'all' && selectedRegion !== 'all'
+  const displayWorkshops = (selectedDistrict === 'all' && selectedRegion !== 'all'
     ? workshops.filter((w) => allDistricts.find((d) => d.id === w.district_id)?.region_id === selectedRegion)
-    : workshops;
+    : workshops
+  ).filter((w) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return w.name.toLowerCase().includes(q) || (w.phone || '').toLowerCase().includes(q);
+  });
 
   // Bir xil telefon raqamli ustaxonalarni izlash (barcha tuman/viloyatlar bo'yicha)
   useEffect(() => {
@@ -389,7 +397,13 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   }, [form.phone, editing]);
 
   const reset = () => { setForm({ name: '', phone: '', address: '', experience_years: '', description: '', sort_order: '', is_active: true }); setPhoneMatches([]); setPhoneLookupOpen(false); };
-  const openNew = () => { setEditing(null); reset(); setOpen(true); };
+  const openNew = () => {
+    setEditing(null);
+    reset();
+    setModalRegion(selectedRegion && selectedRegion !== 'all' ? selectedRegion : '');
+    setModalDistrict(selectedDistrict && selectedDistrict !== 'all' ? selectedDistrict : '');
+    setOpen(true);
+  };
   const openEdit = (w: PartnerWorkshop) => {
     setEditing(w);
     setPhoneMatches([]); setPhoneLookupOpen(false);
@@ -400,11 +414,13 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
       sort_order: w.sort_order != null ? String(w.sort_order) : '',
       is_active: w.is_active ?? true,
     });
+    setModalRegion(districtRegion(w.district_id) || '');
+    setModalDistrict(w.district_id || '');
     setOpen(true);
   };
 
   const save = async () => {
-    if (!selectedDistrict || selectedDistrict === 'all') { toast.error('Tumanni tanlang'); return; }
+    if (!modalDistrict) { toast.error('Tumanni tanlang'); return; }
     if (!form.name.trim()) { toast.error('Ustaxona nomini kiriting'); return; }
     const digits = form.phone.replace(/\D/g, '');
     if (digits && !editing) {
@@ -415,7 +431,7 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
       }
     }
     const payload = {
-      district_id: selectedDistrict,
+      district_id: modalDistrict,
       name: form.name.trim(),
       phone: form.phone.trim() || null,
       address: form.address.trim() || null,
@@ -456,22 +472,28 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
             {(selectedRegion === 'all' ? allDistricts : districts).map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Button onClick={openNew} disabled={!selectedDistrict || selectedDistrict === 'all'}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
+        <div className="relative w-full sm:w-64">
+          <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Ism yoki telefon bo'yicha qidirish" className="pl-9" />
+        </div>
+        <Button onClick={openNew}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
       </div>
 
         <div className="grid gap-3">
           {displayWorkshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
           {displayWorkshops.map((w, i) => (
             <div key={w.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
                 <Store className="w-5 h-5 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{w.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{w.phone} {w.experience_years ? `· ${w.experience_years} yil` : ''}</p>
-                  <p className="text-xs text-muted-foreground truncate">{regionName(districtRegion(w.district_id))} · {districtName(w.district_id)}</p>
+                <p className="font-medium shrink-0 w-40 truncate">{w.name}</p>
+                <div className="grid grid-cols-4 gap-4 flex-1 min-w-0 text-xs text-muted-foreground">
+                  <span className="truncate">{w.phone || '—'}</span>
+                  <span className="truncate">{w.experience_years ? `${w.experience_years} yil` : '—'}</span>
+                  <span className="truncate">{regionName(districtRegion(w.district_id))}</span>
+                  <span className="truncate">{districtName(w.district_id)}</span>
                 </div>
-                <Badge variant={w.is_active ? 'default' : 'secondary'}>{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
+                <Badge variant={w.is_active ? 'default' : 'secondary'} className="shrink-0">{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
               </div>
               <div className="flex gap-2 shrink-0">
                 <Button size="icon" variant="ghost" onClick={() => openEdit(w)}><Pencil className="w-4 h-4" /></Button>
@@ -485,6 +507,26 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>{editing ? 'Ustaxonani tahrirlash' : "Ustaxona qo'shish"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label>Viloyat</Label>
+                <Select value={modalRegion} onValueChange={(v) => { setModalRegion(v); setModalDistrict(''); }}>
+                  <SelectTrigger><SelectValue placeholder="Viloyatni tanlang" /></SelectTrigger>
+                  <SelectContent>
+                    {regions.map((r) => <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Tuman</Label>
+                <Select value={modalDistrict} onValueChange={setModalDistrict} disabled={!modalRegion}>
+                  <SelectTrigger><SelectValue placeholder="Tumanni tanlang" /></SelectTrigger>
+                  <SelectContent>
+                    {allDistricts.filter((d) => d.region_id === modalRegion).map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <div><Label>Nomi</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
             <div className="relative">
               <Label>Telefon raqami</Label>
