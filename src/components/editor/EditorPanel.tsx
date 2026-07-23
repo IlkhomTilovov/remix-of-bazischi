@@ -5,6 +5,7 @@ import { useSiteContent } from '@/hooks/useSiteContent';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAutosave } from '@/hooks/useAutosave';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/compressImage';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -95,13 +96,14 @@ export function EditorPanel() {
       // Save reference to old image for deletion
       const oldImageUrl = editValue || '';
 
-      const fileExt = file.name.split('.').pop();
+      const optimized = await compressImage(file, 1920);
+      const fileExt = optimized.name.split('.').pop();
       const fileName = `${selectedElement.contentKey}-${Date.now()}.${fileExt}`;
       const filePath = `site-content/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, optimized, { upsert: true, cacheControl: '31536000', contentType: optimized.type });
 
       if (uploadError) throw uploadError;
 

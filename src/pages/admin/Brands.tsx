@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/compressImage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,9 +39,10 @@ export default function Brands() {
     if (file.size > 5 * 1024 * 1024) { toast.error('Rasm hajmi 5MB dan oshmasligi kerak'); return; }
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop();
+      const optimized = await compressImage(file, 400);
+      const ext = optimized.name.split('.').pop();
       const filePath = `brands/brand-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, file);
+      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, optimized, { cacheControl: '31536000', contentType: optimized.type });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
       setLogoUrl(publicUrl);

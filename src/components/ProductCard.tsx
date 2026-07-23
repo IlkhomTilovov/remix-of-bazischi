@@ -46,7 +46,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
       data-catalog-product-id={product.id}
       className="group bg-card rounded-2xl overflow-hidden shadow-warm hover:shadow-warm-lg transition-all duration-300"
     >
-      <Link to={productUrl} state={linkState} onClick={onOpen} className="block relative aspect-[4/3] overflow-hidden">
+      <Link to={productUrl} state={linkState} onClick={onOpen} aria-label={name} className="block relative aspect-[4/3] overflow-hidden">
         <LazyImage
           src={images[0] || '/placeholder.svg'}
           alt={name}
@@ -85,6 +85,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
             size="sm"
             variant={inCart ? "secondary" : "default"}
             className="rounded-full"
+            aria-label={inCart ? t.nav.cart : t.products.addToCart}
             onClick={(e) => {
               e.preventDefault();
               if (!inCart) {

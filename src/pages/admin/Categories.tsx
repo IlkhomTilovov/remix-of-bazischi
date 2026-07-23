@@ -15,6 +15,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/compressImage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -117,13 +118,14 @@ export default function Categories() {
 
     setImageUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const optimized = await compressImage(file, 800);
+      const fileExt = optimized.name.split('.').pop();
       const fileName = `category-${Date.now()}.${fileExt}`;
       const filePath = `categories/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(filePath, file);
+        .upload(filePath, optimized, { cacheControl: '31536000', contentType: optimized.type });
 
       if (uploadError) throw uploadError;
 

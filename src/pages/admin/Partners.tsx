@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/compressImage';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -116,9 +117,10 @@ function RegionsTab({ regions, refetch, onViewDistricts }: { regions: PartnerReg
     if (file.size > 5 * 1024 * 1024) { toast.error('Rasm hajmi 5MB dan oshmasligi kerak'); return; }
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop();
+      const optimized = await compressImage(file, 700);
+      const ext = optimized.name.split('.').pop();
       const filePath = `regions/region-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, file);
+      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, optimized, { cacheControl: '31536000', contentType: optimized.type });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
       setImageUrl(publicUrl);
