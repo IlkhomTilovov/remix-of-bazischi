@@ -25,6 +25,57 @@ import {
   PartnerRegion, PartnerDistrict, PartnerWorkshop,
 } from '@/hooks/usePartners';
 
+/* ---------------- Resizable columns ---------------- */
+const WORKSHOP_COLUMNS = ['name', 'phone', 'experience', 'region', 'district', 'address'] as const;
+type WorkshopColKey = typeof WORKSHOP_COLUMNS[number];
+const WORKSHOP_COLUMN_LABELS: Record<WorkshopColKey, string> = {
+  name: 'Nomi', phone: 'Telefon', experience: 'Tajriba', region: 'Viloyat', district: 'Tuman', address: 'Manzil',
+};
+const WORKSHOP_COLUMN_DEFAULTS: Record<WorkshopColKey, number> = {
+  name: 160, phone: 130, experience: 90, region: 140, district: 140, address: 220,
+};
+const WORKSHOP_COLUMN_MIN = 60;
+const WORKSHOP_COLUMNS_STORAGE_KEY = 'admin_workshops_column_widths';
+
+function useWorkshopColumnWidths() {
+  const [widths, setWidths] = useState<Record<WorkshopColKey, number>>(() => {
+    try {
+      const saved = localStorage.getItem(WORKSHOP_COLUMNS_STORAGE_KEY);
+      if (saved) return { ...WORKSHOP_COLUMN_DEFAULTS, ...JSON.parse(saved) };
+    } catch { /* ignore */ }
+    return WORKSHOP_COLUMN_DEFAULTS;
+  });
+  useEffect(() => {
+    try { localStorage.setItem(WORKSHOP_COLUMNS_STORAGE_KEY, JSON.stringify(widths)); } catch { /* ignore */ }
+  }, [widths]);
+  return [widths, setWidths] as const;
+}
+
+function ColumnResizeHandle({ onResize }: { onResize: (deltaX: number) => void }) {
+  const lastX = useRef(0);
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    lastX.current = e.clientX;
+    const onMouseMove = (ev: MouseEvent) => {
+      onResize(ev.clientX - lastX.current);
+      lastX.current = ev.clientX;
+    };
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+  return (
+    <div
+      onMouseDown={onMouseDown}
+      className="absolute right-0 top-0 h-full w-2 translate-x-1/2 cursor-col-resize select-none hover:bg-primary/40 active:bg-primary/60"
+    />
+  );
+}
+
 export default function Partners() {
   const { regions, refetch: refetchRegions } = usePartnerRegions(false);
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
@@ -364,6 +415,11 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
   const [modalRegion, setModalRegion] = useState('');
   const [modalDistrict, setModalDistrict] = useState('');
   const [search, setSearch] = useState('');
+  const [colWidths, setColWidths] = useWorkshopColumnWidths();
+  const resizeColumn = (key: WorkshopColKey, delta: number) => {
+    setColWidths((w) => ({ ...w, [key]: Math.max(WORKSHOP_COLUMN_MIN, w[key] + delta) }));
+  };
+  const columnsTotalWidth = WORKSHOP_COLUMNS.reduce((sum, key) => sum + colWidths[key], 0);
 
   const regionName = (id?: string) => regions.find((r) => r.id === id)?.name || '—';
   const districtName = (id?: string) => allDistricts.find((d) => d.id === id)?.name || '—';
@@ -481,28 +537,49 @@ function WorkshopsTab({ regions, allDistricts, selectedRegion, setSelectedRegion
         <Button onClick={openNew}><Plus className="w-4 h-4 mr-1.5" /> Ustaxona qo'shish</Button>
       </div>
 
-        <div className="grid gap-3">
-          {displayWorkshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
-          {displayWorkshops.map((w, i) => (
-            <div key={w.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
-                <Store className="w-5 h-5 text-muted-foreground shrink-0" />
-                <p className="font-medium shrink-0 w-40 truncate">{w.name}</p>
-                <div className="grid grid-cols-4 gap-4 flex-1 min-w-0 text-xs text-muted-foreground">
-                  <span className="truncate">{w.phone || '—'}</span>
-                  <span className="truncate">{w.experience_years ? `${w.experience_years} yil` : '—'}</span>
-                  <span className="truncate">{regionName(districtRegion(w.district_id))}</span>
-                  <span className="truncate">{districtName(w.district_id)}</span>
+        <div className="overflow-x-auto">
+          <div style={{ minWidth: columnsTotalWidth + 260 }}>
+            {displayWorkshops.length > 0 && (
+              <div className="flex items-center gap-3 px-4 pb-2">
+                <span className="w-6 shrink-0" />
+                <span className="w-5 shrink-0" />
+                <div className="flex items-center min-w-0 flex-1">
+                  {WORKSHOP_COLUMNS.map((key, idx) => (
+                    <div key={key} className={`relative shrink-0 pr-3 ${idx > 0 ? 'border-l-2 border-gray-300 dark:border-gray-600 pl-3' : ''}`} style={{ width: colWidths[key] }}>
+                      <span className="truncate block text-xs font-semibold text-muted-foreground">{WORKSHOP_COLUMN_LABELS[key]}</span>
+                      <ColumnResizeHandle onResize={(delta) => resizeColumn(key, delta)} />
+                    </div>
+                  ))}
                 </div>
-                <Badge variant={w.is_active ? 'default' : 'secondary'} className="shrink-0">{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
+                <span className="w-16 shrink-0" />
+                <span className="w-20 shrink-0" />
               </div>
-              <div className="flex gap-2 shrink-0">
-                <Button size="icon" variant="ghost" onClick={() => openEdit(w)}><Pencil className="w-4 h-4" /></Button>
-                <Button size="icon" variant="ghost" onClick={() => setDeleteId(w.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
-              </div>
+            )}
+            <div className="grid gap-3">
+              {displayWorkshops.length === 0 && <p className="text-muted-foreground text-sm">Ustaxonalar yo'q.</p>}
+              {displayWorkshops.map((w, i) => (
+                <div key={w.id} className="flex items-center justify-between rounded-lg border bg-card p-4">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <span className="w-6 shrink-0 text-sm font-semibold text-muted-foreground">{i + 1}.</span>
+                    <Store className="w-5 h-5 text-muted-foreground shrink-0" />
+                    <div className="flex items-center min-w-0 flex-1 text-xs text-muted-foreground">
+                      <div className="shrink-0 pr-3 truncate text-sm font-medium text-foreground" style={{ width: colWidths.name }}>{w.name}</div>
+                      <div className="shrink-0 border-l-2 border-gray-300 dark:border-gray-600 pl-3 pr-3 truncate" style={{ width: colWidths.phone }}>{w.phone || '—'}</div>
+                      <div className="shrink-0 border-l-2 border-gray-300 dark:border-gray-600 pl-3 pr-3 truncate" style={{ width: colWidths.experience }}>{w.experience_years ? `${w.experience_years} yil` : '—'}</div>
+                      <div className="shrink-0 border-l-2 border-gray-300 dark:border-gray-600 pl-3 pr-3 truncate" style={{ width: colWidths.region }}>{regionName(districtRegion(w.district_id))}</div>
+                      <div className="shrink-0 border-l-2 border-gray-300 dark:border-gray-600 pl-3 pr-3 truncate" style={{ width: colWidths.district }}>{districtName(w.district_id)}</div>
+                      <div className="shrink-0 border-l-2 border-gray-300 dark:border-gray-600 pl-3 pr-3 truncate" style={{ width: colWidths.address }} title={w.address || undefined}>{w.address || '—'}</div>
+                    </div>
+                    <Badge variant={w.is_active ? 'default' : 'secondary'} className="shrink-0">{w.is_active ? 'Faol' : 'Nofaol'}</Badge>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <Button size="icon" variant="ghost" onClick={() => openEdit(w)}><Pencil className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" onClick={() => setDeleteId(w.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
