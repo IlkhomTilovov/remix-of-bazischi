@@ -489,6 +489,7 @@ export type Database = {
       products: {
         Row: {
           application: string[] | null
+          brand_id: string | null
           category_id: string | null
           colors: string[] | null
           created_at: string
@@ -529,6 +530,7 @@ export type Database = {
         }
         Insert: {
           application?: string[] | null
+          brand_id?: string | null
           category_id?: string | null
           colors?: string[] | null
           created_at?: string
@@ -569,6 +571,7 @@ export type Database = {
         }
         Update: {
           application?: string[] | null
+          brand_id?: string | null
           category_id?: string | null
           colors?: string[] | null
           created_at?: string
@@ -613,6 +616,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "partner_brands"
             referencedColumns: ["id"]
           },
         ]

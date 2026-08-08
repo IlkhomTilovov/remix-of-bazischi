@@ -8,12 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Filter, RotateCcw } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Category } from '@/hooks/useProducts';
+import { Category, BrandOption } from '@/hooks/useProducts';
 
 export interface SidebarFilters {
   categoryId: string;
   priceMin: number;
   priceMax: number;
+  brands: string[];
   materials: string[];
   colors: string[];
   furLengths: string[];
@@ -27,6 +28,7 @@ interface CatalogFilterSidebarProps {
   onApply: (filters: SidebarFilters) => void;
   initialFilters?: Partial<SidebarFilters>;
   dynamicOptions?: {
+    brands: BrandOption[];
     materials: string[];
     colors: string[];
     furLengths: string[];
@@ -45,6 +47,7 @@ export function CatalogFilterSidebar({ categories, onApply, initialFilters, dyna
     categoryId: 'all',
     priceMin: 1,
     priceMax: maxPrice,
+    brands: [],
     materials: [],
     colors: [],
     furLengths: [],
@@ -75,7 +78,7 @@ export function CatalogFilterSidebar({ categories, onApply, initialFilters, dyna
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const toggleArrayItem = (key: 'materials' | 'colors' | 'furLengths' | 'applications', id: string) => {
+  const toggleArrayItem = (key: 'brands' | 'materials' | 'colors' | 'furLengths' | 'applications', id: string) => {
     setFilters(prev => {
       const arr = prev[key];
       return {
@@ -104,6 +107,7 @@ export function CatalogFilterSidebar({ categories, onApply, initialFilters, dyna
     filters.categoryId !== 'all' ||
     filters.priceMin > 1 ||
     filters.priceMax < maxPrice ||
+    filters.brands.length > 0 ||
     filters.materials.length > 0 ||
     filters.colors.length > 0 ||
     filters.furLengths.length > 0 ||
@@ -135,6 +139,32 @@ export function CatalogFilterSidebar({ categories, onApply, initialFilters, dyna
                 />
                 <span className="text-sm text-foreground group-hover:text-primary transition-colors">
                   {item}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+        <Separator />
+      </>
+    );
+  };
+
+  const renderBrandCheckboxGroup = (label: string, items: BrandOption[]) => {
+    if (!items || items.length === 0) return null;
+
+    return (
+      <>
+        <div className="space-y-3">
+          <Label className="text-sm font-medium text-foreground">{label}</Label>
+          <div className="space-y-2.5">
+            {items.map(brand => (
+              <label key={brand.id} className="flex items-center gap-2.5 cursor-pointer group">
+                <Checkbox
+                  checked={filters.brands.includes(brand.id)}
+                  onCheckedChange={() => toggleArrayItem('brands', brand.id)}
+                />
+                <span className="text-sm text-foreground group-hover:text-primary transition-colors">
+                  {brand.name}
                 </span>
               </label>
             ))}
@@ -179,6 +209,8 @@ export function CatalogFilterSidebar({ categories, onApply, initialFilters, dyna
 
       <Separator />
 
+      {/* 2. Brand - dynamic from DB */}
+      {renderBrandCheckboxGroup(isUz ? 'Brend' : 'Бренд', dynamicOptions?.brands || [])}
 
       {/* 3. Materials - dynamic from DB */}
       {renderDynamicCheckboxGroup(

@@ -37,6 +37,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { AddMediaModal, MediaItem } from '@/components/admin/AddMediaModal';
 import { MediaGrid } from '@/components/admin/MediaGrid';
 import { SpecificationsBuilder, type Specification } from '@/components/admin/SpecificationsBuilder';
+import { usePartnerBrands } from '@/hooks/usePartners';
 
 interface Category {
   id: string;
@@ -56,6 +57,7 @@ interface Product {
   category_id: string | null;
   price: number | null;
   original_price: number | null;
+  brand_id: string | null;
   images: string[];
   materials: string[];
   sizes: string[];
@@ -93,6 +95,7 @@ interface FormData {
   category_id: string;
   price: string;
   original_price: string;
+  brand_id: string;
   images: string[];
   materials: string;
   sizes: string;
@@ -129,6 +132,7 @@ const emptyForm: FormData = {
   category_id: '',
   price: '',
   original_price: '',
+  brand_id: '',
   images: [],
   materials: '',
   sizes: '',
@@ -180,6 +184,8 @@ export default function ProductsNew() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { language } = useLanguage();
+
+  const { brands } = usePartnerBrands(false);
 
   // Debounce search
   useEffect(() => {
@@ -370,6 +376,7 @@ export default function ProductsNew() {
       category_id: product.category_id || '',
       price: product.price?.toString() || '',
       original_price: product.original_price?.toString() || '',
+      brand_id: product.brand_id || '',
       images: product.images || [],
       materials: (product.materials || []).join(', '),
       sizes: (product.sizes || []).join(', '),
@@ -520,6 +527,7 @@ export default function ProductsNew() {
       category_id: formData.category_id || null,
       price: formData.price ? parseFloat(formData.price) : null,
       original_price: formData.original_price ? parseFloat(formData.original_price) : null,
+      brand_id: formData.brand_id || null,
       images: formData.images,
       materials: formData.materials.split(',').map(s => s.trim()).filter(Boolean),
       sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
@@ -948,6 +956,31 @@ export default function ProductsNew() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Brend</Label>
+                <Select
+                  value={formData.brand_id || 'none'}
+                  onValueChange={(value) => setFormData({ ...formData, brand_id: value === 'none' ? '' : value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Brendni tanlang" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Tanlanmagan</SelectItem>
+                    {brands.map((b) => (
+                      <SelectItem key={b.id} value={b.id}>
+                        {b.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {brands.length === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Hozircha brendlar yo'q — avval "Brendlar" bo'limida qo'shing
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1449,6 +1482,11 @@ export default function ProductsNew() {
               <div>
                 <h2 className="text-xl font-bold">{selectedProduct.name_uz}</h2>
                 <p className="text-muted-foreground">{selectedProduct.name_ru}</p>
+                {selectedProduct.brand_id && (
+                  <Badge variant="outline" className="mt-1">
+                    {brands.find((b) => b.id === selectedProduct.brand_id)?.name || '—'}
+                  </Badge>
+                )}
               </div>
               {selectedProduct.description_uz && (
                 <p>{selectedProduct.description_uz}</p>

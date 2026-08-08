@@ -13,6 +13,7 @@ export interface Product {
   category_id: string | null;
   price: number | null;
   original_price: number | null;
+  brand_id: string | null;
   images: string[] | null;
   materials: string[] | null;
   sizes: string[] | null;
@@ -66,6 +67,7 @@ export interface ProductFilters {
   categoryId?: string;
   priceMin?: number;
   priceMax?: number;
+  brands?: string[];
   materials?: string[];
   colors?: string[];
   furLengths?: string[];
@@ -138,6 +140,10 @@ export function useProducts(
 
       if (filters.search) {
         query = query.or(`name_uz.ilike.%${filters.search}%,name_ru.ilike.%${filters.search}%`);
+      }
+
+      if (filters.brands && filters.brands.length > 0) {
+        query = query.in('brand_id', filters.brands);
       }
 
       // Array overlap filters - product must have ANY of the selected values (OR logic)
@@ -380,15 +386,22 @@ export function useProductById(idOrSlug: string) {
   return { product, loading, error };
 }
 
+export interface BrandOption {
+  id: string;
+  name: string;
+}
+
 // Hook to get unique filter values from all active products
 export function useProductFilterOptions() {
   const [options, setOptions] = useState<{
+    brands: BrandOption[];
     materials: string[];
     colors: string[];
     furLengths: string[];
     applications: string[];
     maxPrice: number;
   }>({
+    brands: [],
     materials: [],
     colors: [],
     furLengths: [],
@@ -402,11 +415,12 @@ export function useProductFilterOptions() {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('materials, colors, fur_length, application, price')
+          .select('brand_id, materials, colors, fur_length, application, price')
           .eq('is_active', true);
 
         if (error) throw error;
 
+        const brandIds = new Set<string>();
         const materialsSet = new Set<string>();
         const colorsSet = new Set<string>();
         const furLengthsSet = new Set<string>();
@@ -414,6 +428,7 @@ export function useProductFilterOptions() {
         let maxPrice = 0;
 
         (data || []).forEach((p: any) => {
+          if (p.brand_id) brandIds.add(p.brand_id);
           (p.materials || []).forEach((m: string) => m && materialsSet.add(m));
           (p.colors || []).forEach((c: string) => c && colorsSet.add(c));
           (p.fur_length || []).forEach((f: string) => f && furLengthsSet.add(f));
@@ -421,10 +436,23 @@ export function useProductFilterOptions() {
           if (p.price && p.price > maxPrice) maxPrice = p.price;
         });
 
+        let brands: BrandOption[] = [];
+        if (brandIds.size > 0) {
+          const { data: brandRows, error: brandError } = await supabase
+            .from('partner_brands')
+            .select('id, name')
+            .eq('is_active', true)
+            .in('id', Array.from(brandIds))
+            .order('name', { ascending: true });
+          if (brandError) throw brandError;
+          brands = (brandRows || []) as BrandOption[];
+        }
+
         // Round max price up to nearest 100k
         maxPrice = Math.ceil(maxPrice / 100000) * 100000 || 700000;
 
         setOptions({
+          brands,
           materials: Array.from(materialsSet).sort(),
           colors: Array.from(colorsSet).sort(),
           furLengths: Array.from(furLengthsSet).sort(),

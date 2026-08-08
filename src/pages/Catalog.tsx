@@ -24,6 +24,7 @@ const PAGE_SIZE = 24;
 
 const pageAffectingFilterKeys: (keyof SidebarFilters)[] = [
   'categoryId',
+  'brands',
   'materials',
   'colors',
   'furLengths',
@@ -89,6 +90,7 @@ export default function Catalog() {
     categoryId: 'all',
     priceMin: 1,
     priceMax: filterOptions.maxPrice,
+    brands: [],
     materials: [],
     colors: [],
     furLengths: [],
@@ -142,6 +144,7 @@ export default function Catalog() {
       f.categoryId = effectiveCategoryId;
     }
     // Price filter removed from UI — do not apply
+    if (sidebarFilters.brands.length > 0) f.brands = sidebarFilters.brands;
     if (sidebarFilters.materials.length > 0) f.materials = sidebarFilters.materials;
     if (sidebarFilters.colors.length > 0) f.colors = sidebarFilters.colors;
     if (sidebarFilters.furLengths.length > 0) f.furLengths = sidebarFilters.furLengths;
@@ -270,6 +273,7 @@ export default function Catalog() {
     }
     if (sidebarFilters.priceMin > 1) params.set('min_price', sidebarFilters.priceMin.toString());
     if (sidebarFilters.priceMax < filterOptions.maxPrice) params.set('max_price', sidebarFilters.priceMax.toString());
+    if (sidebarFilters.brands.length > 0) params.set('brand', sidebarFilters.brands.join(','));
     if (sidebarFilters.materials.length > 0) params.set('material', sidebarFilters.materials.join(','));
     if (sidebarFilters.colors.length > 0) params.set('color', sidebarFilters.colors.join(','));
     if (sidebarFilters.furLengths.length > 0) params.set('fur_length', sidebarFilters.furLengths.join(','));
@@ -481,7 +485,7 @@ export default function Catalog() {
                   variant="link"
                   onClick={() => handleApplyFilters({
                     categoryId: 'all', priceMin: 1, priceMax: filterOptions.maxPrice,
-                    materials: [], colors: [], furLengths: [],
+                    brands: [], materials: [], colors: [], furLengths: [],
                     applications: [], inStock: false, discounted: false,
                   })}
                 >
