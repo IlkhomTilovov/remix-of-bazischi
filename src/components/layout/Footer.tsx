@@ -51,7 +51,7 @@ export function Footer() {
                 />
               ) : (
                 <span className="font-serif text-2xl md:text-3xl font-bold tracking-wider text-foreground">
-                  BAROKAT<span className="text-primary"> MEBEL</span>
+                  {settings?.site_name || 'Logo'}
                 </span>
               )}
             </Link>

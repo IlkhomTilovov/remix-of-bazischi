@@ -67,12 +67,6 @@ export default function Index() {
     { key: 'step_4', num: '04', icon: ShieldCheck, titleFallback: 'Himoya va komfort', descFallback: "Salon issiqlikdan himoyalanadi va avtomobil premium ko'rinishga ega bo'ladi." },
   ];
 
-  const testimonials = [
-    { key: 'testimonial_1', nameFallback: 'Sardor Karimov', textFallback: "BAROKAT MEBEL bilan ishlaganim uchun juda mamnunman. Sifat a'lo darajada, dizayn zamonaviy.", roleFallback: 'Mijoz' },
-    { key: 'testimonial_2', nameFallback: 'Nilufar Rahimova', textFallback: "Oshxona mebelini buyurtma qildik, natija kutganimizdan ham yaxshi chiqdi. Rahmat!", roleFallback: 'Mijoz' },
-    { key: 'testimonial_3', nameFallback: 'Bobur Toshmatov', textFallback: "TV zona va shkaf buyurtma qildim. Professional yondashuv va sifatli ish.", roleFallback: 'Mijoz' },
-  ];
-
   const trustBadges = [
     { key: 'trust_1', icon: Shield, fallback: 'Quyoshdan maksimal himoya' },
     { key: 'trust_2', icon: Sparkles, fallback: "Elegant va sport uslub" },
@@ -108,7 +102,7 @@ export default function Index() {
           <EditableImage
             contentKey="hero_background_image"
             fallbackSrc="/images/hero-default.jpg"
-            alt="Premium mebel showroom"
+            alt="Tonirovka va avtomobil oynasi himoya plyonkasi markazi"
             className="w-full h-full object-cover"
             wrapperClassName="w-full h-full"
             section="hero"
